@@ -1,0 +1,38 @@
+{
+	"name": "Prestashop",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"NODE_VERSION": "lts/*",
+			"VARIANT": "7.4"
+		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"aswinkumar863.smarty-template-support",
+				"bmewburn.vscode-intelephense-client",
+				"editorconfig.editorconfig",
+				"mrmlnc.vscode-apache",
+				"shevaua.phpcs",
+				"stylelint.vscode-stylelint",
+				"xdebug.php-debug"
+			],
+			"settings": {
+				"editor.rulers": [
+					120
+				],
+				"php.validate.executablePath": "/usr/local/bin/php"
+			}
+		}
+	},
+	"features": {
+		"git": "latest"
+	},
+	"portsAttributes": {
+		"9003": {
+			"label": "xdebug"
+		}
+	},
+	"remoteUser": "vscode"
+}

@@ -1,0 +1,23 @@
+{
+    "name": "stancer/prestashop",
+    "description": "Stancer Prestashop module",
+    "version": "1.0.0",
+    "type": "prestashop-module",
+    "license": "MIT",
+    "autoload": {
+        "classmap": [
+            "classes/",
+            "controllers/"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        },
+        "sort-packages": true,
+        "prepend-autoloader": false
+    },
+    "require": {
+        "stancer/stancer": "^1.0"
+    }
+}

@@ -1,0 +1,23 @@
+
+# composer
+vendor/
+
+# node
+node_modules/
+.pnpm-store/
+
+# Tests report
+reports/
+
+# OS specific files
+.DS_Store
+._*
+.directory
+
+# Generated content
+/translations/
+views/css/
+views/js/*.js
+config*.xml
+index.php
+*.zip
