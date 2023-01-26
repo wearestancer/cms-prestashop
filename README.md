@@ -13,6 +13,7 @@ Payments are 3D Secure compatible. The amount from which 3D Secure is triggered 
 Customers have the option of registering a credit card when paying for the order so that they can quickly pay for their next purchases.
 
 ## Documentation
+- [Module Prestashop](https://gitlab.com/wearestancer/cms/prestashop/-/wikis/home)
 - [Stancer API](https://www.stancer.com/documentation/fr/api/)
 - [Stancer Resource](https://www.stancer.com/documentation/fr/resources/)
 
