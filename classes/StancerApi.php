@@ -182,11 +182,16 @@ class StancerApi
         // Send payment to Stancer
         $result = $this->sendToApi($apiPayment);
 
-        // Save payment in Prestashop
-        $currentPayment = StancerApiPayment::saveFrom($apiPayment, $cart);
-
         $log = $result['log'];
         $errors = $result['errors'];
+
+        if (empty($log)) {
+            $apiCustomer = $apiPayment->getCustomer();
+            StancerApiCustomer::saveFrom($apiCustomer);
+
+            // Save payment in Prestashop
+            StancerApiPayment::saveFrom($apiPayment, $cart);
+        }
 
         return $apiPayment;
     }

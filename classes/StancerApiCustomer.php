@@ -196,7 +196,17 @@ class StancerApiCustomer extends ObjectModel
      */
     public static function saveFrom(Stancer\Customer $apiCustomer): StancerApiCustomer
     {
-        $customer = new static();
+        $query = new DbQuery();
+        $query->select('id_stancer_customer');
+        $query->from(static::$definition['table']);
+        $query->where('`id_customer` = ' . (int) $apiCustomer->getExternalId());
+
+        $existingCustomerId = Db::getInstance()->getValue($query);
+        if ($existingCustomerId) {
+            $customer = new static($existingCustomerId);
+        }  else {
+            $customer = new static();
+        }
 
         $customer->id_customer = $apiCustomer->getExternalId();
         $customer->customer_id = $apiCustomer->getId();
@@ -211,6 +221,7 @@ class StancerApiCustomer extends ObjectModel
         }
 
         $customer->api = $apiCustomer;
+        $customer->save();
 
         return $customer;
     }
