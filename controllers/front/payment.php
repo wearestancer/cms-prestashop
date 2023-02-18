@@ -34,12 +34,11 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
         }
 
         $log = '';
-        $exception = null;
 
-        // @todo check
         // Pay with an existing card
         $cardId = (int) Tools::getValue('card');
         $existingCard = null;
+
         if ($cardId) {
             $existingCard = StancerApiCard::getCustomerCard($context->customer, $cardId);
         }

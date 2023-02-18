@@ -1,8 +1,3 @@
-/*!
- * Stancer PrestaShop v1.0.0
- * (c) 2023 Iliad 78
- * Released under the MIT License.
- */
 const terms = [
   {
     en: 'Thanks for your order, %s.',
@@ -17,12 +12,12 @@ const terms = [
     fr: 'Malheureusement votre paiement a été refusé.',
   },
   {
-    en: 'Don\'t panic, no withdrawals will be made.',
+    en: "Don't panic, no withdrawals will be made.",
     fr: 'Pas de panique, aucun prélèvement ne sera fait.',
   },
   {
     en: 'You may want to redo the same order,',
-    fr: 'Pour refaire la commande à l\'identique,',
+    fr: "Pour refaire la commande à l'identique,",
   },
   {
     en: 'click here',

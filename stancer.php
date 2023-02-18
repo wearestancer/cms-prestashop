@@ -200,6 +200,7 @@ class Stancer extends PaymentModule
             ];
 
             $defaultDescriptions = [];
+
             foreach ($this->languages as $lang) {
                 $defaultDescriptions[$lang['id_lang']] = 'Your order SHOP_NAME.';
 
@@ -269,7 +270,6 @@ class Stancer extends PaymentModule
      * Show configuration form
      *
      * @uses self::getHelperForm()
-     *
      * @return string
      */
     public function getContent()
@@ -349,7 +349,7 @@ class Stancer extends PaymentModule
     }
 
     /**
-     * getContentFormKeys
+     * Create admin form for keys.
      *
      * @param mixed $helper
      * @return array
@@ -409,7 +409,7 @@ class Stancer extends PaymentModule
     }
 
     /**
-     * getContentFormSettings
+     * Create admin form for generals settings.
      *
      * @param HelperForm $helper
      * @return array
@@ -533,18 +533,10 @@ class Stancer extends PaymentModule
      */
     public function hookHeader(): string
     {
-        $controller = $this->context->controller;
-        $controller->registerStylesheet($this->name, 'modules/' . $this->name . '/views/css/global.css');
+        $this->registerStylesheet('global');
 
         if (Configuration::get('STANCER_PAGE_TYPE') === 'iframe') {
-            $controller->registerJavascript(
-                $this->name . '-iframe',
-                'modules/' . $this->name . '/views/js/iframe.js'
-            );
-            $controller->registerJavascript(
-                $this->name . '-message',
-                'modules/' . $this->name . '/views/js/message.js'
-            );
+            $this->registerJavascript('iframe')->registerJavascript('message');
         }
 
         return '<script>var STANCER = {origin: "' . Configuration::get('STANCER_PAGE_URL') . '"};</script>';
@@ -554,7 +546,6 @@ class Stancer extends PaymentModule
      * Hook called to display payment methods (PS1.7+).
      *
      * @param array $params
-     *
      * @return PrestaShop\PrestaShop\Core\Payment\PaymentOption[]
      */
     public function hookPaymentOptions(array $params): array
@@ -582,7 +573,8 @@ class Stancer extends PaymentModule
             $cardOption
                 ->setModuleName($this->name)
                 ->setCallToActionText(vsprintf($this->l('Pay with your %s finishing with %s'), [$card->brandname, $card->last4]))
-                ->setAction($target);
+                ->setAction($target)
+            ;
 
             $list[] = $cardOption;
         }
@@ -600,7 +592,8 @@ class Stancer extends PaymentModule
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
             ->setModuleName($this->name)
-            ->setCallToActionText($this->l('Pay by card'));
+            ->setCallToActionText($this->l('Pay by card'))
+        ;
 
         switch (Configuration::get('STANCER_PAGE_TYPE')) {
             case 'iframe':
@@ -612,7 +605,8 @@ class Stancer extends PaymentModule
             default:
                 $paymentOption
                     ->setAction($target)
-                    ->setAdditionalInformation($this->context->smarty->fetch($tpl . 'option.tpl'));
+                    ->setAdditionalInformation($this->context->smarty->fetch($tpl . 'option.tpl'))
+                ;
 
                 break;
         }
@@ -628,7 +622,6 @@ class Stancer extends PaymentModule
      * @uses self::installConfigurations()
      * @uses self::installDbRequirements()
      * @uses self::installHooks()
-     *
      * @return bool
      */
     public function install(): bool
@@ -769,6 +762,36 @@ class Stancer extends PaymentModule
     }
 
     /**
+     * Add a JS file to the current controller.
+     *
+     * @param string $name Name of the JS file to add.
+     */
+    protected function registerJavascript(string $name): self
+    {
+        $identifier = $this->name . '-' . $name;
+        $path = 'modules/' . $this->name . '/views/js/' . $name . '.js';
+
+        $this->context->controller->registerJavascript($identifier, $path);
+
+        return $this;
+    }
+
+    /**
+     * Add a CSS file to the current controller.
+     *
+     * @param string $name Name of the CSS file to add.
+     */
+    protected function registerStylesheet(string $name): self
+    {
+        $identifier = $this->name . '-' . $name;
+        $path = 'modules/' . $this->name . '/views/css/' . $name . '.css';
+
+        $this->context->controller->registerStylesheet($identifier, $path);
+
+        return $this;
+    }
+
+    /**
      * updateConfigurationList
      *
      * @param string $name
@@ -786,7 +809,6 @@ class Stancer extends PaymentModule
      * @uses self::uninstallConfigurations()
      * @uses self::uninstallDbRequirements()
      * @uses self::uninstallHooks()
-     *
      * @return bool
      */
     public function uninstall(): bool

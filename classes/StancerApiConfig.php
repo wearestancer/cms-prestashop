@@ -77,10 +77,10 @@ class StancerApiConfig
     private function getPublicKey(): string
     {
         if ($this->isTestMode()) {
-            return \Configuration::get('STANCER_API_TEST_PUBLIC_KEY');
+            return Configuration::get('STANCER_API_TEST_PUBLIC_KEY');
         }
 
-        return \Configuration::get('STANCER_API_LIVE_PUBLIC_KEY');
+        return Configuration::get('STANCER_API_LIVE_PUBLIC_KEY');
     }
 
     /**
@@ -91,10 +91,10 @@ class StancerApiConfig
     private function getSecretKey(): string
     {
         if ($this->isTestMode()) {
-            return \Configuration::get('STANCER_API_TEST_SECRET_KEY');
+            return Configuration::get('STANCER_API_TEST_SECRET_KEY');
         }
 
-        return \Configuration::get('STANCER_API_LIVE_SECRET_KEY');
+        return Configuration::get('STANCER_API_LIVE_SECRET_KEY');
     }
 
     /**

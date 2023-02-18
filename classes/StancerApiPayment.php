@@ -213,6 +213,7 @@ class StancerApiPayment extends ObjectModel
         ];
 
         $key = 'PS_OS_ERROR';
+
         if (array_key_exists($this->api->getStatus(), $statuses)) {
             $key = $statuses[$this->api->getStatus()];
         }

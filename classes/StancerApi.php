@@ -65,8 +65,7 @@ class StancerApi
     /**
      * Mark a Stancer payment as captured
      *
-     * @param mixed $apiPayment
-     *
+     * @param Stancer\Payment $apiPayment
      * @return void
      */
     public function markPaymentAsCaptured(Stancer\Payment $apiPayment)
@@ -123,7 +122,6 @@ class StancerApi
      * @param Language $language
      * @param Currency $currency
      * @param StancerApiCard|null $card
-     *
      * @return Stancer\Payment
      */
     public function sendPayment(
@@ -156,7 +154,8 @@ class StancerApi
             $apiPayment
                 ->setCustomer($apiCustomer)
                 ->setOrderId($paymentData['orderId'])
-                ->setReturnUrl($paymentData['returnUrl']);
+                ->setReturnUrl($paymentData['returnUrl'])
+            ;
         }
 
         if ($paymentData['auth'] && empty($apiPayment->getAuth())) {

@@ -17,7 +17,7 @@ reports/
 # Generated content
 /translations/
 views/css/
-views/js/*.js
+views/js/
 config*.xml
 index.php
 *.zip

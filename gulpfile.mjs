@@ -1,4 +1,3 @@
-
 import gulp from 'gulp';
 import autoprefixer from 'autoprefixer';
 import cssnano from 'cssnano';
@@ -14,11 +13,11 @@ const sass = gulpSass(sassCompiler);
 const paths = {
   styles: {
     src: 'views/scss/**/*.scss',
-    dest: 'views/css/'
+    dest: 'views/css/',
   },
   scripts: {
-    src: 'views/js/scripts/views/*.js',
-    dest: 'views/js/'
+    src: 'views/scripts/*.js',
+    dest: 'views/js/',
   },
 };
 const uglifyConf = {
@@ -34,28 +33,32 @@ const noMap = (cb) => {
 };
 
 export const styles = () => {
-  return gulp.src(paths.styles.src)
+  return gulp
+    .src(paths.styles.src)
     .pipe(gulpif(maps, sourcemaps.init()))
     .pipe(sass().on('error', sass.logError))
-    .pipe(postcss([
-      autoprefixer(),
-      cssnano(),
-    ]))
+    .pipe(
+      postcss([
+        autoprefixer(),
+        cssnano(),
+      ]),
+    )
     .pipe(gulpif(maps, sourcemaps.write('.')))
-    .pipe(gulp.dest(paths.styles.dest))
-  ;
+    .pipe(gulp.dest(paths.styles.dest));
 };
 
 export const scripts = (cb) => {
-  pump([
-    gulp.src(paths.scripts.src),
-    gulpif(maps, sourcemaps.init()),
-    uglify(uglifyConf),
-    gulpif(maps, sourcemaps.write('.')),
-    gulp.dest(paths.scripts.dest),
-  ], cb);
+  pump(
+    [
+      gulp.src(paths.scripts.src),
+      gulpif(maps, sourcemaps.init()),
+      uglify(uglifyConf),
+      gulpif(maps, sourcemaps.write('.')),
+      gulp.dest(paths.scripts.dest),
+    ],
+    cb,
+  );
 };
-
 
 export const build = gulp.series(noMap, gulp.parallel(styles, scripts));
 

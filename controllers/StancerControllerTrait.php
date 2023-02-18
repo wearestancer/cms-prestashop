@@ -21,7 +21,7 @@ trait StancerControllerTrait
     {
         $cart = $this->context->cart;
 
-        \PrestaShopLogger::addLog(
+        PrestaShopLogger::addLog(
             'Stancer : ' . $message,
             $logLevel,
             null,

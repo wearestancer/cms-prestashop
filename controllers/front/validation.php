@@ -184,6 +184,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             case Stancer\Payment\Status::CAPTURE:
                 // @todo : remove check of property when property deleted will be added
                 $deleted = property_exists($apiCard, 'deleted') && $apiCard->deleted ?? false;
+
                 if ($deleted) {
                     StancerApiCard::deleteFrom($apiCard);
                 } else {

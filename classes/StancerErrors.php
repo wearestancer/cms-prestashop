@@ -31,11 +31,16 @@ class StancerErrors extends ObjectModel
     {
         $module = Module::getInstanceByName('stancer');
         $errors = [];
-
         $message = [];
+
         if (_PS_MODE_DEV_) {
-            $message[] = sprintf($module->l('Configuration error, unknown mode "%s".', 'StancerErrors'), Configuration::get('STANCER_API_MODE'));
-            $message[] = $module->l('Please reconfigure the module in administration or ask the site administrator to do it.');
+            $tmp = $module->l('Configuration error, unknown mode "%s".', 'StancerErrors');
+            $message[] = sprintf($tmp, Configuration::get('STANCER_API_MODE'));
+
+            $message[] = $module->l(
+                'Please reconfigure the module in administration or ask the site administrator to do it.',
+                'StancerErrors'
+            );
         } else {
             $message[] = $module->l('This payment method is actualy unavailable.', 'StancerErrors');
             $message[] = $module->l('Please contact us to unlock this situation.', 'StancerErrors');
