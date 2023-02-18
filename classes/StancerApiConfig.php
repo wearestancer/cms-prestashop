@@ -60,10 +60,13 @@ class StancerApiConfig
         ]);
 
         $apiConfig->setMode($this->mode);
-        $apiConfig->setTimeout($this->timeout ?? 1);
 
         if ($this->host) {
             $apiConfig->setHost($this->host);
+        }
+
+        if ($this->timeout) {
+            $apiConfig->setTimeout($this->timeout);
         }
 
         return $apiConfig;

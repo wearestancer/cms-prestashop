@@ -140,7 +140,7 @@ class Stancer extends PaymentModule
             ];
 
             $this->configurations['STANCER_API_TIMEOUT'] = [
-                'default' => 1,
+                'default' => null,
                 'group' => 'settings',
                 'type' => 'hidden',
             ];
