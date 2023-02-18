@@ -36,7 +36,7 @@ class Stancer extends PaymentModule
         $this->version = '1.0.0';
         $this->author = 'Stancer';
         $this->need_instance = 1;
-        $this->ps_versions_compliancy = ['min' => '1.7', 'max' => '8.0.1'];
+        $this->ps_versions_compliancy = ['min' => '1.7.0', 'max' => '8.0.999'];
         $this->bootstrap = true;
 
         parent::__construct();

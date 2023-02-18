@@ -18,6 +18,7 @@
         "prepend-autoloader": false
     },
     "require": {
+        "php": ">=7.4",
         "stancer/stancer": "^1.0"
     }
 }
