@@ -8,6 +8,10 @@
  * @website   https://www.stancer.com
  * @version   1.0.0
  */
+
+/**
+ * Controller helper.
+ */
 trait StancerControllerTrait
 {
     /**

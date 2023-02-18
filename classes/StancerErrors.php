@@ -8,6 +8,10 @@
  * @website   https://www.stancer.com
  * @version   1.0.0
  */
+
+/**
+ * Error handler.
+ */
 class StancerErrors extends ObjectModel
 {
     public const UNKNOWN_ERROR = 1;
@@ -61,7 +65,10 @@ class StancerErrors extends ObjectModel
         $errors[static::NO_PAYMENT] = $module->l('No payment found for this cart.', 'StancerErrors');
         $errors[static::NO_PAYMENT_REINSURANCE] = $module->l('Your card has not been charged.', 'StancerErrors');
         $errors[static::PAYMENT_FAILED] = $module->l('The payment attempt failed.', 'StancerErrors');
-        $errors[static::UNKNOWN_ERROR] = $module->l('An unknown error occured during connexion to the payment plateform.', 'StancerErrors');
+        $errors[static::UNKNOWN_ERROR] = $module->l(
+            'An unknown error occured during connexion to the payment plateform.',
+            'StancerErrors',
+        );
 
         if (array_key_exists($key, $errors)) {
             return $errors[$key];

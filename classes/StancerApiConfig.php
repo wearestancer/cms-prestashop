@@ -8,6 +8,10 @@
  * @website   https://www.stancer.com
  * @version   1.0.0
  */
+
+/**
+ * Configuration helper.
+ */
 class StancerApiConfig
 {
     /** @var string Mode Live or Test */
@@ -126,14 +130,18 @@ class StancerApiConfig
     {
         $apiConfig = $this->getConfig();
 
-        if (
-            !empty($apiConfig)
-            && !empty($apiConfig->getPublicKey())
-            && !empty($apiConfig->getSecretKey())
-        ) {
-            return true;
+        if (empty($apiConfig)) {
+            return false;
         }
 
-        return false;
+        if (empty($apiConfig->getPublicKey())) {
+            return false;
+        }
+
+        if (empty($apiConfig->getSecretKey())) {
+            return false;
+        }
+
+        return true;
     }
 }

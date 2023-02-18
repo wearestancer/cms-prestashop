@@ -8,6 +8,10 @@
  * @website   https://www.stancer.com
  * @version   1.0.0
  */
+
+/**
+ * Front controller receiving the payment from the gateway.
+ */
 class StancerValidationModuleFrontController extends ModuleFrontController
 {
     use StancerControllerTrait;
@@ -20,6 +24,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
     public function cloneCart(Cart $cart)
     {
         $newCart = $cart->duplicate();
+
         if (!$newCart || !$newCart['success'] || !Validate::isLoadedObject($newCart['cart'])) {
             return;
         }
@@ -27,16 +32,22 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         $this->context->cookie->id_cart = $newCart['cart']->id;
         $this->context->cart = $newCart['cart'];
         $this->context->smarty->assign('cart_qties', $this->context->cart->nbProducts());
+
         CartRule::autoAddToCart($this->context);
 
-        $checkoutSessionData = Db::getInstance()->getValue(
-            'SELECT checkout_session_data FROM ' . _DB_PREFIX_ . 'cart WHERE id_cart = ' . (int) $cart->id
-        );
+        $sql = implode(' ', [
+            'SELECT checkout_session_data',
+            'FROM `' . _DB_PREFIX_ . 'cart`',
+            'WHERE id_cart = ' . (int) $cart->id,
+        ]);
+        $checkoutSessionData = Db::getInstance()->getValue($sql);
 
-        Db::getInstance()->execute(
-            'UPDATE ' . _DB_PREFIX_ . 'cart SET checkout_session_data = "' . pSQL($checkoutSessionData) . '"
-            WHERE id_cart = ' . (int) $this->context->cart->id
-        );
+        $sql = implode(' ', [
+            'UPDATE `' . _DB_PREFIX_ . 'cart`',
+            'SET checkout_session_data = "' . pSQL($checkoutSessionData) . '"',
+            'WHERE id_cart = ' . (int) $this->context->cart->id,
+        ]);
+        Db::getInstance()->execute($sql);
 
         $this->context->cookie->write();
     }
@@ -64,8 +75,8 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         );
 
         $newOrder = new Order((int) $this->module->currentOrder);
-
         $orderPayments = OrderPayment::getByOrderReference($newOrder->reference);
+
         if (!empty($orderPayments)) {
             $apiCard = $apiPayment->getCard();
 
@@ -145,6 +156,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         }
 
         $payment = StancerApiPayment::find($cart, $currency);
+
         if (!$payment) {
             $err = StancerErrors::getMessage(StancerErrors::NO_PAYMENT);
             $this->errors[] = $err;
@@ -158,6 +170,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         $status = $apiPayment->getStatus();
 
         $api = new StancerApi();
+
         if ($auth) {
             if ($auth->getStatus() === Stancer\Auth\Status::SUCCESS) {
                 $api->markPaymentAsCaptured($apiPayment);

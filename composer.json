@@ -20,5 +20,8 @@
     "require": {
         "php": ">=7.4",
         "stancer/stancer": "^1.0"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.7"
     }
 }

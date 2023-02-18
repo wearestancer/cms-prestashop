@@ -8,6 +8,10 @@
  * @website   https://www.stancer.com
  * @version   1.0.0
  */
+
+/**
+ * Model for a card.
+ */
 class StancerApiCard extends ObjectModel
 {
     /** @var int Customer id */

@@ -8,6 +8,10 @@
  * @website   https://www.stancer.com
  * @version   1.0.0
  */
+
+/**
+ * Model for a payment.
+ */
 class StancerApiPayment extends ObjectModel
 {
     /** @var string Payment id */

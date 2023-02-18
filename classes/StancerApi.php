@@ -8,6 +8,10 @@
  * @website   https://www.stancer.com
  * @version   1.0.0
  */
+
+/**
+ * API helper.
+ */
 class StancerApi
 {
     /** @var StancerApiConfig Stancer API configuration */
@@ -144,10 +148,7 @@ class StancerApi
             $apiPayment = $currentPayment->getApiObject();
         }
 
-        if (
-            !$apiPayment
-            || (!empty($apiPayment) && $apiPayment->getStatus() === 'refused')
-        ) {
+        if (!$apiPayment || (!empty($apiPayment) && $apiPayment->getStatus() === 'refused')) {
             $apiPayment = new Stancer\Payment();
             $apiPayment
                 ->setCustomer($apiCustomer)

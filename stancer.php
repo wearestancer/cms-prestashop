@@ -8,12 +8,16 @@
  * @website   https://www.stancer.com
  * @version   1.0.0
  */
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
 
+/**
+ * Stancer payment module.
+ */
 class Stancer extends PaymentModule
 {
     public const VERSION = '1.0.0';
@@ -571,10 +575,11 @@ class Stancer extends PaymentModule
                 true
             );
 
+            $text = vsprintf($this->l('Pay with your %s finishing with %s'), [$card->brandname, $card->last4]);
             $cardOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
             $cardOption
                 ->setModuleName($this->name)
-                ->setCallToActionText(vsprintf($this->l('Pay with your %s finishing with %s'), [$card->brandname, $card->last4]))
+                ->setCallToActionText($text)
                 ->setAction($target)
             ;
 
@@ -599,8 +604,9 @@ class Stancer extends PaymentModule
 
         switch (Configuration::get('STANCER_PAGE_TYPE')) {
             case 'iframe':
+                $link = $this->context->link->getModuleLink($this->name, 'validation', [], true);
                 $this->context->smarty->assign('target', $target);
-                $this->context->smarty->assign('validation', $this->context->link->getModuleLink($this->name, 'validation', [], true));
+                $this->context->smarty->assign('validation', $link);
                 $paymentOption->setAdditionalInformation($this->context->smarty->fetch($tpl . 'iframe.tpl'));
 
                 break;

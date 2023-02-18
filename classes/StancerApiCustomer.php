@@ -8,6 +8,10 @@
  * @website   https://www.stancer.com
  * @version   1.0.0
  */
+
+/**
+ * Model for a customer.
+ */
 class StancerApiCustomer extends ObjectModel
 {
     /** @var int Customer id */
@@ -204,7 +208,7 @@ class StancerApiCustomer extends ObjectModel
         $existingCustomerId = Db::getInstance()->getValue($query);
         if ($existingCustomerId) {
             $customer = new static($existingCustomerId);
-        }  else {
+        } else {
             $customer = new static();
         }
 

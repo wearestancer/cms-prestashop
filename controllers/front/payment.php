@@ -8,6 +8,10 @@
  * @website   https://www.stancer.com
  * @version   1.0.0
  */
+
+/**
+ * Front controller creating a payment.
+ */
 class StancerPaymentModuleFrontController extends ModuleFrontController
 {
     use StancerControllerTrait;
