@@ -147,8 +147,6 @@ class StancerApi
         if (
             !$apiPayment
             || (!empty($apiPayment) && $apiPayment->getStatus() === 'refused')
-            // @todo : remove when update payment will be fixed
-            || (!empty($apiPayment) && $apiPayment->getAmount() != $paymentData['amount'])
         ) {
             $apiPayment = new Stancer\Payment();
             $apiPayment
