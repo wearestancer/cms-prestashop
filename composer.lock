@@ -111,16 +111,16 @@
         },
         {
             "name": "stancer/stancer",
-            "version": "1.0.1",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:wearestancer/library/lib-php.git",
-                "reference": "65ba0996466f44c0d80942df3fc21a02993c3359"
+                "reference": "f5af458923c3a554006ca1721679c2bbbe7e47f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/wearestancer%2Flibrary%2Flib-php/repository/archive.zip?sha=65ba0996466f44c0d80942df3fc21a02993c3359",
-                "reference": "65ba0996466f44c0d80942df3fc21a02993c3359",
+                "url": "https://gitlab.com/api/v4/projects/wearestancer%2Flibrary%2Flib-php/repository/archive.zip?sha=f5af458923c3a554006ca1721679c2bbbe7e47f2",
+                "reference": "f5af458923c3a554006ca1721679c2bbbe7e47f2",
                 "shasum": ""
             },
             "require": {
@@ -129,7 +129,7 @@
                 "psr/log": "^1.0"
             },
             "require-dev": {
-                "atoum/atoum": "~4.0.3",
+                "atoum/atoum": "~4.1",
                 "atoum/autoloop-extension": "dev-master",
                 "atoum/stubs": "^2.6",
                 "atoum/visibility-extension": "^2.0",
@@ -140,7 +140,6 @@
                 "phpstan/phpstan": "^1.2",
                 "phpstan/phpstan-deprecation-rules": "^1.0",
                 "phpstan/phpstan-strict-rules": "^1.0",
-                "ramsey/uuid": "^4.1",
                 "satesh/phpcs-gitlab-report": "^1.0",
                 "squizlabs/php_codesniffer": "^3.3"
             },
@@ -164,7 +163,7 @@
                 "payments",
                 "sepa"
             ],
-            "time": "2023-01-23T13:17:39+00:00"
+            "time": "2023-02-15T15:32:55+00:00"
         }
     ],
     "packages-dev": [],

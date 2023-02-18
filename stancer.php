@@ -16,6 +16,8 @@ require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
 
 class Stancer extends PaymentModule
 {
+    public const VERSION = '1.0.0';
+
     protected $configurations = [];
     protected $languages = [];
     protected $hooks = [

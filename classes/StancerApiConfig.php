@@ -69,7 +69,10 @@ class StancerApiConfig
             $apiConfig->setTimeout($this->timeout);
         }
 
-        return $apiConfig;
+        return $apiConfig
+            ->addAppData('libstancer-prestashop', Stancer::VERSION)
+            ->addAppData('prestashop', _PS_VERSION_)
+        ;
     }
 
     /**
