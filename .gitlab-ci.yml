@@ -29,29 +29,3 @@ phpcs:
   artifacts:
     reports:
       junit: phpcs.junit.xml
-
-zip:
-  stage: deploy
-
-  before_script:
-    - composer --version
-    - node -v
-    - npm -v
-    - pnpm -v
-    - composer install --no-dev
-    - pnpm install
-
-  script:
-    - pnpm run create-assets
-    - pnpm run translate
-    - pnpm run populate
-    - pnpm run version
-    - pnpm run archive
-
-  artifacts:
-    paths:
-      - stancer.zip
-
-  only:
-    - tags
-    - master
