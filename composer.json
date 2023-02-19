@@ -1,21 +1,13 @@
 {
-    "name": "stancer/prestashop",
-    "description": "Stancer Prestashop module",
-    "version": "1.0.0",
+    "name": "stancer/cms-prestashop",
+    "description": "Stancer PrestaShop module",
+    "homepage": "https://stancer.com",
     "type": "prestashop-module",
-    "license": "MIT",
     "autoload": {
         "classmap": [
             "classes/",
             "controllers/"
         ]
-    },
-    "config": {
-        "allow-plugins": {
-            "composer/installers": true
-        },
-        "sort-packages": true,
-        "prepend-autoloader": false
     },
     "require": {
         "php": ">=7.4",
@@ -23,5 +15,15 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.7"
+    },
+    "license": "MIT",
+    "config": {
+        "prepend-autoloader": false,
+        "sort-packages": true
+    },
+    "support": {
+        "docs": "https://gitlab.com/wearestancer/cms/prestashop/-/wikis/home",
+        "issues": "https://gitlab.com/wearestancer/cms/prestashop/-/issues",
+        "source": "https://gitlab.com/wearestancer/cms/prestashop"
     }
 }
