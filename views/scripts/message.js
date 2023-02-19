@@ -5,6 +5,7 @@ window.addEventListener('message', (event) => {
     return;
   }
 
+  const $iframe = $('.js-stancer-payment-iframe');
   const minHeight = 320;
   const props = {};
 
@@ -17,14 +18,16 @@ window.addEventListener('message', (event) => {
   }
 
   if (props) {
-    $('.js-stancer-payment-iframe').animate(props, {
+    $iframe.animate(props, {
       duration: 200,
       easing: 'linear',
       queue: false,
     });
   }
 
-  if (event.data.status === 'secure-auth-start' && typeof event.data.url !== 'undefined') {
-    window.location.href = event.data.url;
+  if (typeof event.data.url !== 'undefined') {
+    if (!$iframe.data('inner-3ds') || event.data.status !== 'secure-auth-start') {
+      window.location.href = event.data.url;
+    }
   }
 });

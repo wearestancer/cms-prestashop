@@ -40,8 +40,12 @@ const terms = [
     fr: 'Rediriger vers une page externe',
   },
   {
-    en: 'Inside the page',
-    fr: 'Inclus dans la page',
+    en: 'Inside the page (recommanded)',
+    fr: 'Inclus dans la page (recommandé)',
+  },
+  {
+    en: 'Inside the page, including authenticated payment',
+    fr: 'Inclus dans la page, incluant les paiements authentifiés',
   },
   {
     en: 'Authentication limit',

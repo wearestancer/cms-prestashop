@@ -159,8 +159,13 @@ class Stancer extends PaymentModule
                 'values' => [
                     [
                         'id' => 'iframe',
-                        'label' => $this->l('Inside the page'),
+                        'label' => $this->l('Inside the page (recommanded)'),
                         'value' => 'iframe',
+                    ],
+                    [
+                        'id' => 'full-iframe',
+                        'label' => $this->l('Inside the page, including authenticated payment'),
+                        'value' => 'full-iframe',
                     ],
                     [
                         'id' => 'redirect',
@@ -541,7 +546,7 @@ class Stancer extends PaymentModule
     {
         $this->registerStylesheet('global');
 
-        if (Configuration::get('STANCER_PAGE_TYPE') === 'iframe') {
+        if (in_array(Configuration::get('STANCER_PAGE_TYPE'), ['full-iframe', 'iframe'])) {
             $this->registerJavascript('iframe')->registerJavascript('message');
         }
 
@@ -603,6 +608,9 @@ class Stancer extends PaymentModule
         ;
 
         switch (Configuration::get('STANCER_PAGE_TYPE')) {
+            case 'full-iframe':
+                $this->context->smarty->assign('3ds', true);
+                // no break
             case 'iframe':
                 $link = $this->context->link->getModuleLink($this->name, 'validation', [], true);
                 $this->context->smarty->assign('target', $target);
