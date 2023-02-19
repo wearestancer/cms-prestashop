@@ -16,20 +16,20 @@ const terms = [
     fr: 'Commence avec "%s"',
   },
   {
-    en: 'Public live API key',
-    fr: 'Clé API publique "live"',
+    en: 'Public live key',
+    fr: 'Clé de production publique',
   },
   {
-    en: 'Secret live API key',
-    fr: 'Clé API secrète "live"',
+    en: 'Secret live key',
+    fr: 'Clé de production privée',
   },
   {
-    en: 'Public test API key',
-    fr: 'Clé API publique "test"',
+    en: 'Public test key',
+    fr: 'Clé de test publique',
   },
   {
-    en: 'Secret test API key',
-    fr: 'Clé API secrète "test"',
+    en: 'Secret test key',
+    fr: 'Clé de test privée',
   },
   {
     en: 'Page type',
@@ -84,8 +84,8 @@ const terms = [
     fr: 'Vous pouvez créer vos clés API sur',
   },
   {
-    en: 'Keys',
-    fr: 'Clés',
+    en: 'API keys',
+    fr: "Clés d'API",
   },
   {
     en: 'Settings',
