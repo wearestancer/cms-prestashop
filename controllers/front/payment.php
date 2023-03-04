@@ -32,7 +32,7 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
             || !$context->cart->id_address_invoice
             || !Validate::isLoadedObject($context->currency)
             || !Validate::isLoadedObject($context->customer)
-            || !$this->module->isAvailable()
+            || $this->module->isNotAvailable()
         ) {
             return $this->redirect();
         }

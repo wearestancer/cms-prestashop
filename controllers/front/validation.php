@@ -67,7 +67,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             $orderState,
             $apiPayment->getAmount() / 100,
             $this->module->displayName,
-            implode("\n", $this->getOrderMessage($apiPayment)),
+            $this->getOrderMessage($apiPayment),
             ['transaction_id' => $apiPayment->getId()],
             (int) $cart->id_currency,
             false,
@@ -98,9 +98,8 @@ class StancerValidationModuleFrontController extends ModuleFrontController
      * @param Stancer\Payment $apiPayment
      * @return array
      */
-    protected function getOrderMessage(Stancer\Payment $apiPayment): array
+    protected function getOrderMessage(Stancer\Payment $apiPayment): string
     {
-        $apiCard = $apiPayment->getCard();
         $amount = vsprintf('%.02f %s', [
             $apiPayment->getAmount() / 100,
             strtoupper($apiPayment->getCurrency()),
@@ -119,16 +118,34 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         $state = $apiPayment->isSuccess() ? 'success' : 'failure';
         $message[] = sprintf('Response: %s (%s)', $apiPayment->getResponse(), $state);
 
-        $message[] = 'Card';
-        $message[] = $apiCard->getId();
         $message[] = '';
-        $message[] = 'Brand: ' . $apiCard->getBrandName();
-        $message[] = 'Last numbers: ' . $apiCard->getLast4();
 
-        $date = $apiCard->getExpirationDate();
-        $message[] = sprintf('Expiration: %02d/%04d', $date->format('m'), $date->format('Y'));
+        switch ($apiPayment->getMethod()) {
+            case 'card':
+                $apiCard = $apiPayment->getCard();
 
-        return $message;
+                $message[] = 'Card';
+                $message[] = $apiCard->getId();
+                $message[] = '';
+                $message[] = 'Brand: ' . $apiCard->getBrandName();
+                $message[] = 'Last numbers: ' . $apiCard->getLast4();
+
+                $date = $apiCard->getExpirationDate();
+                $message[] = sprintf('Expiration: %02d/%04d', $date->format('m'), $date->format('Y'));
+                break;
+            case 'sepa':
+                $apiSepa = $apiPayment->getSepa();
+
+                $message[] = 'Sepa';
+                $message[] = $apiSepa->getId();
+                $message[] = '';
+                $message[] = 'Country: ' . $apiSepa->getCountry();
+                $message[] = 'Last numbers: ' . $apiSepa->getLast4();
+                $message[] = 'Mandate: ' . $apiSepa->getMandate();
+                break;
+        }
+
+        return trim(implode("\n", $message));
     }
 
     /**
@@ -150,7 +167,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             || !$cart->id_address_invoice
             || !Validate::isLoadedObject($currency)
             || !Validate::isLoadedObject($customer)
-            || !$this->module->isAvailable()
+            || $this->module->isNotAvailable()
         ) {
             return $this->redirect();
         }

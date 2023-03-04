@@ -63,25 +63,6 @@ class Stancer extends PaymentModule
     }
 
     /**
-     * Basic validation run at beginning of payment and paymentOptions hooks.
-     *
-     * @return bool
-     */
-    public function isAvailable(): bool
-    {
-        if (!$this->active) {
-            return false;
-        }
-
-        try {
-            $apiConfig = new StancerApiConfig();
-            return $apiConfig->isConfigured();
-        } catch (Exception $e) {
-            return false;
-        }
-    }
-
-    /**
      * Return configuration for install or unistall module
      *
      * @return array
@@ -678,7 +659,7 @@ class Stancer extends PaymentModule
     {
         $list = [];
 
-        if (!$this->isAvailable()) {
+        if ($this->isNotAvailable()) {
             return $list;
         }
 
@@ -910,6 +891,35 @@ class Stancer extends PaymentModule
         }
 
         return false;
+    }
+
+    /**
+     * Basic validation run at beginning of payment and paymentOptions hooks.
+     *
+     * @return bool
+     */
+    public function isAvailable(): bool
+    {
+        if (!$this->active) {
+            return false;
+        }
+
+        try {
+            $apiConfig = new StancerApiConfig();
+            return $apiConfig->isConfigured();
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Basic validation is the module is available.
+     *
+     * @return bool
+     */
+    public function isNotAvailable(): bool
+    {
+        return !$this->isAvailable();
     }
 
     /**

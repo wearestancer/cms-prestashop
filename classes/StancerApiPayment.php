@@ -193,7 +193,6 @@ class StancerApiPayment extends ObjectModel
     {
         if (!$this->api) {
             $this->api = new Stancer\Payment($this->payment_id);
-            $this->api->populate();
         }
 
         return $this->api;
