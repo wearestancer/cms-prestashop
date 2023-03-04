@@ -1,18 +1,20 @@
 {
-	"name": "Prestashop",
-	"build": {
-		"dockerfile": "Dockerfile",
-		"args": {
-			"NODE_VERSION": "lts/*",
-			"VARIANT": "7.4"
-		}
+	"name": "PrestaShop",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "prestashop",
+	"workspaceFolder": "/var/www/html/modules/stancer",
+
+	"remoteEnv": {
+		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
 	},
+
 	"customizations": {
 		"vscode": {
 			"extensions": [
 				"aswinkumar863.smarty-template-support",
 				"bmewburn.vscode-intelephense-client",
 				"editorconfig.editorconfig",
+				"esbenp.prettier-vscode",
 				"mrmlnc.vscode-apache",
 				"shevaua.phpcs",
 				"stylelint.vscode-stylelint",
@@ -22,17 +24,19 @@
 				"editor.rulers": [
 					120
 				],
-				"php.validate.executablePath": "/usr/local/bin/php"
+				"php.validate.executablePath": "/usr/local/bin/php",
+				"[javascript]": {
+					"editor.defaultFormatter": "esbenp.prettier-vscode",
+					"editor.formatOnSave": true
+				}
 			}
 		}
-	},
-	"features": {
-		"git": "latest"
 	},
 	"portsAttributes": {
 		"9003": {
 			"label": "xdebug"
 		}
 	},
+	"postCreateCommand": "composer install && pnpm install && sudo renew-certs && sudo --preserve-env /etc/docker_start",
 	"remoteUser": "vscode"
 }
