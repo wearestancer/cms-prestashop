@@ -40,6 +40,10 @@ const terms = [
     fr: 'Device du panier',
   },
   {
+    en: 'Display',
+    fr: 'Affichage',
+  },
+  {
     en: 'In test mode, no payment will really send to a bank, only test card can be used.',
     fr: 'En mode test, aucun paiement ne sera envoyé à une banque, seuls les cartes de test sont utilisables.',
   },
@@ -70,6 +74,10 @@ const terms = [
   {
     en: 'Pay with your %s finishing with %s',
     fr: 'Payer avec votre %s finissant avec %s',
+  },
+  {
+    en: 'Payment option text',
+    fr: "Texte de l'option de paiement",
   },
   {
     en: 'Payment description',

@@ -151,6 +151,25 @@ class Stancer extends PaymentModule
                 'type' => 'hidden',
             ];
 
+            $defaultValue = [];
+
+            foreach ($this->languages as $lang) {
+                $defaultValue[$lang['id_lang']] = 'Pay by card';
+
+                if (strpos($lang['language_code'], 'fr') !== false) {
+                    $defaultValue[$lang['id_lang']] = 'Payer par carte';
+                }
+            }
+
+            $this->configurations['STANCER_CTA_TEXT'] = [
+                'default' => $defaultValue,
+                'group' => 'display',
+                'label' => $this->l('Payment option text'),
+                'lang' => true,
+                'required' => true,
+                'type' => 'text',
+            ];
+
             $this->configurations['STANCER_PAGE_TYPE'] = [
                 'default' => 'iframe',
                 'group' => 'settings',
@@ -340,6 +359,7 @@ class Stancer extends PaymentModule
         $form = [
             $this->getContentFormKeys($helper),
             $this->getContentFormSettings($helper),
+            $this->getContentFormDisplay($helper),
             [
                 'form' => [
                     'submit' => [
@@ -353,6 +373,46 @@ class Stancer extends PaymentModule
         $output .= $this->display(__FILE__, 'infos.tpl');
 
         return $output . $helper->generateForm($form);
+    }
+
+    /**
+     * Create admin form for display settings.
+     *
+     * @param HelperForm $helper
+     * @return array
+     */
+    public function getContentFormDisplay(HelperForm $helper): array
+    {
+        $settings = [
+            'legend' => [
+                'icon' => 'icon-paint-brush',
+                'title' => $this->l('Display'),
+            ],
+            'input' => [],
+        ];
+
+        $excep = [
+            'default' => 1,
+            'group' => 1,
+        ];
+
+        foreach ($this->getConfigurationsList('display') as $name => $infos) {
+            $clean = array_diff_key($infos, $excep);
+            $settings['input'][] = array_merge($clean, [
+                'name' => $name,
+            ]);
+
+            if (array_key_exists('lang', $infos) && $infos['lang']) {
+                foreach ($this->languages as $lang) {
+                    $value = Configuration::get($name, $lang['id_lang']);
+                    $helper->fields_value[$name][$lang['id_lang']] = $value;
+                }
+            } else {
+                $helper->fields_value[$name] = Configuration::get($name);
+            }
+        }
+
+        return ['form' => $settings];
     }
 
     /**
@@ -600,7 +660,7 @@ class Stancer extends PaymentModule
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
             ->setModuleName($this->name)
-            ->setCallToActionText($this->l('Pay by card'))
+            ->setCallToActionText(Configuration::get('STANCER_CTA_TEXT', $this->context->language->id))
         ;
 
         switch (Configuration::get('STANCER_PAGE_TYPE')) {
