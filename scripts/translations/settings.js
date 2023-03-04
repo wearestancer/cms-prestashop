@@ -12,6 +12,10 @@ const terms = [
     fr: '%s est invalide, merci de fournir une clé valide.',
   },
   {
+    en: 'Add scheme logo on reused card',
+    fr: 'Ajouter le logo du réseau sur les cartes enregistrées',
+  },
+  {
     en: 'API keys',
     fr: "Clés d'API",
   },

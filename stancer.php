@@ -224,6 +224,23 @@ class Stancer extends PaymentModule
                 ],
             ];
 
+            $this->configurations['STANCER_REUSED_CARD_LOGO'] = [
+                'default' => 0,
+                'group' => 'display',
+                'label' => $this->l('Add scheme logo on reused card'),
+                'type' => 'hidden',
+                'values' => [
+                    [
+                        'id' => 'active_on',
+                        'value' => 1,
+                    ],
+                    [
+                        'id' => 'active_off',
+                        'value' => 0,
+                    ],
+                ],
+            ];
+
             $desc = [];
             $desc[] = $this->l(join(' ', [
                 'Minimum amount to trigger an authenticated payment',
@@ -686,6 +703,18 @@ class Stancer extends PaymentModule
                     ->setCallToActionText($text)
                     ->setAction($target)
                 ;
+
+                if (Configuration::get('STANCER_REUSED_CARD_LOGO')) {
+                    $url = _MODULE_DIR_ . $this->name . '/views/img/logo.svg#';
+
+                    if (in_array($card->brand, ['amex', 'mastercard', 'visa'], true)) {
+                        $url .= 'card-' . $card->brand;
+                    } else {
+                        $url .= $card->brand;
+                    }
+
+                    $cardOption->setLogo($url);
+                }
 
                 $list[] = $cardOption;
             }
