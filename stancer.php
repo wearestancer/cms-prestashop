@@ -220,7 +220,10 @@ class Stancer extends PaymentModule
                 }
             }
 
-            $desc = [];
+            $desc = [
+                $this->l('Will be used as description for every payment made.'),
+                '<br />',
+            ];
             $vars = [
                 'SHOP_NAME' => $this->l('Shop name configured in PrestaShop'),
                 'TOTAL_AMOUNT' => $this->l('Total amount'),
@@ -228,27 +231,20 @@ class Stancer extends PaymentModule
                 'CART_ID' => $this->l('Cart identifier'),
             ];
 
-            $desc[] = $this->l(implode(' ', [
-                'Will be used as description for every payment made,',
-                'and will be visible to your customer in redirect mode.',
-            ]));
-
-            $tmp = [];
-            $tmp[] = '<details class="help-block">';
-            $tmp[] = '<summary>' . $this->l('You may use simple variables, click to see.') . '</summary>';
-            $tmp[] = '<dl>';
+            $desc[] = '<details class="help-block">';
+            $desc[] = '<summary>' . $this->l('You may use simple variables, click to see.') . '</summary>';
+            $desc[] = '<dl>';
 
             foreach ($vars as $key => $val) {
-                $tmp[] = '<dt>' . $key . '</dt><dd>' . $this->l($val) . '</dd>';
+                $desc[] = '<dt>' . $key . '</dt><dd>' . $val . '</dd>';
             }
 
-            $tmp[] = '</dl>';
-            $tmp[] = '</details>';
-            $desc[] = implode('', $tmp);
+            $desc[] = '</dl>';
+            $desc[] = '</details>';
 
             $this->configurations['STANCER_PAYMENT_DESCRIPTION'] = [
                 'default' => $defaultDescriptions,
-                'desc' => join('<br />', $desc),
+                'desc' => join('', $desc),
                 'group' => 'settings',
                 'label' => $this->l('Payment description'),
                 'lang' => true,
@@ -367,15 +363,15 @@ class Stancer extends PaymentModule
      */
     public function getContentFormKeys(HelperForm $helper): array
     {
-        $signup = $this->l('https://manage.stancer.com/en/sign-up');
+        $signup = $this->l('https://manage.stancer.com/en/developers');
 
         $keys = [
             'legend' => [
                 'icon' => 'icon-key',
-                'title' => $this->l('Keys'),
+                'title' => $this->l('API keys'),
             ],
             'description' => implode(' ', [
-                $this->l('You can create your API keys on'),
+                $this->l('You can create and recover your API keys on'),
                 '<a href="' . $signup . '" target="_blank">' . $signup . '</a>',
             ]),
             'input' => [],
