@@ -188,7 +188,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
 
         $api = new StancerApi();
 
-        if ($auth) {
+        if (!$status && $auth) {
             if ($auth->getStatus() === Stancer\Auth\Status::SUCCESS) {
                 $api->markPaymentAsCaptured($apiPayment);
                 $status = $apiPayment->getStatus();
@@ -196,6 +196,11 @@ class StancerValidationModuleFrontController extends ModuleFrontController
                 // We can not mark the payment failed in the API
                 $status = Stancer\Payment\Status::FAILED;
             }
+        }
+
+        if ($status === Stancer\Payment\Status::AUTHORIZED) {
+            $api->markPaymentAsCaptured($apiPayment);
+            $status = $apiPayment->getStatus();
         }
 
         switch ($status) {

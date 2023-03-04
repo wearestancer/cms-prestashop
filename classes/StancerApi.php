@@ -74,7 +74,7 @@ class StancerApi
      */
     public function markPaymentAsCaptured(Stancer\Payment $apiPayment)
     {
-        if (!$apiPayment->getStatus()) {
+        if (!$apiPayment->status || $apiPayment->status === Stancer\Payment\Status::AUTHORIZED) {
             $apiPayment->setStatus(Stancer\Payment\Status::CAPTURE);
             $this->sendToApi($apiPayment);
         }
@@ -154,6 +154,7 @@ class StancerApi
                 ->setCustomer($apiCustomer)
                 ->setOrderId($paymentData['orderId'])
                 ->setReturnUrl($paymentData['returnUrl'])
+                ->setCapture(false)
             ;
         }
 
