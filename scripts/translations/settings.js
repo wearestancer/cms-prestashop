@@ -76,6 +76,10 @@ const terms = [
     fr: 'Payer avec votre %s finissant avec %s',
   },
   {
+    en: 'Payment option logo',
+    fr: "Logo de l'option de paiement",
+  },
+  {
     en: 'Payment option text',
     fr: "Texte de l'option de paiement",
   },

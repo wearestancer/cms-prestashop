@@ -170,6 +170,13 @@ class Stancer extends PaymentModule
                 'type' => 'text',
             ];
 
+            $this->configurations['STANCER_CTA_LOGO'] = [
+                'default' => 'none',
+                'group' => 'display',
+                'label' => $this->l('Payment option logo'),
+                'template' => 'logo',
+            ];
+
             $this->configurations['STANCER_PAGE_TYPE'] = [
                 'default' => 'iframe',
                 'group' => 'settings',
@@ -394,21 +401,39 @@ class Stancer extends PaymentModule
         $excep = [
             'default' => 1,
             'group' => 1,
+            'template' => 1,
         ];
 
         foreach ($this->getConfigurationsList('display') as $name => $infos) {
-            $clean = array_diff_key($infos, $excep);
-            $settings['input'][] = array_merge($clean, [
-                'name' => $name,
-            ]);
+            if (array_key_exists('template', $infos)) {
+                $clean = array_diff_key($infos, $excep);
+                $template = 'module:' . $this->name . '/views/templates/admin/' . $infos['template'] . '.tpl';
+                $value = Configuration::get($name);
 
-            if (array_key_exists('lang', $infos) && $infos['lang']) {
-                foreach ($this->languages as $lang) {
-                    $value = Configuration::get($name, $lang['id_lang']);
-                    $helper->fields_value[$name][$lang['id_lang']] = $value;
-                }
+                $this->context->smarty->assign('stancer_module_img', _MODULE_DIR_ . $this->name . '/views/img');
+                $this->context->smarty->assign($name . '_VALUE', $value);
+
+                $settings['input'][] = array_merge($clean, [
+                    'html_content' => $this->context->smarty->fetch($template),
+                    'name' => $name,
+                    'type' => 'html',
+                ]);
+
+                $helper->fields_value[$name] = $value;
             } else {
-                $helper->fields_value[$name] = Configuration::get($name);
+                $clean = array_diff_key($infos, $excep);
+                $settings['input'][] = array_merge($clean, [
+                    'name' => $name,
+                ]);
+
+                if (array_key_exists('lang', $infos) && $infos['lang']) {
+                    foreach ($this->languages as $lang) {
+                        $value = Configuration::get($name, $lang['id_lang']);
+                        $helper->fields_value[$name][$lang['id_lang']] = $value;
+                    }
+                } else {
+                    $helper->fields_value[$name] = Configuration::get($name);
+                }
             }
         }
 
@@ -662,6 +687,12 @@ class Stancer extends PaymentModule
             ->setModuleName($this->name)
             ->setCallToActionText(Configuration::get('STANCER_CTA_TEXT', $this->context->language->id))
         ;
+
+        $logo = Configuration::get('STANCER_CTA_LOGO');
+
+        if ($logo !== 'none') {
+            $paymentOption->setLogo(_MODULE_DIR_ . $this->name . '/views/img/logo.svg#' . $logo);
+        }
 
         switch (Configuration::get('STANCER_PAGE_TYPE')) {
             case 'full-iframe':

@@ -1,3 +1,31 @@
+@mixin fix-logos($name, $width) {
+  &[src="/modules/stancer/views/img/logo.svg##{$name}"] {
+    width: $width;
+    height: 20px;
+    margin-inline-start: 1ch;
+  }
+}
+
+.payment-option {
+  img {
+    // Set a width/height for our logos only
+    // Dimensions are from the SVG
+
+    @include fix-logos('all-schemes', 98.96px);
+    @include fix-logos('all-schemes-prefixed', 128.96px);
+    @include fix-logos('all-schemes-suffixed', 128.96px);
+    @include fix-logos('stancer', 130.75px);
+    @include fix-logos('stancer-logo', 20px);
+    @include fix-logos('visa-mc', 65px);
+    @include fix-logos('visa-mc-prefixed', 95px);
+    @include fix-logos('visa-mc-suffixed', 95px);
+
+    @include fix-logos('card-amex', 30px);
+    @include fix-logos('card-mastercard', 30px);
+    @include fix-logos('card-visa', 30px);
+  }
+}
+
 .stancer-payment {
   &__iframe {
     display: flex;
