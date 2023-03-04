@@ -16,7 +16,7 @@
       {l s='This error may be temporary, please try again.' mod='stancer'}
     </p>
     <p>
-      {l s='In cas this message persists, please contact the store to resolve this issue as soon as possible.' mod='stancer'}
+      {l s='If this message persists, please contact the store to resolve this issue as soon as possible.' mod='stancer'}
     </p>
     <p class="lnk">
       <a class="alert-link" href="{$back|escape:'html':'UTF-8'}" title="{l s='Back' mod='stancer'}">
