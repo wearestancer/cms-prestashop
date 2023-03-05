@@ -68,12 +68,20 @@ const terms = [
     fr: 'Laissez vide si vous ne souhaitez pas faire de paiement authentifié, si vous le placez à zéro tous les paiements seront authentifiés.',
   },
   {
+    en: 'Live',
+    fr: 'Production',
+  },
+  {
     en: 'mandatory in live mode',
     fr: 'obligatoire uniquement en mode production',
   },
   {
     en: 'Minimum amount to trigger an authenticated payment (3DS, Verified by Visa, Mastercard Secure Code...)',
     fr: `Montant minimum pour le déclenchement d'un paiement authentifié (3DS, "Verified by Visa", "Mastercard Secure Code"...)`,
+  },
+  {
+    en: 'Mode',
+    fr: 'Mode',
   },
   {
     en: 'Page type',
@@ -140,8 +148,8 @@ const terms = [
     fr: 'des cartes de tests',
   },
   {
-    en: 'Test mode',
-    fr: 'Mode test',
+    en: 'Test',
+    fr: 'Test',
   },
   {
     en: 'Total amount',
@@ -157,7 +165,7 @@ const terms = [
   },
   {
     en: 'You can not pass to live mode until an error occur with API keys.',
-    fr: 'Vous ne pouvez pas passer en mode "live" tant que vous avez une erreur avec les clés API.',
+    fr: 'Vous ne pouvez pas passer en mode production tant que vous avez une erreur avec les clés API.',
   },
   {
     en: 'You may use simple variables, click to see.',

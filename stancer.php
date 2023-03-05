@@ -73,10 +73,9 @@ class Stancer extends PaymentModule
             $this->configurations = [];
 
             $mode = Configuration::get('STANCER_API_MODE') ?: Stancer\Config::TEST_MODE;
-            $newMode = Tools::getValue('STANCER_API_MODE');
 
-            if ($newMode !== false) {
-                $mode = $newMode ? Stancer\Config::TEST_MODE : Stancer\Config::LIVE_MODE;
+            if (Tools::getValue('STANCER_API_MODE')) {
+                $mode = Stancer\Config::LIVE_MODE;
             }
 
             $isLive = Stancer\Config::LIVE_MODE === $mode;
@@ -371,7 +370,7 @@ class Stancer extends PaymentModule
             $apiMode = Stancer\Config::TEST_MODE;
 
             if ($keysOk) {
-                $apiMode = Tools::getValue('STANCER_API_MODE') ? Stancer\Config::TEST_MODE : Stancer\Config::LIVE_MODE;
+                $apiMode = Tools::getValue('STANCER_API_MODE') ? Stancer\Config::LIVE_MODE : Stancer\Config::TEST_MODE;
             } else {
                 $tmp = $this->l('You can not pass to live mode until an error occur with API keys.');
                 $output .= $this->displayError($tmp);
@@ -556,23 +555,25 @@ class Stancer extends PaymentModule
                 $this->l('In test mode, no payment will really send to a bank, only test card can be used.'),
                 sprintf($this->l('Check the documentation to find %s.'), $link),
             ]),
-            'label' => $this->l('Test mode'),
+            'label' => $this->l('Mode'),
             'name' => 'STANCER_API_MODE',
             'type' => 'switch',
             'values' => [
                 [
                     'id' => 'active_on',
+                    'label' => $this->l('Live'),
                     'value' => 1,
                 ],
                 [
                     'id' => 'active_off',
+                    'label' => $this->l('Test'),
                     'value' => 0,
                 ],
             ],
         ];
 
         $mode = 'STANCER_API_MODE';
-        $helper->fields_value[$mode] = Configuration::get($mode) !== Stancer\Config::LIVE_MODE;
+        $helper->fields_value[$mode] = Configuration::get($mode) === Stancer\Config::LIVE_MODE;
         $excep = [
             'default' => 1,
             'group' => 1,
