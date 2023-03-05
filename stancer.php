@@ -73,6 +73,12 @@ class Stancer extends PaymentModule
             $this->configurations = [];
 
             $mode = Configuration::get('STANCER_API_MODE') ?: Stancer\Config::TEST_MODE;
+            $newMode = Tools::getValue('STANCER_API_MODE');
+
+            if ($newMode !== false) {
+                $mode = $newMode ? Stancer\Config::TEST_MODE : Stancer\Config::LIVE_MODE;
+            }
+
             $isLive = Stancer\Config::LIVE_MODE === $mode;
 
             $this->configurations['STANCER_API_LIVE_PUBLIC_KEY'] = [
@@ -81,7 +87,7 @@ class Stancer extends PaymentModule
                 'group' => 'keys',
                 'label' => $this->l('Public live API key'),
                 'mode' => Stancer\Config::LIVE_MODE,
-                'pattern' => 'pprod_',
+                'pattern' => '/^pprod_/',
                 'required' => $isLive,
             ];
 
@@ -91,7 +97,7 @@ class Stancer extends PaymentModule
                 'group' => 'keys',
                 'label' => $this->l('Secret live API key'),
                 'mode' => Stancer\Config::LIVE_MODE,
-                'pattern' => 'sprod_',
+                'pattern' => '/^sprod_/',
                 'required' => $isLive,
             ];
 
@@ -101,7 +107,7 @@ class Stancer extends PaymentModule
                 'group' => 'keys',
                 'label' => $this->l('Public test API key'),
                 'mode' => Stancer\Config::TEST_MODE,
-                'pattern' => 'ptest_',
+                'pattern' => '/^ptest_/',
                 'required' => false,
             ];
 
@@ -111,7 +117,7 @@ class Stancer extends PaymentModule
                 'group' => 'keys',
                 'label' => $this->l('Secret test API key'),
                 'mode' => Stancer\Config::TEST_MODE,
-                'pattern' => 'stest_',
+                'pattern' => '/^stest_/',
                 'required' => false,
             ];
 
@@ -293,18 +299,6 @@ class Stancer extends PaymentModule
             ];
         }
 
-        $newMode = Tools::getValue('STANCER_API_MODE');
-        if ($newMode !== false) {
-            $keys = [
-                'STANCER_API_LIVE_PUBLIC_KEY',
-                'STANCER_API_LIVE_SECRET_KEY',
-            ];
-
-            foreach ($keys as $key) {
-                $this->configurations[$key]['required'] = !$newMode;
-            }
-        }
-
         if ($group) {
             return array_filter($this->configurations, function ($infos) use ($group) {
                 return $infos['group'] === $group;
@@ -348,8 +342,27 @@ class Stancer extends PaymentModule
                     $value = trim($value);
                 }
 
-                if (array_key_exists('required', $infos) && !$infos['required'] && !$value) {
+                if ((!array_key_exists('required', $infos) || !$infos['required']) && !$value) {
                     continue;
+                }
+
+                if (array_key_exists('pattern', $infos)) {
+                    $check = preg_match($infos['pattern'], $value) === 1;
+
+                    if (!$check) {
+                        $hasError = true;
+                        $error = $this->l('%s is invalid.');
+
+                        if ($infos['group'] === 'keys') {
+                            $keysOk = false;
+                            $error = $this->l('%s is invalid, please provide a correct key.');
+                        }
+
+                        $output .= $this->displayError(sprintf($error, $infos['label']));
+
+                        $this->updateConfigurationList($name, ['class' => 'js-show-error']);
+                        continue;
+                    }
                 }
 
                 Configuration::updateValue($name, $value);
@@ -358,10 +371,11 @@ class Stancer extends PaymentModule
             $apiMode = Stancer\Config::TEST_MODE;
 
             if ($keysOk) {
+                $apiMode = Tools::getValue('STANCER_API_MODE') ? Stancer\Config::TEST_MODE : Stancer\Config::LIVE_MODE;
+            } else {
                 $tmp = $this->l('You can not pass to live mode until an error occur with API keys.');
                 $output .= $this->displayError($tmp);
-
-                $apiMode = Tools::getValue('STANCER_API_MODE') ? Stancer\Config::TEST_MODE : Stancer\Config::LIVE_MODE;
+                $hasError = true;
             }
 
             Configuration::updateValue('STANCER_API_MODE', $apiMode);
@@ -373,7 +387,8 @@ class Stancer extends PaymentModule
                     'conf=4',
                     'token=' . Tools::getAdminTokenLite('AdminModules'),
                 ];
-                Tools::redirectAdmin(implode('&', $link));
+
+                return Tools::redirectAdmin(implode('&', $link));
             }
         }
 
@@ -489,7 +504,7 @@ class Stancer extends PaymentModule
                 $desc = $infos['desc'];
             }
 
-            if (!empty($infos['mode']) === Stancer\Config::LIVE_MODE) {
+            if ($infos['mode'] === Stancer\Config::LIVE_MODE) {
                 if ($desc) {
                     $desc .= ', ';
                 } else {

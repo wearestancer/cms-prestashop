@@ -8,6 +8,10 @@ const terms = [
     fr: 'https://manage.stancer.com/fr/developpeurs',
   },
   {
+    en: '%s is invalid.',
+    fr: '%s est invalide.',
+  },
+  {
     en: '%s is invalid, please provide a correct key.',
     fr: '%s est invalide, merci de fournir une clé valide.',
   },
