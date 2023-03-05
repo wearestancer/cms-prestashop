@@ -789,7 +789,19 @@ class Stancer extends PaymentModule
         $return = true;
 
         foreach ($this->getConfigurationsList() as $name => $infos) {
-            $return &= Configuration::updateValue($name, $infos['default']);
+            if (array_key_exists('lang', $infos) && $infos['lang']) {
+                $exists = false;
+
+                foreach ($this->languages as $lang) {
+                    $exists |= Configuration::hasKey($name, $lang['id_lang']);
+                }
+            } else {
+                $exists = Configuration::hasKey($name);
+            }
+
+            if (!$exists) {
+                $return &= Configuration::updateValue($name, $infos['default']);
+            }
         }
 
         return $return;

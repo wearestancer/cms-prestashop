@@ -2,6 +2,7 @@
 <ruleset name="PHPCS ruleset">
   <file>classes/</file>
   <file>controllers/</file>
+  <file>upgrade/</file>
   <file>stancer.php</file>
   <exclude-pattern>node_modules/</exclude-pattern>
   <exclude-pattern>vendor/</exclude-pattern>
