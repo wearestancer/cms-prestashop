@@ -37,6 +37,6 @@
 			"label": "xdebug"
 		}
 	},
-	"postCreateCommand": "composer install && pnpm install && sudo renew-certs && sudo --preserve-env /etc/docker_start",
+	"postCreateCommand": "git lfs install && composer install && pnpm install && sudo renew-certs && sudo --preserve-env /etc/docker_start",
 	"remoteUser": "vscode"
 }

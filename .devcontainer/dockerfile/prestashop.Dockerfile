@@ -18,6 +18,9 @@ RUN --mount=type=cache,target=/var/lib/apt/lists curl -sL https://deb.nodesource
 RUN --mount=type=cache,target=/var/lib/apt/lists apt update && apt install -y nodejs
 RUN npm install --global pnpm
 
+RUN --mount=type=cache,target=/var/lib/apt/lists curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash -
+RUN --mount=type=cache,target=/var/lib/apt/lists apt update && apt install -y git-lfs
+
 
 RUN php -r "copy('https://getcomposer.org/installer', '/tmp/composer-setup.php');" \
  && php /tmp/composer-setup.php --no-ansi --install-dir=/usr/local/bin --filename=composer \
