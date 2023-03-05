@@ -207,6 +207,23 @@ class Stancer extends PaymentModule
                 'type' => 'hidden',
             ];
 
+            $this->configurations['STANCER_REUSE_CARD'] = [
+                'default' => 0,
+                'group' => 'settings',
+                'label' => $this->l('Allow customers to reuse cards'),
+                'type' => 'hidden',
+                'values' => [
+                    [
+                        'id' => 'active_on',
+                        'value' => 1,
+                    ],
+                    [
+                        'id' => 'active_off',
+                        'value' => 0,
+                    ],
+                ],
+            ];
+
             $desc = [];
             $desc[] = $this->l(join(' ', [
                 'Minimum amount to trigger an authenticated payment',
@@ -643,33 +660,35 @@ class Stancer extends PaymentModule
     public function hookPaymentOptions(array $params): array
     {
         $list = [];
+
         if (!$this->isAvailable()) {
             return $list;
         }
 
-        // @todo : uncomment when use existing card will be fixed
-        // $cards = StancerApiCard::getCustomerCards($this->context->customer);
-        $cards = [];
-        foreach ($cards as $card) {
-            $target = $this->context->link->getModuleLink(
-                $this->name,
-                'payment',
-                [
-                    'card' => $card->id,
-                    'last-step' => Tools::getValue('step'),
-                ],
-                true
-            );
+        if (Configuration::get('STANCER_REUSE_CARD')) {
+            $cards = StancerApiCard::getCustomerCards($this->context->customer);
 
-            $text = vsprintf($this->l('Pay with your %s finishing with %s'), [$card->brandname, $card->last4]);
-            $cardOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-            $cardOption
-                ->setModuleName($this->name)
-                ->setCallToActionText($text)
-                ->setAction($target)
-            ;
+            foreach ($cards as $card) {
+                $target = $this->context->link->getModuleLink(
+                    $this->name,
+                    'payment',
+                    [
+                        'card' => $card->id,
+                        'last-step' => Tools::getValue('step'),
+                    ],
+                    true
+                );
 
-            $list[] = $cardOption;
+                $text = vsprintf($this->l('Pay with your %s finishing with %s'), [$card->brandname, $card->last4]);
+                $cardOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+                $cardOption
+                    ->setModuleName($this->name)
+                    ->setCallToActionText($text)
+                    ->setAction($target)
+                ;
+
+                $list[] = $cardOption;
+            }
         }
 
         $target = $this->context->link->getModuleLink(
