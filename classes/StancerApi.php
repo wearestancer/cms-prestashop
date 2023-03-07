@@ -3,10 +3,14 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2023 Iliad 78
+ * @copyright 2018-2023 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  * @website   https://www.stancer.com
- * @version   1.0.0
+ * @version   1.1.0
+ */
+
+/**
+ * API helper.
  */
 class StancerApi
 {
@@ -65,13 +69,12 @@ class StancerApi
     /**
      * Mark a Stancer payment as captured
      *
-     * @param mixed $apiPayment
-     *
+     * @param Stancer\Payment $apiPayment
      * @return void
      */
     public function markPaymentAsCaptured(Stancer\Payment $apiPayment)
     {
-        if (!$apiPayment->getStatus()) {
+        if (!$apiPayment->status || $apiPayment->status === Stancer\Payment\Status::AUTHORIZED) {
             $apiPayment->setStatus(Stancer\Payment\Status::CAPTURE);
             $this->sendToApi($apiPayment);
         }
@@ -123,7 +126,6 @@ class StancerApi
      * @param Language $language
      * @param Currency $currency
      * @param StancerApiCard|null $card
-     *
      * @return Stancer\Payment
      */
     public function sendPayment(
@@ -146,17 +148,14 @@ class StancerApi
             $apiPayment = $currentPayment->getApiObject();
         }
 
-        if (
-            !$apiPayment
-            || (!empty($apiPayment) && $apiPayment->getStatus() === 'refused')
-            // @todo : remove when update payment will be fixed
-            || (!empty($apiPayment) && $apiPayment->getAmount() != $paymentData['amount'])
-        ) {
+        if (!$apiPayment || (!empty($apiPayment) && $apiPayment->getStatus() === 'refused')) {
             $apiPayment = new Stancer\Payment();
             $apiPayment
                 ->setCustomer($apiCustomer)
                 ->setOrderId($paymentData['orderId'])
-                ->setReturnUrl($paymentData['returnUrl']);
+                ->setReturnUrl($paymentData['returnUrl'])
+                ->setCapture(false)
+            ;
         }
 
         if ($paymentData['auth'] && empty($apiPayment->getAuth())) {
@@ -183,11 +182,16 @@ class StancerApi
         // Send payment to Stancer
         $result = $this->sendToApi($apiPayment);
 
-        // Save payment in Prestashop
-        $currentPayment = StancerApiPayment::saveFrom($apiPayment, $cart);
-
         $log = $result['log'];
         $errors = $result['errors'];
+
+        if (empty($log)) {
+            $apiCustomer = $apiPayment->getCustomer();
+            StancerApiCustomer::saveFrom($apiCustomer);
+
+            // Save payment in Prestashop
+            StancerApiPayment::saveFrom($apiPayment, $cart);
+        }
 
         return $apiPayment;
     }

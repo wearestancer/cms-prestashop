@@ -3,10 +3,14 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2023 Iliad 78
+ * @copyright 2018-2023 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  * @website   https://www.stancer.com
- * @version   1.0.0
+ * @version   1.1.0
+ */
+
+/**
+ * Front controller creating a payment.
  */
 class StancerPaymentModuleFrontController extends ModuleFrontController
 {
@@ -28,18 +32,17 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
             || !$context->cart->id_address_invoice
             || !Validate::isLoadedObject($context->currency)
             || !Validate::isLoadedObject($context->customer)
-            || !$this->module->isAvailable()
+            || $this->module->isNotAvailable()
         ) {
             return $this->redirect();
         }
 
         $log = '';
-        $exception = null;
 
-        // @todo check
         // Pay with an existing card
         $cardId = (int) Tools::getValue('card');
         $existingCard = null;
+
         if ($cardId) {
             $existingCard = StancerApiCard::getCustomerCard($context->customer, $cardId);
         }

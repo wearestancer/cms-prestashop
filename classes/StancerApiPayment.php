@@ -3,10 +3,14 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2023 Iliad 78
+ * @copyright 2018-2023 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  * @website   https://www.stancer.com
- * @version   1.0.0
+ * @version   1.1.0
+ */
+
+/**
+ * Model for a payment.
  */
 class StancerApiPayment extends ObjectModel
 {
@@ -189,7 +193,6 @@ class StancerApiPayment extends ObjectModel
     {
         if (!$this->api) {
             $this->api = new Stancer\Payment($this->payment_id);
-            $this->api->populate();
         }
 
         return $this->api;
@@ -213,6 +216,7 @@ class StancerApiPayment extends ObjectModel
         ];
 
         $key = 'PS_OS_ERROR';
+
         if (array_key_exists($this->api->getStatus(), $statuses)) {
             $key = $statuses[$this->api->getStatus()];
         }

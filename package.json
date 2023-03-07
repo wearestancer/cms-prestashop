@@ -1,19 +1,19 @@
 {
   "name": "@stancer/prestashop",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Stancer Prestashop module",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "archive": "env node ./views/js/scripts/zip.js",
-    "build": "pnpm create-assets && pnpm translate && pnpm run version && pnpm license && pnpm populate",
-    "build:archive": "pnpm build && pnpm archive",
+    "archive": "env node ./scripts/zip.js",
+    "build": "pnpm run create-assets && pnpm run translate && pnpm run version && pnpm run license && pnpm run populate",
+    "build:archive": "rm -rf vendor && composer install --no-dev --optimize-autoloader && pnpm run build && pnpm run archive && composer install",
     "create-assets": "gulp build",
     "lint": "stylelint 'views/**/*.scss'",
-    "license": "env node ./views/js/scripts/license.js",
-    "populate": "env node ./views/js/scripts/populate.js",
-    "translate": "env node ./views/js/scripts/translate.js",
-    "version": "env node ./views/js/scripts/version.js"
+    "license": "env node ./scripts/license.js",
+    "populate": "env node ./scripts/populate.js",
+    "translate": "env node ./scripts/translate.js",
+    "version": "env node ./scripts/version.js"
   },
   "devDependencies": {
     "archiver": "^5.0.0",
@@ -27,8 +27,9 @@
     "gulp-sourcemaps": "^3.0.0",
     "gulp-uglify": "^3.0.0",
     "js-md5": "^0.7.0",
-    "pnpm": "^7.25.1",
     "postcss": "^8.3.0",
+    "prettier": "^2.8.0",
+    "prettier-plugin-multiline-arrays": "^1.1.0",
     "pump": "^3.0.0",
     "sass": "^1.55.0",
     "sprintf-js": "^1.1.0",

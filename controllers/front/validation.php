@@ -3,10 +3,14 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2023 Iliad 78
+ * @copyright 2018-2023 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  * @website   https://www.stancer.com
- * @version   1.0.0
+ * @version   1.1.0
+ */
+
+/**
+ * Front controller receiving the payment from the gateway.
  */
 class StancerValidationModuleFrontController extends ModuleFrontController
 {
@@ -20,6 +24,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
     public function cloneCart(Cart $cart)
     {
         $newCart = $cart->duplicate();
+
         if (!$newCart || !$newCart['success'] || !Validate::isLoadedObject($newCart['cart'])) {
             return;
         }
@@ -27,16 +32,22 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         $this->context->cookie->id_cart = $newCart['cart']->id;
         $this->context->cart = $newCart['cart'];
         $this->context->smarty->assign('cart_qties', $this->context->cart->nbProducts());
+
         CartRule::autoAddToCart($this->context);
 
-        $checkoutSessionData = Db::getInstance()->getValue(
-            'SELECT checkout_session_data FROM ' . _DB_PREFIX_ . 'cart WHERE id_cart = ' . (int) $cart->id
-        );
+        $sql = implode(' ', [
+            'SELECT checkout_session_data',
+            'FROM `' . _DB_PREFIX_ . 'cart`',
+            'WHERE id_cart = ' . (int) $cart->id,
+        ]);
+        $checkoutSessionData = Db::getInstance()->getValue($sql);
 
-        Db::getInstance()->execute(
-            'UPDATE ' . _DB_PREFIX_ . 'cart SET checkout_session_data = "' . pSQL($checkoutSessionData) . '"
-            WHERE id_cart = ' . (int) $this->context->cart->id
-        );
+        $sql = implode(' ', [
+            'UPDATE `' . _DB_PREFIX_ . 'cart`',
+            'SET checkout_session_data = "' . pSQL($checkoutSessionData) . '"',
+            'WHERE id_cart = ' . (int) $this->context->cart->id,
+        ]);
+        Db::getInstance()->execute($sql);
 
         $this->context->cookie->write();
     }
@@ -56,7 +67,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             $orderState,
             $apiPayment->getAmount() / 100,
             $this->module->displayName,
-            implode("\n", $this->getOrderMessage($apiPayment)),
+            $this->getOrderMessage($apiPayment),
             ['transaction_id' => $apiPayment->getId()],
             (int) $cart->id_currency,
             false,
@@ -64,8 +75,8 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         );
 
         $newOrder = new Order((int) $this->module->currentOrder);
-
         $orderPayments = OrderPayment::getByOrderReference($newOrder->reference);
+
         if (!empty($orderPayments)) {
             $apiCard = $apiPayment->getCard();
 
@@ -87,9 +98,8 @@ class StancerValidationModuleFrontController extends ModuleFrontController
      * @param Stancer\Payment $apiPayment
      * @return array
      */
-    protected function getOrderMessage(Stancer\Payment $apiPayment): array
+    protected function getOrderMessage(Stancer\Payment $apiPayment): string
     {
-        $apiCard = $apiPayment->getCard();
         $amount = vsprintf('%.02f %s', [
             $apiPayment->getAmount() / 100,
             strtoupper($apiPayment->getCurrency()),
@@ -108,16 +118,34 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         $state = $apiPayment->isSuccess() ? 'success' : 'failure';
         $message[] = sprintf('Response: %s (%s)', $apiPayment->getResponse(), $state);
 
-        $message[] = 'Card';
-        $message[] = $apiCard->getId();
         $message[] = '';
-        $message[] = 'Brand: ' . $apiCard->getBrandName();
-        $message[] = 'Last numbers: ' . $apiCard->getLast4();
 
-        $date = $apiCard->getExpirationDate();
-        $message[] = sprintf('Expiration: %02d/%04d', $date->format('m'), $date->format('Y'));
+        switch ($apiPayment->getMethod()) {
+            case 'card':
+                $apiCard = $apiPayment->getCard();
 
-        return $message;
+                $message[] = 'Card';
+                $message[] = $apiCard->getId();
+                $message[] = '';
+                $message[] = 'Brand: ' . $apiCard->getBrandName();
+                $message[] = 'Last numbers: ' . $apiCard->getLast4();
+
+                $date = $apiCard->getExpirationDate();
+                $message[] = sprintf('Expiration: %02d/%04d', $date->format('m'), $date->format('Y'));
+                break;
+            case 'sepa':
+                $apiSepa = $apiPayment->getSepa();
+
+                $message[] = 'Sepa';
+                $message[] = $apiSepa->getId();
+                $message[] = '';
+                $message[] = 'Country: ' . $apiSepa->getCountry();
+                $message[] = 'Last numbers: ' . $apiSepa->getLast4();
+                $message[] = 'Mandate: ' . $apiSepa->getMandate();
+                break;
+        }
+
+        return trim(implode("\n", $message));
     }
 
     /**
@@ -139,12 +167,13 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             || !$cart->id_address_invoice
             || !Validate::isLoadedObject($currency)
             || !Validate::isLoadedObject($customer)
-            || !$this->module->isAvailable()
+            || $this->module->isNotAvailable()
         ) {
             return $this->redirect();
         }
 
         $payment = StancerApiPayment::find($cart, $currency);
+
         if (!$payment) {
             $err = StancerErrors::getMessage(StancerErrors::NO_PAYMENT);
             $this->errors[] = $err;
@@ -158,7 +187,8 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         $status = $apiPayment->getStatus();
 
         $api = new StancerApi();
-        if ($auth) {
+
+        if (!$status && $auth) {
             if ($auth->getStatus() === Stancer\Auth\Status::SUCCESS) {
                 $api->markPaymentAsCaptured($apiPayment);
                 $status = $apiPayment->getStatus();
@@ -166,6 +196,11 @@ class StancerValidationModuleFrontController extends ModuleFrontController
                 // We can not mark the payment failed in the API
                 $status = Stancer\Payment\Status::FAILED;
             }
+        }
+
+        if ($status === Stancer\Payment\Status::AUTHORIZED) {
+            $api->markPaymentAsCaptured($apiPayment);
+            $status = $apiPayment->getStatus();
         }
 
         switch ($status) {
@@ -184,6 +219,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             case Stancer\Payment\Status::CAPTURE:
                 // @todo : remove check of property when property deleted will be added
                 $deleted = property_exists($apiCard, 'deleted') && $apiCard->deleted ?? false;
+
                 if ($deleted) {
                     StancerApiCard::deleteFrom($apiCard);
                 } else {

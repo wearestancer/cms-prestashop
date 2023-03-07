@@ -3,19 +3,25 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2023 Iliad 78
+ * @copyright 2018-2023 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  * @website   https://www.stancer.com
  * @version   1.0.0
  */
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
 
+/**
+ * Stancer payment module.
+ */
 class Stancer extends PaymentModule
 {
+    public const VERSION = '1.1.0';
+
     protected $configurations = [];
     protected $languages = [];
     protected $hooks = [
@@ -33,10 +39,10 @@ class Stancer extends PaymentModule
     {
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.0';
+        $this->version = '1.1.0';
         $this->author = 'Stancer';
         $this->need_instance = 1;
-        $this->ps_versions_compliancy = ['min' => '1.7', 'max' => '8.0.1'];
+        $this->ps_versions_compliancy = ['min' => '1.7.0', 'max' => '8.0.999'];
         $this->bootstrap = true;
 
         parent::__construct();
@@ -57,25 +63,6 @@ class Stancer extends PaymentModule
     }
 
     /**
-     * Basic validation run at beginning of payment and paymentOptions hooks.
-     *
-     * @return bool
-     */
-    public function isAvailable(): bool
-    {
-        if (!$this->active) {
-            return false;
-        }
-
-        try {
-            $apiConfig = new StancerApiConfig();
-            return $apiConfig->isConfigured();
-        } catch (Exception $e) {
-            return false;
-        }
-    }
-
-    /**
      * Return configuration for install or unistall module
      *
      * @return array
@@ -86,6 +73,11 @@ class Stancer extends PaymentModule
             $this->configurations = [];
 
             $mode = Configuration::get('STANCER_API_MODE') ?: Stancer\Config::TEST_MODE;
+
+            if (Tools::getValue('STANCER_API_MODE')) {
+                $mode = Stancer\Config::LIVE_MODE;
+            }
+
             $isLive = Stancer\Config::LIVE_MODE === $mode;
 
             $this->configurations['STANCER_API_LIVE_PUBLIC_KEY'] = [
@@ -94,7 +86,7 @@ class Stancer extends PaymentModule
                 'group' => 'keys',
                 'label' => $this->l('Public live API key'),
                 'mode' => Stancer\Config::LIVE_MODE,
-                'pattern' => 'pprod_',
+                'pattern' => '/^pprod_/',
                 'required' => $isLive,
             ];
 
@@ -104,7 +96,7 @@ class Stancer extends PaymentModule
                 'group' => 'keys',
                 'label' => $this->l('Secret live API key'),
                 'mode' => Stancer\Config::LIVE_MODE,
-                'pattern' => 'sprod_',
+                'pattern' => '/^sprod_/',
                 'required' => $isLive,
             ];
 
@@ -114,7 +106,7 @@ class Stancer extends PaymentModule
                 'group' => 'keys',
                 'label' => $this->l('Public test API key'),
                 'mode' => Stancer\Config::TEST_MODE,
-                'pattern' => 'ptest_',
+                'pattern' => '/^ptest_/',
                 'required' => false,
             ];
 
@@ -124,7 +116,7 @@ class Stancer extends PaymentModule
                 'group' => 'keys',
                 'label' => $this->l('Secret test API key'),
                 'mode' => Stancer\Config::TEST_MODE,
-                'pattern' => 'stest_',
+                'pattern' => '/^stest_/',
                 'required' => false,
             ];
 
@@ -140,9 +132,35 @@ class Stancer extends PaymentModule
             ];
 
             $this->configurations['STANCER_API_TIMEOUT'] = [
-                'default' => 1,
+                'default' => null,
                 'group' => 'settings',
                 'type' => 'hidden',
+            ];
+
+            $defaultValue = [];
+
+            foreach ($this->languages as $lang) {
+                $defaultValue[$lang['id_lang']] = 'Pay by card';
+
+                if (strpos($lang['language_code'], 'fr') !== false) {
+                    $defaultValue[$lang['id_lang']] = 'Payer par carte';
+                }
+            }
+
+            $this->configurations['STANCER_CTA_TEXT'] = [
+                'default' => $defaultValue,
+                'group' => 'display',
+                'label' => $this->l('Payment option text'),
+                'lang' => true,
+                'required' => true,
+                'type' => 'text',
+            ];
+
+            $this->configurations['STANCER_CTA_LOGO'] = [
+                'default' => 'none',
+                'group' => 'display',
+                'label' => $this->l('Payment option logo'),
+                'template' => 'logo',
             ];
 
             $this->configurations['STANCER_PAGE_TYPE'] = [
@@ -153,8 +171,13 @@ class Stancer extends PaymentModule
                 'values' => [
                     [
                         'id' => 'iframe',
-                        'label' => $this->l('Inside the page'),
+                        'label' => $this->l('Inside the page (recommanded)'),
                         'value' => 'iframe',
+                    ],
+                    [
+                        'id' => 'full-iframe',
+                        'label' => $this->l('Inside the page, including authenticated payment'),
+                        'value' => 'full-iframe',
                     ],
                     [
                         'id' => 'redirect',
@@ -168,6 +191,40 @@ class Stancer extends PaymentModule
                 'default' => 'https://payment.stancer.com',
                 'group' => 'settings',
                 'type' => 'hidden',
+            ];
+
+            $this->configurations['STANCER_REUSE_CARD'] = [
+                'default' => 0,
+                'group' => 'settings',
+                'label' => $this->l('Allow customers to reuse cards'),
+                'type' => 'hidden',
+                'values' => [
+                    [
+                        'id' => 'active_on',
+                        'value' => 1,
+                    ],
+                    [
+                        'id' => 'active_off',
+                        'value' => 0,
+                    ],
+                ],
+            ];
+
+            $this->configurations['STANCER_REUSED_CARD_LOGO'] = [
+                'default' => 0,
+                'group' => 'display',
+                'label' => $this->l('Add scheme logo on reused card'),
+                'type' => 'hidden',
+                'values' => [
+                    [
+                        'id' => 'active_on',
+                        'value' => 1,
+                    ],
+                    [
+                        'id' => 'active_off',
+                        'value' => 0,
+                    ],
+                ],
             ];
 
             $desc = [];
@@ -200,6 +257,7 @@ class Stancer extends PaymentModule
             ];
 
             $defaultDescriptions = [];
+
             foreach ($this->languages as $lang) {
                 $defaultDescriptions[$lang['id_lang']] = 'Your order SHOP_NAME.';
 
@@ -208,7 +266,10 @@ class Stancer extends PaymentModule
                 }
             }
 
-            $desc = [];
+            $desc = [
+                $this->l('Will be used as description for every payment made.'),
+                '<br />',
+            ];
             $vars = [
                 'SHOP_NAME' => $this->l('Shop name configured in PrestaShop'),
                 'TOTAL_AMOUNT' => $this->l('Total amount'),
@@ -216,44 +277,25 @@ class Stancer extends PaymentModule
                 'CART_ID' => $this->l('Cart identifier'),
             ];
 
-            $desc[] = $this->l(implode(' ', [
-                'Will be used as description for every payment made,',
-                'and will be visible to your customer in redirect mode.',
-            ]));
-
-            $tmp = [];
-            $tmp[] = '<details class="help-block">';
-            $tmp[] = '<summary>' . $this->l('You may use simple variables, click to see.') . '</summary>';
-            $tmp[] = '<dl>';
+            $desc[] = '<details class="help-block">';
+            $desc[] = '<summary>' . $this->l('You may use simple variables, click to see.') . '</summary>';
+            $desc[] = '<dl>';
 
             foreach ($vars as $key => $val) {
-                $tmp[] = '<dt>' . $key . '</dt><dd>' . $this->l($val) . '</dd>';
+                $desc[] = '<dt>' . $key . '</dt><dd>' . $val . '</dd>';
             }
 
-            $tmp[] = '</dl>';
-            $tmp[] = '</details>';
-            $desc[] = implode('', $tmp);
+            $desc[] = '</dl>';
+            $desc[] = '</details>';
 
             $this->configurations['STANCER_PAYMENT_DESCRIPTION'] = [
                 'default' => $defaultDescriptions,
-                'desc' => join('<br />', $desc),
+                'desc' => join('', $desc),
                 'group' => 'settings',
                 'label' => $this->l('Payment description'),
                 'lang' => true,
                 'type' => 'text',
             ];
-        }
-
-        $newMode = Tools::getValue('STANCER_API_MODE');
-        if ($newMode !== false) {
-            $keys = [
-                'STANCER_API_LIVE_PUBLIC_KEY',
-                'STANCER_API_LIVE_SECRET_KEY',
-            ];
-
-            foreach ($keys as $key) {
-                $this->configurations[$key]['required'] = !$newMode;
-            }
         }
 
         if ($group) {
@@ -269,7 +311,6 @@ class Stancer extends PaymentModule
      * Show configuration form
      *
      * @uses self::getHelperForm()
-     *
      * @return string
      */
     public function getContent()
@@ -300,8 +341,27 @@ class Stancer extends PaymentModule
                     $value = trim($value);
                 }
 
-                if (array_key_exists('required', $infos) && !$infos['required'] && !$value) {
+                if ((!array_key_exists('required', $infos) || !$infos['required']) && !$value) {
                     continue;
+                }
+
+                if (array_key_exists('pattern', $infos)) {
+                    $check = preg_match($infos['pattern'], $value) === 1;
+
+                    if (!$check) {
+                        $hasError = true;
+                        $error = $this->l('%s is invalid.');
+
+                        if ($infos['group'] === 'keys') {
+                            $keysOk = false;
+                            $error = $this->l('%s is invalid, please provide a correct key.');
+                        }
+
+                        $output .= $this->displayError(sprintf($error, $infos['label']));
+
+                        $this->updateConfigurationList($name, ['class' => 'js-show-error']);
+                        continue;
+                    }
                 }
 
                 Configuration::updateValue($name, $value);
@@ -310,10 +370,11 @@ class Stancer extends PaymentModule
             $apiMode = Stancer\Config::TEST_MODE;
 
             if ($keysOk) {
+                $apiMode = Tools::getValue('STANCER_API_MODE') ? Stancer\Config::LIVE_MODE : Stancer\Config::TEST_MODE;
+            } else {
                 $tmp = $this->l('You can not pass to live mode until an error occur with API keys.');
                 $output .= $this->displayError($tmp);
-
-                $apiMode = Tools::getValue('STANCER_API_MODE') ? Stancer\Config::TEST_MODE : Stancer\Config::LIVE_MODE;
+                $hasError = true;
             }
 
             Configuration::updateValue('STANCER_API_MODE', $apiMode);
@@ -325,7 +386,8 @@ class Stancer extends PaymentModule
                     'conf=4',
                     'token=' . Tools::getAdminTokenLite('AdminModules'),
                 ];
-                Tools::redirectAdmin(implode('&', $link));
+
+                return Tools::redirectAdmin(implode('&', $link));
             }
         }
 
@@ -333,6 +395,7 @@ class Stancer extends PaymentModule
         $form = [
             $this->getContentFormKeys($helper),
             $this->getContentFormSettings($helper),
+            $this->getContentFormDisplay($helper),
             [
                 'form' => [
                     'submit' => [
@@ -349,22 +412,80 @@ class Stancer extends PaymentModule
     }
 
     /**
-     * getContentFormKeys
+     * Create admin form for display settings.
+     *
+     * @param HelperForm $helper
+     * @return array
+     */
+    public function getContentFormDisplay(HelperForm $helper): array
+    {
+        $settings = [
+            'legend' => [
+                'icon' => 'icon-paint-brush',
+                'title' => $this->l('Display'),
+            ],
+            'input' => [],
+        ];
+
+        $excep = [
+            'default' => 1,
+            'group' => 1,
+            'template' => 1,
+        ];
+
+        foreach ($this->getConfigurationsList('display') as $name => $infos) {
+            if (array_key_exists('template', $infos)) {
+                $clean = array_diff_key($infos, $excep);
+                $template = 'module:' . $this->name . '/views/templates/admin/' . $infos['template'] . '.tpl';
+                $value = Configuration::get($name);
+
+                $this->context->smarty->assign('stancer_module_img', _MODULE_DIR_ . $this->name . '/views/img');
+                $this->context->smarty->assign($name . '_VALUE', $value);
+
+                $settings['input'][] = array_merge($clean, [
+                    'html_content' => $this->context->smarty->fetch($template),
+                    'name' => $name,
+                    'type' => 'html',
+                ]);
+
+                $helper->fields_value[$name] = $value;
+            } else {
+                $clean = array_diff_key($infos, $excep);
+                $settings['input'][] = array_merge($clean, [
+                    'name' => $name,
+                ]);
+
+                if (array_key_exists('lang', $infos) && $infos['lang']) {
+                    foreach ($this->languages as $lang) {
+                        $value = Configuration::get($name, $lang['id_lang']);
+                        $helper->fields_value[$name][$lang['id_lang']] = $value;
+                    }
+                } else {
+                    $helper->fields_value[$name] = Configuration::get($name);
+                }
+            }
+        }
+
+        return ['form' => $settings];
+    }
+
+    /**
+     * Create admin form for keys.
      *
      * @param mixed $helper
      * @return array
      */
     public function getContentFormKeys(HelperForm $helper): array
     {
-        $signup = $this->l('https://manage.stancer.com/en/sign-up');
+        $signup = $this->l('https://manage.stancer.com/en/developers');
 
         $keys = [
             'legend' => [
                 'icon' => 'icon-key',
-                'title' => $this->l('Keys'),
+                'title' => $this->l('API keys'),
             ],
             'description' => implode(' ', [
-                $this->l('You can create your API keys on'),
+                $this->l('You can create and recover your API keys on'),
                 '<a href="' . $signup . '" target="_blank">' . $signup . '</a>',
             ]),
             'input' => [],
@@ -382,7 +503,7 @@ class Stancer extends PaymentModule
                 $desc = $infos['desc'];
             }
 
-            if (!empty($infos['mode']) === Stancer\Config::LIVE_MODE) {
+            if ($infos['mode'] === Stancer\Config::LIVE_MODE) {
                 if ($desc) {
                     $desc .= ', ';
                 } else {
@@ -409,7 +530,7 @@ class Stancer extends PaymentModule
     }
 
     /**
-     * getContentFormSettings
+     * Create admin form for generals settings.
      *
      * @param HelperForm $helper
      * @return array
@@ -434,23 +555,25 @@ class Stancer extends PaymentModule
                 $this->l('In test mode, no payment will really send to a bank, only test card can be used.'),
                 sprintf($this->l('Check the documentation to find %s.'), $link),
             ]),
-            'label' => $this->l('Test mode'),
+            'label' => $this->l('Mode'),
             'name' => 'STANCER_API_MODE',
             'type' => 'switch',
             'values' => [
                 [
                     'id' => 'active_on',
+                    'label' => $this->l('Live'),
                     'value' => 1,
                 ],
                 [
                     'id' => 'active_off',
+                    'label' => $this->l('Test'),
                     'value' => 0,
                 ],
             ],
         ];
 
         $mode = 'STANCER_API_MODE';
-        $helper->fields_value[$mode] = Configuration::get($mode) !== Stancer\Config::LIVE_MODE;
+        $helper->fields_value[$mode] = Configuration::get($mode) === Stancer\Config::LIVE_MODE;
         $excep = [
             'default' => 1,
             'group' => 1,
@@ -533,18 +656,10 @@ class Stancer extends PaymentModule
      */
     public function hookHeader(): string
     {
-        $controller = $this->context->controller;
-        $controller->registerStylesheet($this->name, 'modules/' . $this->name . '/views/css/global.css');
+        $this->registerStylesheet('global');
 
-        if (Configuration::get('STANCER_PAGE_TYPE') === 'iframe') {
-            $controller->registerJavascript(
-                $this->name . '-iframe',
-                'modules/' . $this->name . '/views/js/iframe.js'
-            );
-            $controller->registerJavascript(
-                $this->name . '-message',
-                'modules/' . $this->name . '/views/js/message.js'
-            );
+        if (in_array(Configuration::get('STANCER_PAGE_TYPE'), ['full-iframe', 'iframe'])) {
+            $this->registerJavascript('iframe')->registerJavascript('message');
         }
 
         return '<script>var STANCER = {origin: "' . Configuration::get('STANCER_PAGE_URL') . '"};</script>';
@@ -554,37 +669,52 @@ class Stancer extends PaymentModule
      * Hook called to display payment methods (PS1.7+).
      *
      * @param array $params
-     *
      * @return PrestaShop\PrestaShop\Core\Payment\PaymentOption[]
      */
     public function hookPaymentOptions(array $params): array
     {
         $list = [];
-        if (!$this->isAvailable()) {
+
+        if ($this->isNotAvailable()) {
             return $list;
         }
 
-        // @todo : uncomment when use existing card will be fixed
-        // $cards = StancerApiCard::getCustomerCards($this->context->customer);
-        $cards = [];
-        foreach ($cards as $card) {
-            $target = $this->context->link->getModuleLink(
-                $this->name,
-                'payment',
-                [
-                    'card' => $card->id,
-                    'last-step' => Tools::getValue('step'),
-                ],
-                true
-            );
+        if (Configuration::get('STANCER_REUSE_CARD')) {
+            $cards = StancerApiCard::getCustomerCards($this->context->customer);
 
-            $cardOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-            $cardOption
-                ->setModuleName($this->name)
-                ->setCallToActionText(vsprintf($this->l('Pay with your %s finishing with %s'), [$card->brandname, $card->last4]))
-                ->setAction($target);
+            foreach ($cards as $card) {
+                $target = $this->context->link->getModuleLink(
+                    $this->name,
+                    'payment',
+                    [
+                        'card' => $card->id,
+                        'last-step' => Tools::getValue('step'),
+                    ],
+                    true
+                );
 
-            $list[] = $cardOption;
+                $text = vsprintf($this->l('Pay with your %s finishing with %s'), [$card->brandname, $card->last4]);
+                $cardOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+                $cardOption
+                    ->setModuleName($this->name)
+                    ->setCallToActionText($text)
+                    ->setAction($target)
+                ;
+
+                if (Configuration::get('STANCER_REUSED_CARD_LOGO')) {
+                    $url = _MODULE_DIR_ . $this->name . '/views/img/logo.svg#';
+
+                    if (in_array($card->brand, ['amex', 'mastercard', 'visa'], true)) {
+                        $url .= 'card-' . $card->brand;
+                    } else {
+                        $url .= $card->brand;
+                    }
+
+                    $cardOption->setLogo($url);
+                }
+
+                $list[] = $cardOption;
+            }
         }
 
         $target = $this->context->link->getModuleLink(
@@ -600,19 +730,31 @@ class Stancer extends PaymentModule
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
             ->setModuleName($this->name)
-            ->setCallToActionText($this->l('Pay by card'));
+            ->setCallToActionText(Configuration::get('STANCER_CTA_TEXT', $this->context->language->id))
+        ;
+
+        $logo = Configuration::get('STANCER_CTA_LOGO');
+
+        if ($logo !== 'none') {
+            $paymentOption->setLogo(_MODULE_DIR_ . $this->name . '/views/img/logo.svg#' . $logo);
+        }
 
         switch (Configuration::get('STANCER_PAGE_TYPE')) {
+            case 'full-iframe':
+                $this->context->smarty->assign('3ds', true);
+                // no break
             case 'iframe':
+                $link = $this->context->link->getModuleLink($this->name, 'validation', [], true);
                 $this->context->smarty->assign('target', $target);
-                $this->context->smarty->assign('validation', $this->context->link->getModuleLink($this->name, 'validation', [], true));
+                $this->context->smarty->assign('validation', $link);
                 $paymentOption->setAdditionalInformation($this->context->smarty->fetch($tpl . 'iframe.tpl'));
 
                 break;
             default:
                 $paymentOption
                     ->setAction($target)
-                    ->setAdditionalInformation($this->context->smarty->fetch($tpl . 'option.tpl'));
+                    ->setAdditionalInformation($this->context->smarty->fetch($tpl . 'option.tpl'))
+                ;
 
                 break;
         }
@@ -628,7 +770,6 @@ class Stancer extends PaymentModule
      * @uses self::installConfigurations()
      * @uses self::installDbRequirements()
      * @uses self::installHooks()
-     *
      * @return bool
      */
     public function install(): bool
@@ -649,7 +790,19 @@ class Stancer extends PaymentModule
         $return = true;
 
         foreach ($this->getConfigurationsList() as $name => $infos) {
-            $return &= Configuration::updateValue($name, $infos['default']);
+            if (array_key_exists('lang', $infos) && $infos['lang']) {
+                $exists = false;
+
+                foreach ($this->languages as $lang) {
+                    $exists |= Configuration::hasKey($name, $lang['id_lang']);
+                }
+            } else {
+                $exists = Configuration::hasKey($name);
+            }
+
+            if (!$exists) {
+                $return &= Configuration::updateValue($name, $infos['default']);
+            }
         }
 
         return $return;
@@ -769,6 +922,65 @@ class Stancer extends PaymentModule
     }
 
     /**
+     * Basic validation run at beginning of payment and paymentOptions hooks.
+     *
+     * @return bool
+     */
+    public function isAvailable(): bool
+    {
+        if (!$this->active) {
+            return false;
+        }
+
+        try {
+            $apiConfig = new StancerApiConfig();
+            return $apiConfig->isConfigured();
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Basic validation is the module is available.
+     *
+     * @return bool
+     */
+    public function isNotAvailable(): bool
+    {
+        return !$this->isAvailable();
+    }
+
+    /**
+     * Add a JS file to the current controller.
+     *
+     * @param string $name Name of the JS file to add.
+     */
+    protected function registerJavascript(string $name): self
+    {
+        $identifier = $this->name . '-' . $name;
+        $path = 'modules/' . $this->name . '/views/js/' . $name . '.js';
+
+        $this->context->controller->registerJavascript($identifier, $path);
+
+        return $this;
+    }
+
+    /**
+     * Add a CSS file to the current controller.
+     *
+     * @param string $name Name of the CSS file to add.
+     */
+    protected function registerStylesheet(string $name): self
+    {
+        $identifier = $this->name . '-' . $name;
+        $path = 'modules/' . $this->name . '/views/css/' . $name . '.css';
+
+        $this->context->controller->registerStylesheet($identifier, $path);
+
+        return $this;
+    }
+
+    /**
      * updateConfigurationList
      *
      * @param string $name
@@ -786,7 +998,6 @@ class Stancer extends PaymentModule
      * @uses self::uninstallConfigurations()
      * @uses self::uninstallDbRequirements()
      * @uses self::uninstallHooks()
-     *
      * @return bool
      */
     public function uninstall(): bool

@@ -3,10 +3,14 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2023 Iliad 78
+ * @copyright 2018-2023 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  * @website   https://www.stancer.com
- * @version   1.0.0
+ * @version   1.1.0
+ */
+
+/**
+ * Configuration helper.
  */
 class StancerApiConfig
 {
@@ -60,13 +64,19 @@ class StancerApiConfig
         ]);
 
         $apiConfig->setMode($this->mode);
-        $apiConfig->setTimeout($this->timeout ?? 1);
 
         if ($this->host) {
             $apiConfig->setHost($this->host);
         }
 
-        return $apiConfig;
+        if ($this->timeout) {
+            $apiConfig->setTimeout($this->timeout);
+        }
+
+        return $apiConfig
+            ->addAppData('libstancer-prestashop', Stancer::VERSION)
+            ->addAppData('prestashop', _PS_VERSION_)
+        ;
     }
 
     /**
@@ -77,10 +87,10 @@ class StancerApiConfig
     private function getPublicKey(): string
     {
         if ($this->isTestMode()) {
-            return \Configuration::get('STANCER_API_TEST_PUBLIC_KEY');
+            return Configuration::get('STANCER_API_TEST_PUBLIC_KEY');
         }
 
-        return \Configuration::get('STANCER_API_LIVE_PUBLIC_KEY');
+        return Configuration::get('STANCER_API_LIVE_PUBLIC_KEY');
     }
 
     /**
@@ -91,10 +101,10 @@ class StancerApiConfig
     private function getSecretKey(): string
     {
         if ($this->isTestMode()) {
-            return \Configuration::get('STANCER_API_TEST_SECRET_KEY');
+            return Configuration::get('STANCER_API_TEST_SECRET_KEY');
         }
 
-        return \Configuration::get('STANCER_API_LIVE_SECRET_KEY');
+        return Configuration::get('STANCER_API_LIVE_SECRET_KEY');
     }
 
     /**
@@ -120,14 +130,18 @@ class StancerApiConfig
     {
         $apiConfig = $this->getConfig();
 
-        if (
-            !empty($apiConfig)
-            && !empty($apiConfig->getPublicKey())
-            && !empty($apiConfig->getSecretKey())
-        ) {
-            return true;
+        if (empty($apiConfig)) {
+            return false;
         }
 
-        return false;
+        if (empty($apiConfig->getPublicKey())) {
+            return false;
+        }
+
+        if (empty($apiConfig->getSecretKey())) {
+            return false;
+        }
+
+        return true;
     }
 }

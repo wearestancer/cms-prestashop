@@ -1,31 +1,47 @@
-# Stancer Prestashop module
+# Stancer PrestaShop module
 
-This official module allows you to accept credit card payments via the Stancer platform directly on Prestashop.
+This official module allows you to accept credit card payments via the Stancer platform directly on PrestaShop.
 
 ## Requirements
+
+### Minimal versions
+
 | PrestaShop version | PHP Version      |
 |--------------------|------------------|
-| 1.7.x - 8.0.1      | 7.1 or greater |
+| 1.7 - 8.0          | 7.4 or greater   |
 
-### Supported payment method
+### API keys
+
+In order to configure the PrestaShop module, you need Stancer API keys.
+You can find your keys in the <q>Developers</q> tab on your [Stancer account](https://manage.stancer.com).
+
+When creating your account, a private and public key is automatically generated for test mode.
+Live mode keys will be created after account validation.
+
+## Supported payment method
+
 The module allows you to make payments by credit card.
-Payments are 3D Secure compatible. The amount from which 3D Secure is triggered can be configured from the module in the Prestashop back office.
-Customers have the option of registering a credit card when paying for the order so that they can quickly pay for their next purchases.
+
+Payments are 3D Secure compatible.
+The amount from which 3D Secure is triggered can be configured from the module in the PrestaShop back office.
+
+Customers have the option of registering a credit card when paying for the order so that they
+can quickly pay for their next purchases.
 
 ## Documentation
-- [Module Prestashop](https://gitlab.com/wearestancer/cms/prestashop/-/wikis/home)
-- [Stancer API](https://www.stancer.com/documentation/fr/api/)
-- [Stancer Resource](https://www.stancer.com/documentation/fr/resources/)
 
-## Generate API keys
-In order to configure the Prestashop module, it's necessary to obtain information which you can find in your Stancer account via the link <a href="https://manage.stancer.com" target="_blank">https://manage.stancer.com</a>
-
-Once logged in, go to the Developers tab
-When creating your account, a private and public key is automatically generated for test mode.
+- [PrestaShop module](https://gitlab.com/wearestancer/cms/prestashop/-/wikis/home) (french)
+- [Stancer API](https://www.stancer.com/documentation/api)
+- Stancer Resource:
+  [english](https://www.stancer.com/documentation/resources/) /
+  [french](https://www.stancer.com/documentation/fr/resources/)
 
 ## API Library
-This module is using the Stancer API Library for PHP.
-<a href="https://github.com/wearestancer/lib-php" target="_blank">This library can be found here</a>
+
+This module is using the [Stancer API Library for PHP](https://gitlab.com/wearestancer/library/lib-php).
 
 ## License
-MIT license. For more information, see the LICENSE file.
+
+MIT license.
+
+For more information, see the LICENSE file.

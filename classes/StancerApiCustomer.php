@@ -3,10 +3,14 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2023 Iliad 78
+ * @copyright 2018-2023 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  * @website   https://www.stancer.com
- * @version   1.0.0
+ * @version   1.1.0
+ */
+
+/**
+ * Model for a customer.
  */
 class StancerApiCustomer extends ObjectModel
 {
@@ -196,7 +200,17 @@ class StancerApiCustomer extends ObjectModel
      */
     public static function saveFrom(Stancer\Customer $apiCustomer): StancerApiCustomer
     {
-        $customer = new static();
+        $query = new DbQuery();
+        $query->select('id_stancer_customer');
+        $query->from(static::$definition['table']);
+        $query->where('`id_customer` = ' . (int) $apiCustomer->getExternalId());
+
+        $existingCustomerId = Db::getInstance()->getValue($query);
+        if ($existingCustomerId) {
+            $customer = new static($existingCustomerId);
+        } else {
+            $customer = new static();
+        }
 
         $customer->id_customer = $apiCustomer->getExternalId();
         $customer->customer_id = $apiCustomer->getId();
@@ -211,6 +225,7 @@ class StancerApiCustomer extends ObjectModel
         }
 
         $customer->api = $apiCustomer;
+        $customer->save();
 
         return $customer;
     }

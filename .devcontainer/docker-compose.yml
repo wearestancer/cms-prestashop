@@ -1,0 +1,74 @@
+version: '3'
+
+services:
+  mysql:
+    image: mariadb:latest
+
+    environment:
+      - MARIADB_ROOT_PASSWORD=${DB_PASSWD}
+
+    healthcheck:
+      interval: 1s
+      retries: 3
+      start_period: 10s
+      test: mysqladmin ping -u $DB_USER -p$DB_PASSWD
+      timeout: 2s
+
+    ports:
+      - 3366:3306
+
+    restart: always
+
+    volumes:
+      - db:/var/lib/mysql
+
+  prestashop:
+    build:
+      context: .
+      dockerfile: dockerfile/prestashop.Dockerfile
+      args:
+        - IMAGE_TAG=8.0-apache
+        - MODULE=${PS_MODULE_NAME}-${PS_MODULE_VERSION}
+
+    command: sleep infinity
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    environment:
+      - ADMIN_MAIL=${ADMIN_MAIL}
+      - ADMIN_PASSWD=${ADMIN_PASSWD}
+
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWD=${DB_PASSWD}
+      - DB_PREFIX=ps_
+      - DB_SERVER=mysql
+      - DB_USER=${DB_USER}
+
+      - PS_COUNTRY=${PS_COUNTRY}
+      - PS_DEV_MODE=${PS_DEV_MODE}
+      - PS_DOMAIN=${PS_DOMAIN}:8443
+      - PS_ENABLE_SSL=1
+      - PS_FOLDER_ADMIN=${PS_FOLDER_ADMIN}
+      - PS_FOLDER_INSTALL=installed
+      - PS_INSTALL_DB=1
+      - PS_INSTALL_AUTO=1
+      - PS_LANGUAGE=${PS_LANGUAGE}
+      - PS_MODULE_NAME=${PS_MODULE_NAME}
+      - PS_MODULE_VERSION=${PS_MODULE_VERSION}
+
+    ports:
+      - 8080:80
+      - 8443:443
+
+    volumes:
+      - prestashop:/var/www/html:cached
+      - /var/run/docker.sock:/var/run/docker-host.sock:cached
+      - ..:/var/www/html/modules/stancer:cached
+
+
+
+volumes:
+  db:
+  prestashop:
