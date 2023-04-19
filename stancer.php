@@ -386,11 +386,11 @@ class Stancer extends PaymentModule
 
                     if (!$check) {
                         $hasError = true;
-                        $error = $this->l('%s is invalid.');
+                        $error = $this->l('"%s" is invalid.');
 
                         if ($infos['group'] === 'keys') {
                             $keysOk = false;
-                            $error = $this->l('%s is invalid, please provide a correct key.');
+                            $error = $this->l('"%s" is invalid, please provide a correct key.');
                         }
 
                         $output .= $this->displayError(sprintf($error, $infos['label']));
