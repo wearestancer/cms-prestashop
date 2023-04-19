@@ -8,16 +8,20 @@ const terms = [
     fr: 'https://manage.stancer.com/fr/developpeurs',
   },
   {
-    en: '%s is invalid.',
-    fr: '%s est invalide.',
+    en: '"%s" is invalid.',
+    fr: '"%s" est invalide.',
   },
   {
-    en: '%s is invalid, please provide a correct key.',
-    fr: '%s est invalide, merci de fournir une clé valide.',
+    en: '"%s" is invalid, please provide a correct key.',
+    fr: '"%s" est invalide, merci de fournir une clé valide.',
   },
   {
     en: 'Add scheme logo on reused card',
     fr: 'Ajouter le logo du réseau sur les cartes enregistrées',
+  },
+  {
+    en: 'Allow customers to reuse cards',
+    fr: "Autoriser l'enregistrement des cartes",
   },
   {
     en: 'API keys',

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] - 2023-03-06
 
 ### Added
+- Admin form can be hidded
 - `full-iframe` page type
 - Module and PrestaShop versions added to API requests
 - New devcontainer configuration, with PrestaShop included
