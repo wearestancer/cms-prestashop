@@ -11,5 +11,15 @@
 
 function upgrade_module_1_1_0($module)
 {
-    return $module->installConfigurations();
+    if (!$module->installConfigurations()) {
+        return false;
+    }
+
+    $mode = Configuration::get('STANCER_API_MODE');
+
+    if (!in_array($mode, [Stancer\Config::TEST_MODE, Stancer\Config::LIVE_MODE], true)) {
+        Configuration::updateValue('STANCER_API_MODE', $mode ? Stancer\Config::LIVE_MODE : Stancer\Config::TEST_MODE);
+    }
+
+    return true;
 }
