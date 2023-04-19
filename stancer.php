@@ -263,6 +263,24 @@ class Stancer extends PaymentModule
                 ],
             ];
 
+            $this->configurations['STANCER_ORDER_FOR_NOK_PAYMENTS'] = [
+                'default' => true,
+                'desc' => $this->l('When active, order will be created for failed payments.'),
+                'group' => 'settings',
+                'label' => $this->l('Create an order for every payments'),
+                'type' => 'switch',
+                'values' => [
+                    [
+                        'id' => 'active_on',
+                        'value' => 1,
+                    ],
+                    [
+                        'id' => 'active_off',
+                        'value' => 0,
+                    ],
+                ],
+            ];
+
             $desc = [];
             $desc[] = $this->l(join(' ', [
                 'Minimum amount to trigger an authenticated payment',

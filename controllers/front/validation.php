@@ -210,8 +210,10 @@ class StancerValidationModuleFrontController extends ModuleFrontController
                 $err = StancerErrors::getMessage(StancerErrors::PAYMENT_FAILED);
                 $this->errors[] = $err;
 
-                $this->createOrder($cart, $apiPayment, $payment->getOrderState());
-                $this->cloneCart($cart);
+                if (Configuration::get('STANCER_ORDER_FOR_NOK_PAYMENTS')) {
+                    $this->createOrder($cart, $apiPayment, $payment->getOrderState());
+                    $this->cloneCart($cart);
+                }
 
                 return $this->displayError($err);
             case Stancer\Payment\Status::AUTHORIZED:
