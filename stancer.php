@@ -72,12 +72,7 @@ class Stancer extends PaymentModule
         if (!$this->configurations) {
             $this->configurations = [];
 
-            $mode = Configuration::get('STANCER_API_MODE') ?: Stancer\Config::TEST_MODE;
-
-            if (Tools::getValue('STANCER_API_MODE')) {
-                $mode = Stancer\Config::LIVE_MODE;
-            }
-
+            $mode = Tools::getValue('STANCER_API_MODE', Configuration::get('STANCER_API_MODE'));
             $isLive = Stancer\Config::LIVE_MODE === $mode;
 
             $this->configurations['STANCER_ADMIN_SHOW_DISPLAY'] = [
@@ -138,9 +133,32 @@ class Stancer extends PaymentModule
                 'required' => false,
             ];
 
+            $link = implode('', [
+                '<a href="' . $this->l('https://www.stancer.com/documentation/api/#test-cards') . '" target="_blank">',
+                $this->l('test cards'),
+                '</a>',
+            ]);
             $this->configurations['STANCER_API_MODE'] = [
-                'default' => Stancer\Config::TEST_MODE,
-                'group' => 'hidden',
+                'default' => $mode,
+                'desc' => implode('<br />', [
+                    $this->l('In test mode, no payment will really send to a bank, only test card can be used.'),
+                    sprintf($this->l('Check the documentation to find %s.'), $link),
+                ]),
+                'group' => 'settings',
+                'label' => $this->l('Mode'),
+                'type' => 'radio',
+                'values' => [
+                    [
+                        'id' => Stancer\Config::LIVE_MODE,
+                        'label' => $this->l('Live'),
+                        'value' => Stancer\Config::LIVE_MODE,
+                    ],
+                    [
+                        'id' => Stancer\Config::TEST_MODE,
+                        'label' => $this->l('Test'),
+                        'value' => Stancer\Config::TEST_MODE,
+                    ],
+                ],
             ];
 
             $this->configurations['STANCER_API_HOST'] = [
@@ -388,7 +406,7 @@ class Stancer extends PaymentModule
             $apiMode = Stancer\Config::TEST_MODE;
 
             if ($keysOk) {
-                $apiMode = Tools::getValue('STANCER_API_MODE') ? Stancer\Config::LIVE_MODE : Stancer\Config::TEST_MODE;
+                $apiMode = Tools::getValue('STANCER_API_MODE') ?? Stancer\Config::TEST_MODE;
             } else {
                 $tmp = $this->l('You can not pass to live mode until an error occur with API keys.');
                 $output .= $this->displayError($tmp);
@@ -570,33 +588,6 @@ class Stancer extends PaymentModule
                 'title' => $this->l('Settings'),
             ],
             'input' => [],
-        ];
-
-        $link = implode('', [
-            '<a href="' . $this->l('https://www.stancer.com/documentation/api/#test-cards') . '" target="_blank">',
-            $this->l('test cards'),
-            '</a>',
-        ]);
-        $settings['input'][] = [
-            'desc' => implode('<br />', [
-                $this->l('In test mode, no payment will really send to a bank, only test card can be used.'),
-                sprintf($this->l('Check the documentation to find %s.'), $link),
-            ]),
-            'label' => $this->l('Mode'),
-            'name' => 'STANCER_API_MODE',
-            'type' => 'switch',
-            'values' => [
-                [
-                    'id' => 'active_on',
-                    'label' => $this->l('Live'),
-                    'value' => 1,
-                ],
-                [
-                    'id' => 'active_off',
-                    'label' => $this->l('Test'),
-                    'value' => 0,
-                ],
-            ],
         ];
 
         $mode = 'STANCER_API_MODE';
