@@ -80,6 +80,24 @@ class Stancer extends PaymentModule
 
             $isLive = Stancer\Config::LIVE_MODE === $mode;
 
+            $this->configurations['STANCER_ADMIN_SHOW_DISPLAY'] = [
+                'default' => true,
+                'group' => 'settings',
+                'type' => 'hidden',
+            ];
+
+            $this->configurations['STANCER_ADMIN_SHOW_KEYS'] = [
+                'default' => true,
+                'group' => 'settings',
+                'type' => 'hidden',
+            ];
+
+            $this->configurations['STANCER_ADMIN_SHOW_SETTINGS'] = [
+                'default' => true,
+                'group' => 'settings',
+                'type' => 'hidden',
+            ];
+
             $this->configurations['STANCER_API_LIVE_PUBLIC_KEY'] = [
                 'default' => '',
                 'desc' => sprintf($this->l('Starts with "%s"'), 'pprod_'),
@@ -392,16 +410,25 @@ class Stancer extends PaymentModule
         }
 
         $helper = $this->getHelperForm();
-        $form = [
-            $this->getContentFormKeys($helper),
-            $this->getContentFormSettings($helper),
-            $this->getContentFormDisplay($helper),
-            [
-                'form' => [
-                    'submit' => [
-                        'class' => 'btn btn-default pull-right',
-                        'title' => $this->l('Save'),
-                    ],
+        $form = [];
+
+        if (Configuration::get('STANCER_ADMIN_SHOW_KEYS')) {
+            $form[] = $this->getContentFormKeys($helper);
+        }
+
+        if (Configuration::get('STANCER_ADMIN_SHOW_SETTINGS')) {
+            $form[] = $this->getContentFormSettings($helper);
+        }
+
+        if (Configuration::get('STANCER_ADMIN_SHOW_DISPLAY')) {
+            $form[] = $this->getContentFormDisplay($helper);
+        }
+
+        $form[] = [
+            'form' => [
+                'submit' => [
+                    'class' => 'btn btn-default pull-right',
+                    'title' => $this->l('Save'),
                 ],
             ],
         ];
