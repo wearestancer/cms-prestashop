@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - API keys wording
-- Mode switch is now `on` for live mode
+- Refact mode switch
 - No default timeout
 - Version requirements
 
