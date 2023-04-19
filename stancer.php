@@ -211,11 +211,6 @@ class Stancer extends PaymentModule
                         'value' => 'iframe',
                     ],
                     [
-                        'id' => 'full-iframe',
-                        'label' => $this->l('Inside the page, including authenticated payment'),
-                        'value' => 'full-iframe',
-                    ],
-                    [
                         'id' => 'redirect',
                         'label' => $this->l('Redirect to an external page'),
                         'value' => 'redirect',
