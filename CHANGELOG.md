@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Admin form can be hidded
+- Failed payments may not create an order [#1](https://gitlab.com/wearestancer/cms/prestashop/-/issues/1)
 - `full-iframe` page type
 - Module and PrestaShop versions added to API requests
 - New devcontainer configuration, with PrestaShop included

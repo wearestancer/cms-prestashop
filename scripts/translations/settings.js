@@ -48,6 +48,10 @@ const terms = [
     fr: 'Regardez la documentation pour trouver %s.',
   },
   {
+    en: 'Create an order for every payments',
+    fr: 'Créer une commande pour chaque paiement',
+  },
+  {
     en: 'Currency of the cart',
     fr: 'Device du panier',
   },
@@ -158,6 +162,10 @@ const terms = [
   {
     en: 'Total amount',
     fr: 'Montant total',
+  },
+  {
+    en: 'When active, order will be created for failed payments.',
+    fr: 'Avec cette option activée, une commande sera créée lors des échecs de paiements.',
   },
   {
     en: 'Will be used as description for every payment made.',
