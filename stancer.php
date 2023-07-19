@@ -382,6 +382,8 @@ class Stancer extends PaymentModule
                     foreach ($this->languages as $lang) {
                         $value[$lang['id_lang']] = Tools::getValue($name . '_' . $lang['id_lang']);
                     }
+                } elseif (false === $value) {
+                    continue;
                 }
 
                 if (is_array($value)) {
@@ -390,7 +392,7 @@ class Stancer extends PaymentModule
                     $value = trim($value);
                 }
 
-                if ((!array_key_exists('required', $infos) || !$infos['required']) && !$value) {
+                if ((!array_key_exists('required', $infos) || !$infos['required']) && '' === $value) {
                     continue;
                 }
 
