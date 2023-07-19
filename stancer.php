@@ -1033,8 +1033,7 @@ class Stancer extends PaymentModule
      */
     public function uninstall(): bool
     {
-        return
-            parent::uninstall()
+        return parent::uninstall()
             && $this->uninstallConfigurations()
             && $this->uninstallDbRequirements()
             && $this->uninstallHooks();
