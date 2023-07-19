@@ -141,7 +141,7 @@ class Stancer extends PaymentModule
             $this->configurations['STANCER_API_MODE'] = [
                 'default' => $mode,
                 'desc' => implode('<br />', [
-                    $this->l('In test mode, no payment will really send to a bank, only test card can be used.'),
+                    $this->l('In test mode, no payment will be sent to a bank, only test cards can be used.'),
                     sprintf($this->l('Check the documentation to find %s.'), $link),
                 ]),
                 'group' => 'settings',
@@ -207,7 +207,7 @@ class Stancer extends PaymentModule
                 'values' => [
                     [
                         'id' => 'iframe',
-                        'label' => $this->l('Inside the page (recommanded)'),
+                        'label' => $this->l('Inside the page (recommended)'),
                         'value' => 'iframe',
                     ],
                     [
@@ -260,9 +260,9 @@ class Stancer extends PaymentModule
 
             $this->configurations['STANCER_ORDER_FOR_NOK_PAYMENTS'] = [
                 'default' => true,
-                'desc' => $this->l('When active, order will be created for failed payments.'),
+                'desc' => $this->l('When active, an order will be created for failed payments.'),
                 'group' => 'settings',
-                'label' => $this->l('Create an order for every payments'),
+                'label' => $this->l('Create an order for every payment'),
                 'type' => 'switch',
                 'values' => [
                     [
@@ -282,7 +282,7 @@ class Stancer extends PaymentModule
                 '(3DS, Verified by Visa, Mastercard Secure Code...)',
             ]));
             $desc[] = $this->l(join(' ', [
-                'Leave blank if you do not wish to authenticate,',
+                'Leave blank if you do not wish to authenticate payments,',
                 'at zero all payments will be authenticated.',
             ]));
 
@@ -327,7 +327,7 @@ class Stancer extends PaymentModule
             ];
 
             $desc[] = '<details class="help-block">';
-            $desc[] = '<summary>' . $this->l('You may use simple variables, click to see.') . '</summary>';
+            $desc[] = '<summary>' . $this->l('You may use simple variables, click here to see the list.') . '</summary>';
             $desc[] = '<dl>';
 
             foreach ($vars as $key => $val) {
@@ -421,7 +421,7 @@ class Stancer extends PaymentModule
             if ($keysOk) {
                 $apiMode = Tools::getValue('STANCER_API_MODE') ?? Stancer\Config::TEST_MODE;
             } else {
-                $tmp = $this->l('You can not pass to live mode until an error occur with API keys.');
+                $tmp = $this->l('You cannot switch to live mode while an error is occurring with the API keys.');
                 $output .= $this->displayError($tmp);
                 $hasError = true;
             }
