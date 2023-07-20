@@ -5,7 +5,9 @@
  * @author    Stancer <hello@stancer.com>
  * @copyright 2018-2023 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
+ *
  * @website   https://www.stancer.com
+ *
  * @version   1.1.0
  */
 
@@ -70,6 +72,7 @@ class StancerApi
      * Mark a Stancer payment as captured
      *
      * @param Stancer\Payment $apiPayment
+     *
      * @return void
      */
     public function markPaymentAsCaptured(Stancer\Payment $apiPayment)
@@ -84,6 +87,7 @@ class StancerApi
      * Pay with existing card
      *
      * @param Stancer\Payment $apiPayment
+     *
      * @return void
      */
     public function sendToApi(Stancer\Payment $apiPayment)
@@ -126,6 +130,7 @@ class StancerApi
      * @param Language $language
      * @param Currency $currency
      * @param StancerApiCard|null $card
+     *
      * @return Stancer\Payment
      */
     public function sendPayment(
@@ -133,9 +138,9 @@ class StancerApi
         Customer $customer,
         Language $language,
         Currency $currency,
-        ?StancerApiCard $card = null,
+        StancerApiCard $card = null,
         array &$errors = [],
-        ?string &$log = null
+        string &$log = null
     ): Stancer\Payment {
         $paymentData = $this->buildPaymentData($cart, $language, $currency);
         $psApiCustomer = StancerApiCustomer::find($customer);

@@ -23,9 +23,9 @@ phpcs:
     - composer update --no-progress --prefer-stable
 
   script:
-    - ./vendor/bin/phpcs || true
-    - ./vendor/bin/phpcs --report=junit --report-file=phpcs.junit.xml
+    - ./vendor/bin/php-cs-fixer fix --dry-run --diff || true
+    - ./vendor/bin/php-cs-fixer fix --dry-run --format=gitlab > gl-code-quality-report.json
 
   artifacts:
     reports:
-      junit: phpcs.junit.xml
+      codequality: gl-code-quality-report.json

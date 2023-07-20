@@ -14,7 +14,7 @@
         "stancer/stancer": "^1.0"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "^3.7"
+        "prestashop/php-dev-tools": "^4.3"
     },
     "license": "MIT",
     "config": {

@@ -7,6 +7,7 @@ node_modules/
 .pnpm-store/
 
 # Tests report
+.cache/
 reports/
 
 # OS specific files

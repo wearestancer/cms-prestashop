@@ -5,7 +5,9 @@
  * @author    Stancer <hello@stancer.com>
  * @copyright 2018-2023 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
+ *
  * @website   https://www.stancer.com
+ *
  * @version   1.1.0
  */
 
