@@ -5,7 +5,9 @@
  * @author    Stancer <hello@stancer.com>
  * @copyright 2018-2023 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
+ *
  * @website   https://www.stancer.com
+ *
  * @version   1.1.0
  */
 
@@ -19,6 +21,7 @@ trait StancerControllerTrait
      *
      * @param string $message
      * @param int $logLevel
+     *
      * @return void
      */
     public function displayError(string $message, int $logLevel = 4)
@@ -63,6 +66,7 @@ trait StancerControllerTrait
      * Redirect an url or default redirection (last step of payment)
      *
      * @param mixed $url
+     *
      * @return void
      */
     public function redirect($url = null)

@@ -5,10 +5,11 @@
  * @author    Stancer <hello@stancer.com>
  * @copyright 2018-2023 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
+ *
  * @website   https://www.stancer.com
+ *
  * @version   1.0.0
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -328,7 +329,9 @@ class Stancer extends PaymentModule
             ];
 
             $desc[] = '<details class="help-block">';
-            $desc[] = '<summary>' . $this->l('You may use simple variables, click here to see the list.') . '</summary>';
+            $desc[] = '<summary>';
+            $desc[] = $this->l('You may use simple variables, click here to see the list.');
+            $desc[] = '</summary>';
             $desc[] = '<dl>';
 
             foreach ($vars as $key => $val) {
@@ -361,6 +364,7 @@ class Stancer extends PaymentModule
      * Show configuration form
      *
      * @uses self::getHelperForm()
+     *
      * @return string
      */
     public function getContent()
@@ -476,6 +480,7 @@ class Stancer extends PaymentModule
      * Create admin form for display settings.
      *
      * @param HelperForm $helper
+     *
      * @return array
      */
     public function getContentFormDisplay(HelperForm $helper): array
@@ -534,6 +539,7 @@ class Stancer extends PaymentModule
      * Create admin form for keys.
      *
      * @param mixed $helper
+     *
      * @return array
      */
     public function getContentFormKeys(HelperForm $helper): array
@@ -594,6 +600,7 @@ class Stancer extends PaymentModule
      * Create admin form for generals settings.
      *
      * @param HelperForm $helper
+     *
      * @return array
      */
     public function getContentFormSettings(HelperForm $helper): array
@@ -703,6 +710,7 @@ class Stancer extends PaymentModule
      * Hook called to display payment methods (PS1.7+).
      *
      * @param array $params
+     *
      * @return PrestaShop\PrestaShop\Core\Payment\PaymentOption[]
      */
     public function hookPaymentOptions(array $params): array
@@ -804,6 +812,7 @@ class Stancer extends PaymentModule
      * @uses self::installConfigurations()
      * @uses self::installDbRequirements()
      * @uses self::installHooks()
+     *
      * @return bool
      */
     public function install(): bool
@@ -968,6 +977,7 @@ class Stancer extends PaymentModule
 
         try {
             $apiConfig = new StancerApiConfig();
+
             return $apiConfig->isConfigured();
         } catch (Exception $e) {
             return false;
@@ -987,7 +997,7 @@ class Stancer extends PaymentModule
     /**
      * Add a JS file to the current controller.
      *
-     * @param string $name Name of the JS file to add.
+     * @param string $name name of the JS file to add
      */
     protected function registerJavascript(string $name): self
     {
@@ -1002,7 +1012,7 @@ class Stancer extends PaymentModule
     /**
      * Add a CSS file to the current controller.
      *
-     * @param string $name Name of the CSS file to add.
+     * @param string $name name of the CSS file to add
      */
     protected function registerStylesheet(string $name): self
     {
@@ -1019,6 +1029,7 @@ class Stancer extends PaymentModule
      *
      * @param string $name
      * @param array $params
+     *
      * @return void
      */
     public function updateConfigurationList(string $name, array $params): void
@@ -1032,6 +1043,7 @@ class Stancer extends PaymentModule
      * @uses self::uninstallConfigurations()
      * @uses self::uninstallDbRequirements()
      * @uses self::uninstallHooks()
+     *
      * @return bool
      */
     public function uninstall(): bool

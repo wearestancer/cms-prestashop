@@ -5,7 +5,9 @@
  * @author    Stancer <hello@stancer.com>
  * @copyright 2018-2023 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
+ *
  * @website   https://www.stancer.com
+ *
  * @version   1.1.0
  */
 
@@ -163,6 +165,7 @@ class StancerApiPayment extends ObjectModel
      *
      * @param Cart $cart
      * @param Currency $currency
+     *
      * @return StancerApiPayment
      */
     public static function find(Cart $cart, Currency $currency): ?StancerApiPayment
@@ -257,6 +260,7 @@ class StancerApiPayment extends ObjectModel
      *
      * @param Stancer\Payment $payment
      * @param Cart $cart
+     *
      * @return StancerApiPayment
      */
     public static function saveFrom(Stancer\Payment $apiPayment, Cart $cart): StancerApiPayment
