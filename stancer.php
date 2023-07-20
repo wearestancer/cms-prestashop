@@ -205,6 +205,13 @@ class Stancer extends PaymentModule
                 'template' => 'logo',
             ];
 
+            $this->configurations['STANCER_FROM_MARKETPLACE'] = [
+                'default' => false,
+                'desc' => 'Internal flag, set to true if the module was installed from the marketplace',
+                'group' => 'settings',
+                'type' => 'hidden',
+            ];
+
             $this->configurations['STANCER_PAGE_TYPE'] = [
                 'default' => 'iframe',
                 'group' => 'settings',
