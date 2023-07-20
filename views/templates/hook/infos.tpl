@@ -11,7 +11,7 @@
 {if !Configuration::get('PS_SSL_ENABLED')}
   <div class="alert alert-danger">
     <p>{l s='This module allows you to accept secure payments by card.' mod='stancer'}</p>
-    <p>{l s='For security reason, you must enable SSL to use this module.' mod='stancer'}</p>
+    <p>{l s='For security reasons, you must enable SSL to use this module.' mod='stancer'}</p>
     <p>
       {l s='This can be done in general preferences available in the left menu or by following this' mod='stancer'}
       <a

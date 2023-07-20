@@ -13,7 +13,7 @@
 {block name='page_content_container'}
   <div>
     <p>
-      {l s='This error may be temporary, please try again.' mod='stancer'}
+      {l s='This error should be temporary, please try again later.' mod='stancer'}
     </p>
     <p>
       {l s='If this message persists, please contact the store to resolve this issue as soon as possible.' mod='stancer'}

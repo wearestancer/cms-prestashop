@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Fixed
+- Change wordings #CMS-28
 - Some options in admin settings are impossible to deactivate #CMS-29 #CMS-30
 
 

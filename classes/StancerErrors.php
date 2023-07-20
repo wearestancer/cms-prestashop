@@ -42,11 +42,11 @@ class StancerErrors extends ObjectModel
             $message[] = sprintf($tmp, Configuration::get('STANCER_API_MODE'));
 
             $message[] = $module->l(
-                'Please reconfigure the module in administration or ask the site administrator to do it.',
+                'Please reconfigure the module or ask the site administrator to do it.',
                 'StancerErrors'
             );
         } else {
-            $message[] = $module->l('This payment method is actualy unavailable.', 'StancerErrors');
+            $message[] = $module->l('This payment method is currently unavailable.', 'StancerErrors');
             $message[] = $module->l('Please contact us to unlock this situation.', 'StancerErrors');
         }
 
@@ -58,15 +58,15 @@ class StancerErrors extends ObjectModel
             $module->l('Please contact us to unlock this situation.', 'StancerErrors'),
         ]);
         $errors[static::SERVER_ERROR] = implode(' ', [
-            $module->l('The payment platform is actualy unavailable.', 'StancerErrors'),
+            $module->l('The payment platform is currently unavailable.', 'StancerErrors'),
             $module->l('Please wait a minute and try again.', 'StancerErrors'),
         ]);
-        $errors[static::CLIENT_ERROR] = $module->l('The payment platform is actualy unreacheable.', 'StancerErrors');
+        $errors[static::CLIENT_ERROR] = $module->l('The payment platform is currently unreacheable.', 'StancerErrors');
         $errors[static::NO_PAYMENT] = $module->l('No payment found for this cart.', 'StancerErrors');
         $errors[static::NO_PAYMENT_REINSURANCE] = $module->l('Your card has not been charged.', 'StancerErrors');
         $errors[static::PAYMENT_FAILED] = $module->l('The payment attempt failed.', 'StancerErrors');
         $errors[static::UNKNOWN_ERROR] = $module->l(
-            'An unknown error occured during connexion to the payment plateform.',
+            'An unknown error occurred while connecting to the payment platform.',
             'StancerErrors',
         );
 

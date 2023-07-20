@@ -1,7 +1,7 @@
 const terms = [
   {
-    en: 'For security reason, you must enable SSL to use this module.',
-    fr: 'Pour des raisons de sécurités, vous devez activer SSL pour utiliser ce module.',
+    en: 'For security reasons, you must enable SSL to use this module.',
+    fr: 'Pour des raisons de sécurité, vous devez activer SSL pour utiliser ce module.',
     domains: [
       'infos',
     ],
@@ -22,14 +22,14 @@ const terms = [
   },
   {
     en: 'This can be done in general preferences available in the left menu or by following this',
-    fr: 'Cela peux être fait dans les préférences générales disponible dans le menu de gauche ou en suivant',
+    fr: 'Cela peut être fait dans les préférences générales disponibles dans le menu de gauche ou en suivant',
     domains: [
       'infos',
     ],
   },
   {
     en: 'This module allows you to accept secure payments by card.',
-    fr: "Ce module vous permet d'accepter les paiements par cartes de façon simple et sécurisé.",
+    fr: "Ce module vous permet d'accepter les paiements par carte de façon simple et sécurisée.",
     domains: [
       'infos',
     ],
