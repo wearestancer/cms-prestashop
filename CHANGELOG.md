@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- PrestaShop 8.1 support
+
 ### Fixed
 - Change wordings #CMS-28
 - Some options in admin settings are impossible to deactivate #CMS-29 #CMS-30
