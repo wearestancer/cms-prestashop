@@ -8,7 +8,7 @@
  *
  * @website   https://www.stancer.com
  *
- * @version   1.1.0
+ * @version   1.2.0
  */
 function upgrade_module_1_1_0($module)
 {

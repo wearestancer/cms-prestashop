@@ -8,7 +8,7 @@
  *
  * @website   https://www.stancer.com
  *
- * @version   1.1.0
+ * @version   1.2.0
  */
 header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 60) . ' GMT');
 header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
