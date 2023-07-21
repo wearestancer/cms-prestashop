@@ -11,11 +11,11 @@ services:
       interval: 1s
       retries: 3
       start_period: 10s
-      test: mysqladmin ping -u $DB_USER -p$DB_PASSWD
+      test: mariadb-admin ping -u $DB_USER -p$DB_PASSWD
       timeout: 2s
 
     ports:
-      - 3366:3306
+      - 3336:3306
 
     restart: always
 
@@ -27,7 +27,7 @@ services:
       context: .
       dockerfile: dockerfile/prestashop.Dockerfile
       args:
-        - IMAGE_TAG=8.0-apache
+        - IMAGE_TAG=8.1-apache
         - MODULE=${PS_MODULE_NAME}-${PS_MODULE_VERSION}
 
     command: sleep infinity

@@ -3,11 +3,9 @@
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "prestashop",
 	"workspaceFolder": "/var/www/html/modules/stancer",
-
 	"remoteEnv": {
 		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
 	},
-
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -15,8 +13,8 @@
 				"bmewburn.vscode-intelephense-client",
 				"editorconfig.editorconfig",
 				"esbenp.prettier-vscode",
+				"higoka.php-cs-fixer",
 				"mrmlnc.vscode-apache",
-				"shevaua.phpcs",
 				"stylelint.vscode-stylelint",
 				"xdebug.php-debug"
 			],
@@ -24,6 +22,8 @@
 				"editor.rulers": [
 					120
 				],
+				"php-cs-fixer.configFile": "/var/www/html/modules/stancer/.php-cs-fixer.dist.php",
+				"php-cs-fixer.executable": "/var/www/html/modules/stancer/vendor/bin/php-cs-fixer",
 				"php.validate.executablePath": "/usr/local/bin/php",
 				"[javascript]": {
 					"editor.defaultFormatter": "esbenp.prettier-vscode",
