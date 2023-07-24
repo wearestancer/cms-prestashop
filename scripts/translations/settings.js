@@ -1,9 +1,5 @@
 const terms = [
   {
-    en: 'https://www.stancer.com/documentation/api/#test-cards',
-    fr: 'https://www.stancer.com/documentation/api/#test-cards',
-  },
-  {
     en: 'https://manage.stancer.com/en/developers',
     fr: 'https://manage.stancer.com/fr/developpeurs',
   },
@@ -44,10 +40,6 @@ const terms = [
     fr: 'Identifiant du panier',
   },
   {
-    en: 'Check the documentation to find %s.',
-    fr: 'Regardez la documentation pour trouver %s.',
-  },
-  {
     en: 'Create an order for every payment',
     fr: 'Créer une commande pour chaque paiement',
   },
@@ -60,10 +52,6 @@ const terms = [
     fr: 'Affichage',
   },
   {
-    en: 'In test mode, no payment will be sent to a bank, only test cards can be used.',
-    fr: 'En mode test, aucun paiement ne sera envoyé à une banque, seules les cartes de test sont utilisables.',
-  },
-  {
     en: 'Inside the page (recommended)',
     fr: 'Inclus dans la page (recommandé)',
   },
@@ -72,20 +60,8 @@ const terms = [
     fr: 'Inclus dans la page, incluant les paiements authentifiés',
   },
   {
-    en: 'Leave blank if you do not wish to authenticate payments, at zero all payments will be authenticated.',
-    fr: 'Laissez vide si vous ne souhaitez pas faire de paiement authentifié, si vous le placez à zéro tous les paiements seront authentifiés.',
-  },
-  {
     en: 'Live',
     fr: 'Production',
-  },
-  {
-    en: 'mandatory in live mode',
-    fr: 'obligatoire uniquement en mode production',
-  },
-  {
-    en: 'Minimum amount to trigger an authenticated payment (3DS, Verified by Visa, Mastercard Secure Code...)',
-    fr: `Montant minimum pour le déclenchement d'un paiement authentifié (3DS, "Verified by Visa", "Mastercard Secure Code"...)`,
   },
   {
     en: 'Mode',
@@ -148,14 +124,6 @@ const terms = [
     fr: 'La solution de paiement simple à petit prix.',
   },
   {
-    en: 'Starts with "%s"',
-    fr: 'Commence avec "%s"',
-  },
-  {
-    en: 'test cards',
-    fr: 'des cartes de test',
-  },
-  {
     en: 'Test',
     fr: 'Test',
   },
@@ -168,20 +136,8 @@ const terms = [
     fr: 'Avec cette option activée, une commande sera créée lors des échecs de paiements.',
   },
   {
-    en: 'Will be used as description for every payment made.',
-    fr: 'Sera utilisé comme description pour chaque paiement.',
-  },
-  {
-    en: 'You can create and recover your API keys on',
-    fr: 'Vous pouvez créer et récupérer vos clés API sur',
-  },
-  {
     en: 'You cannot switch to live mode while an error is occurring with the API keys.',
     fr: 'Vous ne pouvez pas passer en mode production tant que vous avez une erreur avec les clés API.',
-  },
-  {
-    en: 'You may use simple variables, click here to see the list.',
-    fr: 'Vous pouvez utiliser des variables, cliquez ici pour avoir la liste.',
   },
   {
     en: 'You must configure your keys before testing this module.',
