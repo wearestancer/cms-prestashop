@@ -356,7 +356,6 @@ class Stancer extends PaymentModule
 
         if (Tools::isSubmit('submit' . $this->name)) {
             $hasError = false;
-            $keysOk = true;
 
             foreach ($this->getConfigurationsList() as $name => $infos) {
                 $value = Tools::getValue($name);
@@ -377,11 +376,7 @@ class Stancer extends PaymentModule
                     $value = trim($value);
                 }
 
-                if ((!array_key_exists('required', $infos) || !$infos['required']) && '' === $value) {
-                    continue;
-                }
-
-                if (array_key_exists('pattern', $infos)) {
+                if (array_key_exists('pattern', $infos) && '' !== $value) {
                     $check = preg_match($infos['pattern'], $value) === 1;
 
                     if (!$check) {
@@ -389,7 +384,6 @@ class Stancer extends PaymentModule
                         $error = $this->l('"%s" is invalid.');
 
                         if ($infos['group'] === 'keys') {
-                            $keysOk = false;
                             $error = $this->l('"%s" is invalid, please provide a correct key.');
                         }
 
@@ -403,14 +397,25 @@ class Stancer extends PaymentModule
                 Configuration::updateValue($name, $value);
             }
 
-            $apiMode = Stancer\Config::TEST_MODE;
+            $apiMode = Tools::getValue('STANCER_API_MODE') ?? Stancer\Config::TEST_MODE;
 
-            if ($keysOk) {
-                $apiMode = Tools::getValue('STANCER_API_MODE') ?? Stancer\Config::TEST_MODE;
-            } else {
-                $tmp = $this->l('You cannot switch to live mode while an error is occurring with the API keys.');
-                $output .= $this->displayError($tmp);
-                $hasError = true;
+            if ($apiMode === Stancer\Config::LIVE_MODE) {
+                $keys = Configuration::getMultiple([
+                    'STANCER_API_LIVE_PUBLIC_KEY',
+                    'STANCER_API_LIVE_SECRET_KEY',
+                ]);
+
+                $keysOk = array_reduce($keys, function ($prev, $curr) {
+                    return $curr && (bool) $prev;
+                }, true);
+
+                if (!$keysOk) {
+                    $tmp = $this->l('You cannot switch to live mode while an error is occurring with the API keys.');
+                    $output .= $this->displayError($tmp);
+                    $hasError = true;
+
+                    $apiMode = Stancer\Config::TEST_MODE;
+                }
             }
 
             Configuration::updateValue('STANCER_API_MODE', $apiMode);
