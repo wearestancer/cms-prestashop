@@ -53,9 +53,61 @@ function upgrade_module_1_2_0($module)
         $config->setMode(Stancer\Config::LIVE_MODE);
 
         upgrade_modes();
+        fix_payments(true);
+    }
+
+    $testKeys = array_values(Configuration::getMultiple([
+        'STANCER_API_TEST_PUBLIC_KEY',
+        'STANCER_API_TEST_SECRET_KEY',
+    ]));
+
+    if ($testKeys) {
+        $config = Stancer\Config::init($testKeys);
+        $config->setMode(Stancer\Config::TEST_MODE);
+
+        fix_payments(false);
     }
 
     return true;
+}
+
+function fix_payments(bool $isProd)
+{
+    // We use direct db update to prevent messing with the current configuration during the migration
+    $db = Db::getInstance();
+
+    $payments = (new PrestaShopCollection('StancerApiPayment'))->where('live_mode', '=', (int) $isProd);
+
+    /** @var StancerApiPayment $payment */
+    foreach ($payments as $payment) {
+        try {
+            $api = $payment->getApiObject();
+            $status = $api->status;
+            $updates = [];
+
+            if (!$status && $api->auth && $api->auth->status !== Stancer\Auth\Status::SUCCESS) {
+                $status = Stancer\Payment\Status::FAILED;
+            }
+
+            if ($status) {
+                $updates[] = '`status` = "' . pSQL($status) . '"';
+            }
+
+            if (!trim($payment->card_id) && $api->card) {
+                $updates[] = '`card_id` = "' . pSQL($api->card->id) . '"';
+            }
+
+            if ($updates) {
+                $sql = 'UPDATE `' . _DB_PREFIX_ . 'stancer_payment`
+                    SET ' . implode(', ', $updates) . '
+                    WHERE `payment_id` = "' . pSQL($api->id) . '"';
+
+                $db->execute($sql);
+            }
+        } catch (Stancer\Exceptions\Exception $exception) {
+            // do nothing
+        }
+    }
 }
 
 function upgrade_modes()

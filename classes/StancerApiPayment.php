@@ -183,6 +183,7 @@ class StancerApiPayment extends ObjectModel
         $query->from(static::$definition['table']);
         $query->where('`id_cart` = ' . (int) $cart->id);
         $query->where('`currency` = "' . pSQL($currency->iso_code) . '"');
+        $query->where('`status` = "pending"');
 
         $row = Db::getInstance()->getRow($query);
         if (!$row) {
@@ -261,7 +262,26 @@ class StancerApiPayment extends ObjectModel
         $this->live_mode = $config->isLiveMode();
 
         if ($this->api) {
-            $this->payment_id = $this->api->getId();
+            $this->payment_id = $this->api->id;
+
+            if ($this->api->card) {
+                $this->card_id = $this->api->card->id;
+            }
+
+            if ($this->api->customer) {
+                $this->customer_id = $this->api->customer->id;
+            }
+
+            $status = $this->api->status;
+
+            if (!$status && $this->api->auth) {
+                if (in_array($this->api->auth->status, ['declined', 'expired', 'failed', 'unavailable'], true)) {
+                    // We can not mark the payment failed in the API
+                    $status = Stancer\Payment\Status::FAILED;
+                }
+            }
+
+            $this->status = $status ?? 'pending';
         }
 
         return parent::save($null_values, $auto_date);
@@ -283,28 +303,19 @@ class StancerApiPayment extends ObjectModel
             $payment = new static();
         }
 
-        $card = $apiPayment->getCard();
-        $creation = $apiPayment->getCreationDate();
-        $customer = $apiPayment->getCustomer();
-        $status = $apiPayment->getStatus();
+        $card = $apiPayment->card;
+        $creation = $apiPayment->creationDate;
+        $customer = $apiPayment->customer;
 
-        if (!$status && $apiPayment->auth) {
-            if (in_array($apiPayment->auth->status, ['declined', 'expired', 'failed', 'unavailable'], true)) {
-                // We can not mark the payment failed in the API
-                $status = Stancer\Payment\Status::FAILED;
-            }
-        }
-
-        $payment->payment_id = $apiPayment->getId();
-        $payment->currency = $apiPayment->getCurrency();
-        $payment->amount = $apiPayment->getAmount();
-        $payment->status = $status;
-        $payment->card_id = $card ? $card->getId() : null;
-        $payment->created = $creation ? $creation->format('Y-m-d H:i:s') : null;
-        $payment->customer_id = $customer ? $customer->getId() : null;
-        $payment->id_cart = $cart->id;
-
+        $payment->amount = $apiPayment->amount;
         $payment->api = $apiPayment;
+        $payment->card_id = $card ? $card->id : null;
+        $payment->created = $creation ? $creation->format('Y-m-d H:i:s') : null;
+        $payment->currency = $apiPayment->currency;
+        $payment->customer_id = $customer ? $customer->id : null;
+        $payment->id_cart = $cart->id;
+        $payment->payment_id = $apiPayment->id;
+
         $payment->save();
 
         return $payment;
