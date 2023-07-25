@@ -31,6 +31,9 @@ class StancerApiPayment extends ObjectModel
     /** @var int Order id */
     public $id_order;
 
+    /** @var bool Is a live mode object? */
+    public $live_mode;
+
     /** @var string Currency */
     public $currency;
 
@@ -82,6 +85,11 @@ class StancerApiPayment extends ObjectModel
             'id_order' => [
                 'type' => self::TYPE_INT,
                 'validate' => 'isUnsignedId',
+            ],
+            'live_mode' => [
+                'required' => true,
+                'type' => self::TYPE_BOOL,
+                'validate' => 'isBool',
             ],
             'currency' => [
                 'required' => true,
@@ -236,7 +244,7 @@ class StancerApiPayment extends ObjectModel
     }
 
     /**
-     * Save Stancer api payment
+     * Save Stancer API payment
      *
      * @param bool $null_values
      * @param bool $auto_date
@@ -248,6 +256,10 @@ class StancerApiPayment extends ObjectModel
      */
     public function save($null_values = false, $auto_date = true): bool
     {
+        $config = new StancerApiConfig();
+
+        $this->live_mode = $config->isLiveMode();
+
         if ($this->api) {
             $this->payment_id = $this->api->getId();
         }
@@ -266,6 +278,7 @@ class StancerApiPayment extends ObjectModel
     public static function saveFrom(Stancer\Payment $apiPayment, Cart $cart): StancerApiPayment
     {
         $payment = static::findByApiPayment($apiPayment);
+
         if (!$payment) {
             $payment = new static();
         }
@@ -273,11 +286,19 @@ class StancerApiPayment extends ObjectModel
         $card = $apiPayment->getCard();
         $creation = $apiPayment->getCreationDate();
         $customer = $apiPayment->getCustomer();
+        $status = $apiPayment->getStatus();
+
+        if (!$status && $apiPayment->auth) {
+            if (in_array($apiPayment->auth->status, ['declined', 'expired', 'failed', 'unavailable'], true)) {
+                // We can not mark the payment failed in the API
+                $status = Stancer\Payment\Status::FAILED;
+            }
+        }
 
         $payment->payment_id = $apiPayment->getId();
         $payment->currency = $apiPayment->getCurrency();
         $payment->amount = $apiPayment->getAmount();
-        $payment->status = $apiPayment->getStatus() ?: 'pending';
+        $payment->status = $status;
         $payment->card_id = $card ? $card->getId() : null;
         $payment->created = $creation ? $creation->format('Y-m-d H:i:s') : null;
         $payment->customer_id = $customer ? $customer->getId() : null;

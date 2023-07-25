@@ -22,6 +22,9 @@ class StancerApiCustomer extends ObjectModel
     /** @var string Customer id */
     public $customer_id;
 
+    /** @var bool Is a live mode object? */
+    public $live_mode;
+
     /** @var string Customer name */
     public $name;
 
@@ -62,6 +65,11 @@ class StancerApiCustomer extends ObjectModel
                 'size' => 29,
                 'type' => self::TYPE_STRING,
                 'validate' => 'isString',
+            ],
+            'live_mode' => [
+                'required' => true,
+                'type' => self::TYPE_BOOL,
+                'validate' => 'isBool',
             ],
             'name' => [
                 'size' => 64,
@@ -183,6 +191,10 @@ class StancerApiCustomer extends ObjectModel
      */
     public function save($null_values = false, $auto_date = true)
     {
+        $config = new StancerApiConfig();
+
+        $this->live_mode = $config->isLiveMode();
+
         if ($this->api) {
             $this->customer_id = $this->api->getId();
             $this->name = $this->api->getName();
@@ -205,9 +217,10 @@ class StancerApiCustomer extends ObjectModel
         $query = new DbQuery();
         $query->select('id_stancer_customer');
         $query->from(static::$definition['table']);
-        $query->where('`id_customer` = ' . (int) $apiCustomer->getExternalId());
+        $query->where('`customer_id` = "' . pSQL($apiCustomer->id) . '"');
 
         $existingCustomerId = Db::getInstance()->getValue($query);
+
         if ($existingCustomerId) {
             $customer = new static($existingCustomerId);
         } else {

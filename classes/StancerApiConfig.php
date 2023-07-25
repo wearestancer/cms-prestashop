@@ -22,17 +22,11 @@ class StancerApiConfig
     /** @var string API Host */
     public $host;
 
-    /** @var string API Timeout */
+    /** @var int|null API Timeout */
     public $timeout;
 
     /** @var string Auth limit */
     public $authLimit;
-
-    /** @var string Public API key */
-    public $publicKey;
-
-    /** @var string Secret API key */
-    public $secretKey;
 
     /** @var bool API is configured ? */
     public $isConfigured;
@@ -48,8 +42,6 @@ class StancerApiConfig
         $this->host = Configuration::get('STANCER_API_HOST');
         $this->timeout = Configuration::get('STANCER_API_TIMEOUT');
         $this->authLimit = Configuration::get('STANCER_AUTH_LIMIT');
-        $this->publicKey = $this->getPublicKey();
-        $this->secretKey = $this->getSecretKey();
         $this->isConfigured = $this->isConfigured();
     }
 
@@ -110,17 +102,23 @@ class StancerApiConfig
     }
 
     /**
+     * Checks if on live mode
+     *
+     * @return bool
+     */
+    public function isLiveMode(): bool
+    {
+        return $this->mode === Stancer\Config::LIVE_MODE;
+    }
+
+    /**
      * Checks if on test mode
      *
      * @return bool
      */
     public function isTestMode(): bool
     {
-        if ($this->mode === Stancer\Config::TEST_MODE) {
-            return true;
-        }
-
-        return false;
+        return $this->mode === Stancer\Config::TEST_MODE;
     }
 
     /**
@@ -131,10 +129,6 @@ class StancerApiConfig
     public function isConfigured(): bool
     {
         $apiConfig = $this->getConfig();
-
-        if (empty($apiConfig)) {
-            return false;
-        }
 
         if (empty($apiConfig->getPublicKey())) {
             return false;

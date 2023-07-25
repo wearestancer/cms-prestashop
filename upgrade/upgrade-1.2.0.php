@@ -12,5 +12,87 @@
  */
 function upgrade_module_1_2_0($module)
 {
-    return $module->installConfigurations();
+    // Add new configurations
+    if (!$module->installConfigurations()) {
+        return false;
+    }
+
+    // Update tables schema
+    $db = Db::getInstance();
+
+    $sql = 'ALTER TABLE `' . _DB_PREFIX_ . 'stancer_card`
+        ADD `live_mode` TINYINT(1) UNSIGNED NOT NULL COMMENT "Is a live mode object?" AFTER `card_id`;';
+
+    if (!$db->execute($sql)) {
+        return false;
+    }
+
+    $sql = 'ALTER TABLE `' . _DB_PREFIX_ . 'stancer_customer`
+        ADD `live_mode` TINYINT(1) UNSIGNED NOT NULL COMMENT "Is a live mode object?" AFTER `customer_id`;';
+
+    if (!$db->execute($sql)) {
+        return false;
+    }
+
+    $sql = 'ALTER TABLE `' . _DB_PREFIX_ . 'stancer_payment`
+        ADD `live_mode` TINYINT(1) UNSIGNED NOT NULL COMMENT "Is a live mode object?" AFTER `id_order`;';
+
+    if (!$db->execute($sql)) {
+        return false;
+    }
+
+    // Patch database
+
+    $liveKeys = array_values(Configuration::getMultiple([
+        'STANCER_API_LIVE_PUBLIC_KEY',
+        'STANCER_API_LIVE_SECRET_KEY',
+    ]));
+
+    if ($liveKeys) {
+        $config = Stancer\Config::init($liveKeys);
+        $config->setMode(Stancer\Config::LIVE_MODE);
+
+        upgrade_modes();
+    }
+
+    return true;
+}
+
+function upgrade_modes()
+{
+    // We use direct db update to prevent messing with the current configuration during the migration
+    $db = Db::getInstance();
+
+    $payments = new PrestaShopCollection('StancerApiPayment');
+
+    /** @var StancerApiPayment $payment */
+    foreach ($payments as $payment) {
+        try {
+            $api = $payment->getApiObject();
+
+            if ($api->card) {
+                $sql = 'UPDATE `' . _DB_PREFIX_ . 'stancer_card`
+                    SET `live_mode` = 1
+                    WHERE `card_id` = "' . pSQL($api->card->id) . '"';
+
+                $db->execute($sql);
+            }
+
+            if ($api->customer) {
+                $sql = 'UPDATE `' . _DB_PREFIX_ . 'stancer_customer`
+                    SET `live_mode` = 1
+                    WHERE `customer_id` = "' . pSQL($api->customer->id) . '"';
+
+                $db->execute($sql);
+            }
+
+            $sql = 'UPDATE `' . _DB_PREFIX_ . 'stancer_payment`
+                SET `live_mode` = 1
+                WHERE `payment_id` = "' . pSQL($api->id) . '"';
+
+            $db->execute($sql);
+        } catch (Stancer\Exceptions\Exception $exception) {
+            // do nothing
+        }
+    }
 }
