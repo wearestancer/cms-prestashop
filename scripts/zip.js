@@ -29,5 +29,6 @@ archive.on('error', (err) => {
 archive.pipe(output);
 
 archive.glob('**', { ignore }, { prefix: `${name}/` });
+archive.file('.htaccess', { prefix: `${name}/` });
 
 archive.finalize();
