@@ -16,8 +16,8 @@
   </summary>
   <dl>
     {foreach $variables as $key => $value}
-      <dt>{$key}</dt>
-      <dd>{$value}</dd>
+      <dt>{$key|escape:'htmlall':'UTF-8'}</dt>
+      <dd>{$value|escape:'htmlall':'UTF-8'}</dd>
     {/foreach}
   </dl>
 </details>

@@ -8,4 +8,5 @@
  * @version   1.2.0
  *}
 
-{l s='You can create and recover your API keys on' mod='stancer'} <a href="{$signup}" target="_blank">{$signup}</a>.
+{l s='You can create and recover your API keys on' mod='stancer'}
+<a href="{$signup|escape:'htmlall':'UTF-8'}" target="_blank">{$signup|escape:'htmlall':'UTF-8'}</a>.

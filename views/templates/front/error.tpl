@@ -19,7 +19,7 @@
       {l s='If this message persists, please contact the store to resolve this issue as soon as possible.' mod='stancer'}
     </p>
     <p class="lnk">
-      <a class="alert-link" href="{$back|escape:'html':'UTF-8'}" title="{l s='Back' mod='stancer'}">
+      <a class="alert-link" href="{$back|escape:'htmlall':'UTF-8'}" title="{l s='Back' mod='stancer'}">
         &laquo; {l s='Back' mod='stancer'}
       </a>
     </p>

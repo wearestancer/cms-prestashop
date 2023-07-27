@@ -10,9 +10,9 @@
 
 <iframe
   class="stancer-payment__iframe js-stancer-payment-iframe"
-  data-inner-3ds="{$3ds|default:false}"
-  data-target="{$target}"
-  data-validation="{$validation}"
+  data-inner-3ds="{$3ds|default:false|escape:'htmlall':'UTF-8'}"
+  data-target="{$target|escape:'htmlall':'UTF-8'}"
+  data-validation="{$validation|escape:'htmlall':'UTF-8'}"
 ></iframe>
 
 <p class="js-stancer-confirm-terms">

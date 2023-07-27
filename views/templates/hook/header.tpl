@@ -10,6 +10,6 @@
 
 <script>
 var STANCER = {
-  origin: "{Configuration::get('STANCER_PAGE_URL')}",
+  origin: "{Configuration::get('STANCER_PAGE_URL')|escape:'javascript':'UTF-8'}",
 };
 </script>

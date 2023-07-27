@@ -8,4 +8,10 @@
  * @version   1.2.0
  *}
 
-<input class="input" name="{$auth_limit}" type="number" value="{$value}" min="0" />
+<input
+  class="input"
+  name="{$auth_limit|escape:'htmlall':'UTF-8'}"
+  type="number"
+  value="{$value|escape:'htmlall':'UTF-8'}"
+  min="0"
+/>
