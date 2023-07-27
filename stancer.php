@@ -112,7 +112,7 @@ class Stancer extends PaymentModule
                 'group' => 'keys',
                 'label' => $this->l('Public live API key'),
                 'mode' => Stancer\Config::LIVE_MODE,
-                'pattern' => '/^pprod_/',
+                'pattern' => '/^pprod_\w{24}$/',
                 'public' => true,
                 'required' => $isLive,
             ];
@@ -122,7 +122,7 @@ class Stancer extends PaymentModule
                 'group' => 'keys',
                 'label' => $this->l('Secret live API key'),
                 'mode' => Stancer\Config::LIVE_MODE,
-                'pattern' => '/^sprod_/',
+                'pattern' => '/^sprod_\w{24}$/',
                 'public' => false,
                 'required' => $isLive,
             ];
@@ -132,7 +132,7 @@ class Stancer extends PaymentModule
                 'group' => 'keys',
                 'label' => $this->l('Public test API key'),
                 'mode' => Stancer\Config::TEST_MODE,
-                'pattern' => '/^ptest_/',
+                'pattern' => '/^ptest_\w{24}$/',
                 'public' => true,
                 'required' => false,
             ];
@@ -142,7 +142,7 @@ class Stancer extends PaymentModule
                 'group' => 'keys',
                 'label' => $this->l('Secret test API key'),
                 'mode' => Stancer\Config::TEST_MODE,
-                'pattern' => '/^stest_/',
+                'pattern' => '/^stest_\w{24}$/',
                 'public' => false,
                 'required' => false,
             ];
@@ -353,6 +353,8 @@ class Stancer extends PaymentModule
         $this->context->controller->addJs(_MODULE_DIR_ . $this->name . '/views/js/admin.js');
 
         $output = '';
+        $publicProdKeyInError = false;
+        $secretProdKeyInError = false;
 
         if (Tools::isSubmit('submit' . $this->name)) {
             $hasError = false;
@@ -384,6 +386,14 @@ class Stancer extends PaymentModule
                         $error = $this->l('"%s" is invalid.');
 
                         if ($infos['group'] === 'keys') {
+                            if ($infos['mode'] === Stancer\Config::LIVE_MODE) {
+                                if ($infos['public']) {
+                                    $publicProdKeyInError = true;
+                                } else {
+                                    $secretProdKeyInError = true;
+                                }
+                            }
+
                             $error = $this->l('"%s" is invalid, please provide a correct key.');
                         }
 
@@ -400,14 +410,26 @@ class Stancer extends PaymentModule
             $apiMode = Tools::getValue('STANCER_API_MODE') ?? Stancer\Config::TEST_MODE;
 
             if ($apiMode === Stancer\Config::LIVE_MODE) {
-                $keys = Configuration::getMultiple([
-                    'STANCER_API_LIVE_PUBLIC_KEY',
-                    'STANCER_API_LIVE_SECRET_KEY',
-                ]);
+                $public = Configuration::get('STANCER_API_LIVE_PUBLIC_KEY');
+                $secret = Configuration::get('STANCER_API_LIVE_SECRET_KEY');
+                $keysOk = !$publicProdKeyInError && !$secretProdKeyInError;
+                $error = $this->l('"%s" is invalid.');
 
-                $keysOk = array_reduce($keys, function ($prev, $curr) {
-                    return $curr && (bool) $prev;
-                }, true);
+                if (!$publicProdKeyInError) {
+                    if (!$public) {
+                        $label = $this->configurations['STANCER_API_LIVE_PUBLIC_KEY']['label'];
+                        $output .= $this->displayError(sprintf($error, $label));
+                        $keysOk = false;
+                    }
+                }
+
+                if (!$secretProdKeyInError) {
+                    if (!$secret) {
+                        $label = $this->configurations['STANCER_API_LIVE_SECRET_KEY']['label'];
+                        $output .= $this->displayError(sprintf($error, $label));
+                        $keysOk = false;
+                    }
+                }
 
                 if (!$keysOk) {
                     $tmp = $this->l('You cannot switch to live mode while an error is occurring with the API keys.');
