@@ -58,6 +58,20 @@ class StancerApi
         ];
         $description = $message ? str_replace(array_keys($params), $params, $message) : null;
 
+        $uniqueId = null;
+
+        if (Configuration::get('STANCER_FROM_MARKETPLACE')) {
+            $now = new DateTime();
+            $now->setTimezone(new DateTimeZone('UTC'));
+
+            $uniqueId = implode('-', [
+                'PS',
+                'MP',
+                $now->format('U'),
+                str_pad((string) $cart->id, 6, '0', STR_PAD_LEFT),
+            ]);
+        }
+
         return [
             'amount' => $amount,
             'auth' => $auth,
@@ -65,6 +79,7 @@ class StancerApi
             'description' => $description,
             'orderId' => (string) $cart->id,
             'returnUrl' => Context::getContext()->link->getModuleLink('stancer', 'validation', [], true),
+            'uniqueId' => $uniqueId,
         ];
     }
 
@@ -177,6 +192,10 @@ class StancerApi
 
         if ($apiPayment->getDescription() != $paymentData['description']) {
             $apiPayment->setDescription($paymentData['description']);
+        }
+
+        if ($paymentData['uniqueId']) {
+            $apiPayment->setUniqueId($paymentData['uniqueId']);
         }
 
         // Reuse an existing card

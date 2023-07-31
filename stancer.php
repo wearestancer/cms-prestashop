@@ -65,6 +65,18 @@ class Stancer extends PaymentModule
     }
 
     /**
+     * Fetch a template.
+     *
+     * @param string $path path of the template to fetch
+     *
+     * @return string
+     */
+    protected function fetchTemplate(string $path)
+    {
+        return $this->context->smarty->fetch('module:' . $this->name . '/views/templates/' . $path);
+    }
+
+    /**
      * Return configuration for install or unistall module
      *
      * @return array
@@ -97,55 +109,47 @@ class Stancer extends PaymentModule
 
             $this->configurations['STANCER_API_LIVE_PUBLIC_KEY'] = [
                 'default' => '',
-                'desc' => sprintf($this->l('Starts with "%s"'), 'pprod_'),
                 'group' => 'keys',
                 'label' => $this->l('Public live API key'),
                 'mode' => Stancer\Config::LIVE_MODE,
-                'pattern' => '/^pprod_/',
+                'pattern' => '/^pprod_\w{24}$/',
+                'public' => true,
                 'required' => $isLive,
             ];
 
             $this->configurations['STANCER_API_LIVE_SECRET_KEY'] = [
                 'default' => '',
-                'desc' => sprintf($this->l('Starts with "%s"'), 'sprod_'),
                 'group' => 'keys',
                 'label' => $this->l('Secret live API key'),
                 'mode' => Stancer\Config::LIVE_MODE,
-                'pattern' => '/^sprod_/',
+                'pattern' => '/^sprod_\w{24}$/',
+                'public' => false,
                 'required' => $isLive,
             ];
 
             $this->configurations['STANCER_API_TEST_PUBLIC_KEY'] = [
                 'default' => '',
-                'desc' => sprintf($this->l('Starts with "%s"'), 'ptest_'),
                 'group' => 'keys',
                 'label' => $this->l('Public test API key'),
                 'mode' => Stancer\Config::TEST_MODE,
-                'pattern' => '/^ptest_/',
+                'pattern' => '/^ptest_\w{24}$/',
+                'public' => true,
                 'required' => false,
             ];
 
             $this->configurations['STANCER_API_TEST_SECRET_KEY'] = [
                 'default' => '',
-                'desc' => sprintf($this->l('Starts with "%s"'), 'stest_'),
                 'group' => 'keys',
                 'label' => $this->l('Secret test API key'),
                 'mode' => Stancer\Config::TEST_MODE,
-                'pattern' => '/^stest_/',
+                'pattern' => '/^stest_\w{24}$/',
+                'public' => false,
                 'required' => false,
             ];
 
-            $link = implode('', [
-                '<a href="' . $this->l('https://www.stancer.com/documentation/api/#test-cards') . '" target="_blank">',
-                $this->l('test cards'),
-                '</a>',
-            ]);
             $this->configurations['STANCER_API_MODE'] = [
                 'default' => $mode,
-                'desc' => implode('<br />', [
-                    $this->l('In test mode, no payment will be sent to a bank, only test cards can be used.'),
-                    sprintf($this->l('Check the documentation to find %s.'), $link),
-                ]),
+                'desc' => $this->fetchTemplate('admin/descriptions/api_mode.tpl'),
                 'group' => 'settings',
                 'label' => $this->l('Mode'),
                 'type' => 'radio',
@@ -199,6 +203,13 @@ class Stancer extends PaymentModule
                 'group' => 'display',
                 'label' => $this->l('Payment option logo'),
                 'template' => 'logo',
+            ];
+
+            $this->configurations['STANCER_FROM_MARKETPLACE'] = [
+                'default' => false,
+                'desc' => 'Internal flag, set to true if the module was installed from the marketplace',
+                'group' => 'settings',
+                'type' => 'hidden',
             ];
 
             $this->configurations['STANCER_PAGE_TYPE'] = [
@@ -278,31 +289,16 @@ class Stancer extends PaymentModule
                 ],
             ];
 
-            $desc = [];
-            $desc[] = $this->l(join(' ', [
-                'Minimum amount to trigger an authenticated payment',
-                '(3DS, Verified by Visa, Mastercard Secure Code...)',
-            ]));
-            $desc[] = $this->l(join(' ', [
-                'Leave blank if you do not wish to authenticate payments,',
-                'at zero all payments will be authenticated.',
-            ]));
-
             $authLimit = 'STANCER_AUTH_LIMIT';
-            $value = Tools::getValue($authLimit, Configuration::get($authLimit));
-            $attr = [
-                'class="input"',
-                'name="' . $authLimit . '"',
-                'type="number"',
-                'value="' . $value . '"',
-                'min="0"',
-            ];
+
+            $this->context->smarty->assign('auth_limit', $authLimit);
+            $this->context->smarty->assign('value', Tools::getValue($authLimit, Configuration::get($authLimit)));
 
             $this->configurations[$authLimit] = [
                 'default' => 0,
-                'desc' => join('<br />', $desc),
+                'desc' => $this->fetchTemplate('admin/descriptions/auth_limit.tpl'),
                 'group' => 'settings',
-                'html_content' => '<input ' . join(' ', $attr) . ' />',
+                'html_content' => $this->fetchTemplate('admin/input/auth_limit.tpl'),
                 'label' => $this->l('Authentication limit'),
                 'type' => 'html',
             ];
@@ -317,33 +313,17 @@ class Stancer extends PaymentModule
                 }
             }
 
-            $desc = [
-                $this->l('Will be used as description for every payment made.'),
-                '<br />',
-            ];
             $vars = [
                 'SHOP_NAME' => $this->l('Shop name configured in PrestaShop'),
                 'TOTAL_AMOUNT' => $this->l('Total amount'),
                 'CURRENCY' => $this->l('Currency of the cart'),
                 'CART_ID' => $this->l('Cart identifier'),
             ];
-
-            $desc[] = '<details class="help-block">';
-            $desc[] = '<summary>';
-            $desc[] = $this->l('You may use simple variables, click here to see the list.');
-            $desc[] = '</summary>';
-            $desc[] = '<dl>';
-
-            foreach ($vars as $key => $val) {
-                $desc[] = '<dt>' . $key . '</dt><dd>' . $val . '</dd>';
-            }
-
-            $desc[] = '</dl>';
-            $desc[] = '</details>';
+            $this->context->smarty->assign('variables', $vars);
 
             $this->configurations['STANCER_PAYMENT_DESCRIPTION'] = [
                 'default' => $defaultDescriptions,
-                'desc' => join('', $desc),
+                'desc' => $this->fetchTemplate('admin/descriptions/payment_description.tpl'),
                 'group' => 'settings',
                 'label' => $this->l('Payment description'),
                 'lang' => true,
@@ -373,10 +353,11 @@ class Stancer extends PaymentModule
         $this->context->controller->addJs(_MODULE_DIR_ . $this->name . '/views/js/admin.js');
 
         $output = '';
+        $publicProdKeyInError = false;
+        $secretProdKeyInError = false;
 
         if (Tools::isSubmit('submit' . $this->name)) {
             $hasError = false;
-            $keysOk = true;
 
             foreach ($this->getConfigurationsList() as $name => $infos) {
                 $value = Tools::getValue($name);
@@ -397,11 +378,7 @@ class Stancer extends PaymentModule
                     $value = trim($value);
                 }
 
-                if ((!array_key_exists('required', $infos) || !$infos['required']) && '' === $value) {
-                    continue;
-                }
-
-                if (array_key_exists('pattern', $infos)) {
+                if (array_key_exists('pattern', $infos) && '' !== $value) {
                     $check = preg_match($infos['pattern'], $value) === 1;
 
                     if (!$check) {
@@ -409,7 +386,14 @@ class Stancer extends PaymentModule
                         $error = $this->l('"%s" is invalid.');
 
                         if ($infos['group'] === 'keys') {
-                            $keysOk = false;
+                            if ($infos['mode'] === Stancer\Config::LIVE_MODE) {
+                                if ($infos['public']) {
+                                    $publicProdKeyInError = true;
+                                } else {
+                                    $secretProdKeyInError = true;
+                                }
+                            }
+
                             $error = $this->l('"%s" is invalid, please provide a correct key.');
                         }
 
@@ -423,14 +407,37 @@ class Stancer extends PaymentModule
                 Configuration::updateValue($name, $value);
             }
 
-            $apiMode = Stancer\Config::TEST_MODE;
+            $apiMode = Tools::getValue('STANCER_API_MODE') ?? Stancer\Config::TEST_MODE;
 
-            if ($keysOk) {
-                $apiMode = Tools::getValue('STANCER_API_MODE') ?? Stancer\Config::TEST_MODE;
-            } else {
-                $tmp = $this->l('You cannot switch to live mode while an error is occurring with the API keys.');
-                $output .= $this->displayError($tmp);
-                $hasError = true;
+            if ($apiMode === Stancer\Config::LIVE_MODE) {
+                $public = Configuration::get('STANCER_API_LIVE_PUBLIC_KEY');
+                $secret = Configuration::get('STANCER_API_LIVE_SECRET_KEY');
+                $keysOk = !$publicProdKeyInError && !$secretProdKeyInError;
+                $error = $this->l('"%s" is invalid.');
+
+                if (!$publicProdKeyInError) {
+                    if (!$public) {
+                        $label = $this->configurations['STANCER_API_LIVE_PUBLIC_KEY']['label'];
+                        $output .= $this->displayError(sprintf($error, $label));
+                        $keysOk = false;
+                    }
+                }
+
+                if (!$secretProdKeyInError) {
+                    if (!$secret) {
+                        $label = $this->configurations['STANCER_API_LIVE_SECRET_KEY']['label'];
+                        $output .= $this->displayError(sprintf($error, $label));
+                        $keysOk = false;
+                    }
+                }
+
+                if (!$keysOk) {
+                    $tmp = $this->l('You cannot switch to live mode while an error is occurring with the API keys.');
+                    $output .= $this->displayError($tmp);
+                    $hasError = true;
+
+                    $apiMode = Stancer\Config::TEST_MODE;
+                }
             }
 
             Configuration::updateValue('STANCER_API_MODE', $apiMode);
@@ -502,14 +509,13 @@ class Stancer extends PaymentModule
         foreach ($this->getConfigurationsList('display') as $name => $infos) {
             if (array_key_exists('template', $infos)) {
                 $clean = array_diff_key($infos, $excep);
-                $template = 'module:' . $this->name . '/views/templates/admin/' . $infos['template'] . '.tpl';
                 $value = Configuration::get($name);
 
                 $this->context->smarty->assign('stancer_module_img', _MODULE_DIR_ . $this->name . '/views/img');
                 $this->context->smarty->assign($name . '_VALUE', $value);
 
                 $settings['input'][] = array_merge($clean, [
-                    'html_content' => $this->context->smarty->fetch($template),
+                    'html_content' => $this->fetchTemplate('admin/' . $infos['template'] . '.tpl'),
                     'name' => $name,
                     'type' => 'html',
                 ]);
@@ -544,22 +550,20 @@ class Stancer extends PaymentModule
      */
     public function getContentFormKeys(HelperForm $helper): array
     {
-        $signup = $this->l('https://manage.stancer.com/en/developers');
+        $this->context->smarty->assign('signup', $this->l('https://manage.stancer.com/en/developers'));
 
         $keys = [
             'legend' => [
                 'icon' => 'icon-key',
                 'title' => $this->l('API keys'),
             ],
-            'description' => implode(' ', [
-                $this->l('You can create and recover your API keys on'),
-                '<a href="' . $signup . '" target="_blank">' . $signup . '</a>',
-            ]),
+            'description' => $this->fetchTemplate('admin/descriptions/keys_settings.tpl'),
             'input' => [],
         ];
 
         foreach ($this->getConfigurationsList('keys') as $name => $infos) {
             $class = '';
+            $prefix = '';
 
             if (array_key_exists('class', $infos)) {
                 $class = $infos['class'];
@@ -570,14 +574,23 @@ class Stancer extends PaymentModule
                 $desc = $infos['desc'];
             }
 
-            if ($infos['mode'] === Stancer\Config::LIVE_MODE) {
-                if ($desc) {
-                    $desc .= ', ';
-                } else {
-                    $desc = '';
+            if (array_key_exists('public', $infos)) {
+                $prefix = 's';
+
+                if ($infos['public']) {
+                    $prefix = 'p';
                 }
 
-                $desc .= '<em>' . $this->l('mandatory in live mode') . '</em>';
+                if ($infos['mode'] === Stancer\Config::LIVE_MODE) {
+                    $prefix .= 'prod';
+                } else {
+                    $prefix .= 'test';
+                }
+
+                $this->context->smarty->assign('prefix', $prefix . '_');
+                $this->context->smarty->assign('is_prod', $infos['mode'] === Stancer\Config::LIVE_MODE);
+
+                $desc = $this->fetchTemplate('admin/descriptions/keys.tpl');
             }
 
             $keys['input'][] = [
@@ -703,7 +716,7 @@ class Stancer extends PaymentModule
             $this->registerJavascript('iframe')->registerJavascript('message');
         }
 
-        return '<script>var STANCER = {origin: "' . Configuration::get('STANCER_PAGE_URL') . '"};</script>';
+        return $this->fetchTemplate('hook/header.tpl');
     }
 
     /**
@@ -767,7 +780,6 @@ class Stancer extends PaymentModule
             ],
             true
         );
-        $tpl = 'module:' . $this->name . '/views/templates/front/';
 
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
@@ -789,13 +801,13 @@ class Stancer extends PaymentModule
                 $link = $this->context->link->getModuleLink($this->name, 'validation', [], true);
                 $this->context->smarty->assign('target', $target);
                 $this->context->smarty->assign('validation', $link);
-                $paymentOption->setAdditionalInformation($this->context->smarty->fetch($tpl . 'iframe.tpl'));
+                $paymentOption->setAdditionalInformation($this->fetchTemplate('front/iframe.tpl'));
 
                 break;
             default:
                 $paymentOption
                     ->setAction($target)
-                    ->setAdditionalInformation($this->context->smarty->fetch($tpl . 'option.tpl'))
+                    ->setAdditionalInformation($this->fetchTemplate('front/option.tpl'))
                 ;
 
                 break;
@@ -867,6 +879,7 @@ class Stancer extends PaymentModule
                 `id_stancer_card` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT "Unique ID in this table",
                 `id_customer` INT(10) NOT NULL COMMENT "ID of a customer (PS)",
                 `card_id` BINARY(29) NOT NULL COMMENT "ID of a card, unique in this table",
+                `live_mode` TINYINT(1) UNSIGNED NOT NULL COMMENT "Is a live mode object?",
                 `last4` CHAR(4) NOT NULL COMMENT "Last 4 digits of the number",
                 `expiration` DATE NOT NULL COMMENT "Expiration date",
                 `brand` VARCHAR(10) COMMENT "Card brand (reference)",
@@ -889,6 +902,7 @@ class Stancer extends PaymentModule
                 `id_stancer_customer` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT "Unique ID in this table",
                 `id_customer` INT(10) NOT NULL COMMENT "ID of a customer (PS)",
                 `customer_id` BINARY(29) NOT NULL COMMENT "ID of a customer (API), unique in this table",
+                `live_mode` TINYINT(1) UNSIGNED NOT NULL COMMENT "Is a live mode object?",
                 `name` VARCHAR(64) COMMENT "Customer\'s name",
                 `email` VARCHAR(64) COMMENT "Customer\'s email",
                 `mobile` VARCHAR(16) COMMENT "Customer\'s mobile phone number",
@@ -912,6 +926,7 @@ class Stancer extends PaymentModule
                 `card_id` BINARY(29) COMMENT "ID of the card used (API)",
                 `id_cart` INT(10) UNSIGNED NOT NULL COMMENT "PrestaShop cart ID",
                 `id_order` INT(10) UNSIGNED COMMENT "PrestaShop order ID",
+                `live_mode` TINYINT(1) UNSIGNED NOT NULL COMMENT "Is a live mode object?",
                 `currency` CHAR(3) NOT NULL COMMENT "Currency used",
                 `amount` INT(10) UNSIGNED NOT NULL COMMENT "Amount paid (in cents)",
                 `status` VARCHAR(10) NOT NULL DEFAULT "pending" COMMENT "Payment\'s status (trust only API status)",

@@ -22,6 +22,9 @@ class StancerApiCard extends ObjectModel
     /** @var int Card id */
     public $card_id;
 
+    /** @var bool Is a live mode object? */
+    public $live_mode;
+
     /** @var string Card last4 */
     public $last4;
 
@@ -68,6 +71,11 @@ class StancerApiCard extends ObjectModel
                 'size' => 29,
                 'type' => self::TYPE_STRING,
                 'validate' => 'isString',
+            ],
+            'live_mode' => [
+                'required' => true,
+                'type' => self::TYPE_BOOL,
+                'validate' => 'isBool',
             ],
             'last4' => [
                 'required' => true,
@@ -229,6 +237,10 @@ class StancerApiCard extends ObjectModel
      */
     public function save($null_values = false, $auto_date = true)
     {
+        $config = new StancerApiConfig();
+
+        $this->live_mode = $config->isLiveMode();
+
         if ($this->api) {
             $this->card_id = $this->api->getId();
             $this->brand = $this->api->getBrand();
@@ -248,6 +260,7 @@ class StancerApiCard extends ObjectModel
     public static function saveFrom(Stancer\Card $apiCard, Customer $customer): StancerApiCard
     {
         $card = static::findByApiCard($apiCard);
+
         if (!$card) {
             $card = new static();
             $card->id_customer = $customer->id;

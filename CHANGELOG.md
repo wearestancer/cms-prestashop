@@ -9,9 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - PrestaShop 8.1 support
 - PrestaShop Marketplace module key
+- `.htaccess` file (to please PrestaShop validation team :) )
+- `live_mode` in inner tables
 
 ### Fixed
+- Admin settings may not be modifiable
 - Change wordings #CMS-28
+- Inline HTML in the module
 - Some options in admin settings are impossible to deactivate #CMS-29 #CMS-30
 
 

@@ -36,7 +36,7 @@
         {if $choice != 'none'}
           <img
             class="stancer-logo__preview stancer-logo__preview--{$choice}"
-            src="{$stancer_module_img|cat:'/logo.svg#'|cat:$choice|escape:'html':'UTF-8'}"
+            src="{$stancer_module_img|cat:'/logo.svg#'|cat:$choice|escape:'htmlall':'UTF-8'}"
           />
         {/if}
         <span class="stancer-logo__text">

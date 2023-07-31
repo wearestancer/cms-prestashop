@@ -201,6 +201,13 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             }
         }
 
+        if ($apiCard) {
+            $payment->card_id = $apiCard->id;
+        }
+
+        $payment->status = $status;
+        $payment->save();
+
         if ($status === Stancer\Payment\Status::AUTHORIZED) {
             $api->markPaymentAsCaptured($apiPayment);
             $status = $apiPayment->getStatus();
@@ -209,7 +216,6 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         switch ($status) {
             case Stancer\Payment\Status::FAILED:
             case Stancer\Payment\Status::REFUSED:
-                $payment->save();
                 $err = StancerErrors::getMessage(StancerErrors::PAYMENT_FAILED);
                 $this->errors[] = $err;
 
@@ -233,7 +239,6 @@ class StancerValidationModuleFrontController extends ModuleFrontController
 
                 $newOrder = $this->createOrder($cart, $apiPayment, $payment->getOrderState());
 
-                $payment->status = $status;
                 $payment->id_order = $newOrder->id;
                 $payment->save();
 
