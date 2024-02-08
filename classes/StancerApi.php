@@ -153,9 +153,9 @@ class StancerApi
         Customer $customer,
         Language $language,
         Currency $currency,
-        StancerApiCard $card = null,
+        ?StancerApiCard $card = null,
         array &$errors = [],
-        string &$log = null
+        ?string &$log = null
     ): Stancer\Payment {
         $paymentData = $this->buildPaymentData($cart, $language, $currency);
         $psApiCustomer = StancerApiCustomer::find($customer);
