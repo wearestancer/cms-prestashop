@@ -175,6 +175,7 @@ class StancerApi
                 ->setOrderId($paymentData['orderId'])
                 ->setReturnUrl($paymentData['returnUrl'])
                 ->setCapture(false)
+                ->setMethodsAllowed(['card'])
             ;
         }
 

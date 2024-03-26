@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - API mode radio button
+- Iframe secured with sandbox attributes.
 
 ## [1.2.0] - 2023-07-20
 
