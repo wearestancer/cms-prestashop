@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Make 1.7.8 the minimum required PrestaShop version
 
+### Fixed
+- API mode radio button
+- Iframe secured with sandbox attributes.
+
 
 ## [1.2.0] - 2023-07-20
 

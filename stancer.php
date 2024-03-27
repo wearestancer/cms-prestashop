@@ -148,7 +148,8 @@ class Stancer extends PaymentModule
             ];
 
             $this->configurations['STANCER_API_MODE'] = [
-                'default' => $mode,
+                // By forcing the cast on Stance\Config Constant we make sure that it binds to values id and show the radio button checked in our form.
+                'default' => (string) $mode,
                 'desc' => $this->fetchTemplate('admin/descriptions/api_mode.tpl'),
                 'group' => 'settings',
                 'label' => $this->l('Mode'),

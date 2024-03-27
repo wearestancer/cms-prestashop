@@ -1,7 +1,8 @@
 window.addEventListener('message', (event) => {
   'use strict';
 
-  if (typeof STANCER === 'undefined' || event.origin !== STANCER.origin) {
+  // We cannot check for origin (not allowed in the sandbox) so we check the data
+  if (typeof event.data.status === 'undefined' || typeof event.data.width === 'undefined' || typeof event.data.height === 'undefined') {
     return;
   }
 
