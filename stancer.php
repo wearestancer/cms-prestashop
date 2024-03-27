@@ -36,7 +36,7 @@ class Stancer extends PaymentModule
      * @param string $name Module unique name
      * @param Context $context
      */
-    public function __construct($name = null, Context $context = null)
+    public function __construct($name = null, ?Context $context = null)
     {
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
