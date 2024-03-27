@@ -11,6 +11,7 @@
 if (!defined('_PS_VERSION_')) {
     exit;
 }
+const VERSION_MODULE_STANCER = '1.2.0';
 
 use Stancer as StancerSDK;
 

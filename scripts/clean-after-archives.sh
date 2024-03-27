@@ -9,9 +9,7 @@ search_dir=$(dirname "$current_dir")
 files=$(find -name "*.php.old" -not -path "*/vendor/*" -not -path "*/node_module/*")
 # We get our old unchanged file and erase the new one.
 for file in $files; do
-  echo "$file"
-  newname=${file/%.php.old/.php}
-  mv -f "$file" "$newname"
+  mv -f "$file" ${file/%.php.old/.php}
 done
 
 # We keep sure that our vendor-prefixer is still followed by git
