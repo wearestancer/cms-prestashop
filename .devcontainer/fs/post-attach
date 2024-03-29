@@ -1,0 +1,82 @@
+#! /bin/bash
+
+set -eu -o pipefail
+
+web_dir="/var/www/html"
+plugin_dir="${web_dir}/modules/stancer"
+
+DB_PASSWD="${DB_PASSWD:-root}"
+DB_PORT="${DB_PORT:-3306}"
+DB_SERVER="${DB_SERVER:-mysql}"
+DB_USER="${DB_USER:-root}"
+
+
+# Configure git
+git --git-dir="${plugin_dir}/.git" config --global --add safe.directory "$plugin_dir"
+git --git-dir="${plugin_dir}/.git" config filter.dates.smudge './scripts/dates/smudge.sh %f'
+git --git-dir="${plugin_dir}/.git" config filter.dates.clean './scripts/dates/clean.sh'
+
+# Install dependencies
+composer install --working-dir="${plugin_dir}"
+pnpm config set store-dir "${HOME}/.cache/pnpm"
+pnpm install --dir "${plugin_dir}"
+
+# Prepare assets
+pnpm run --dir "${plugin_dir}" create-assets
+pnpm run --dir "${plugin_dir}" translate
+
+
+# Get Caddy root CA
+curl http://caddy:2019/pki/ca/local/certificates -so "${devcontainer_dir}/root-ca.crt"
+
+
+if [ -d "${web_dir}/install" ]; then
+  # Prepare the database
+  mysql -h $DB_SERVER -P $DB_PORT -u $DB_USER -p$DB_PASSWD -ANe "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
+
+  # Install PrestaShop
+  ps-install
+
+  # Install our module
+  php -d memory_limit=-1 "${web_dir}/bin/console" prestashop:module -q install stancer
+fi
+
+
+# Configure the module
+configurations=$(env | grep STANCER_)
+
+if [ -n "$configurations" ]; then
+  touch module-configuration.yml
+  echo "configuration:" >> module-configuration.yml
+  echo "  update:" >> module-configuration.yml
+
+  for conf in $configurations; do
+    value=$(echo "$conf" | cut -d= -f2)
+
+    if [ -n "$value" ] ; then
+      echo "    ${conf/=/: }" >> module-configuration.yml
+    fi
+  done
+
+  php -d memory_limit=-1 "${web_dir}/bin/console" prestashop:module -q configure stancer module-configuration.yml
+
+  rm module-configuration.yml
+fi
+
+
+# Remove the pretty URL options (it breaks products images, we did not configure Caddy to handle it)
+mysql -h $DB_SERVER -P $DB_PORT -u $DB_USER -p$DB_PASSWD -AN <<-SQL
+  UPDATE \`${DB_NAME}\`.\`${DB_PREFIX}configuration\`
+  SET value = NULL
+  WHERE name = 'PS_REWRITING_SETTINGS';
+SQL
+
+# Remove Preston (the onboarding only)
+mysql -h $DB_SERVER -P $DB_PORT -u $DB_USER -p$DB_PASSWD -AN <<-SQL
+  INSERT INTO \`${DB_NAME}\`.\`${DB_PREFIX}configuration\` (name, value, date_add, date_upd)
+  VALUES ("ONBOARDINGV2_SHUT_DOWN", 1, NOW(), NOW());
+SQL
+
+
+# Cache clearing
+php -d memory_limit=-1 "${web_dir}/bin/console" cache:clear -q
