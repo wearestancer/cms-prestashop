@@ -74,7 +74,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             ['transaction_id' => $apiPayment->getId()],
             (int) $cart->id_currency,
             false,
-            $cart->secure_key
+            $cart->secure_key,
         );
 
         $newOrder = new Order((int) $this->module->currentOrder);

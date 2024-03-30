@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stancer PrestaShop
  *
@@ -45,7 +46,7 @@ class StancerErrors extends ObjectModel
 
             $message[] = $module->l(
                 'Please reconfigure the module or ask the site administrator to do it.',
-                'StancerErrors'
+                'StancerErrors',
             );
         } else {
             $message[] = $module->l('This payment method is currently unavailable.', 'StancerErrors');

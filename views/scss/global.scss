@@ -1,8 +1,8 @@
 @mixin fix-logos($name, $width) {
-  &[src="/modules/stancer/views/img/logo.svg##{$name}"] {
+  &[src='/modules/stancer/views/img/logo.svg##{$name}'] {
+    margin-inline-start: 1ch;
     width: $width;
     height: 20px;
-    margin-inline-start: 1ch;
   }
 }
 
