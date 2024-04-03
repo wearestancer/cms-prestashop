@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { globSync } = require('glob');
+const glob = require('glob');
 
 const pack = require('../package.json');
 
@@ -18,19 +18,39 @@ const fsOptions = {
 }
 const version = `* @version   ${pack.version}`;
 
-const content = fs.readFileSync(file, fsOptions);
+fs.readFile(file, { encoding: 'utf8' }, (err, content) => {
+  if (err) {
+    throw err;
+  }
+  const data = content
+    .replace(/\$this->version.+/, `$this->version = '${pack.version}';`)
+    .replace(/const STANCER_PS_VERSION .+/, `const STANCER_PS_VERSION = '${pack.version}';`);
 
-const data = content
-  .replace(/\* @version.+/, version)
-  .replace(/\$this->version.+/, `$this->version = '${pack.version}';`)
-  .replace(/public const VERSION .+/, `public const VERSION = '${pack.version}';`);
+  fs.writeFile(file, data, (err) => {
+    if (err) {
+      throw err;
+    }
+  });
+});
 
-fs.writeFileSync(file, data, fsOptions);
+glob('**/*.php', globOptions, (err, files) => {
+  if (err) {
+    throw err;
+  }
 
-for (const file of globSync('**/*.{js,php,tpl}', globOptions)) {
-  const filepath = path.join(process.cwd(), file);
+  files.forEach((file) => {
+    const filepath = path.join(process.cwd(), file);
 
-  const content = fs.readFileSync(filepath, fsOptions);
+    fs.readFile(filepath, { encoding: 'utf-8' }, (err, content) => {
+      if (err) {
+        throw err;
+      }
 
-  fs.writeFileSync(filepath, content.replace(/\* @version.+/, version), fsOptions);
-}
+      fs.writeFile(filepath, content.replace(/\* @version.+/, version), (err) => {
+        if (err) {
+          throw err;
+        }
+      });
+    });
+  });
+});

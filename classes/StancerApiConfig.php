@@ -71,8 +71,9 @@ class StancerApiConfig
         }
 
         return $apiConfig
-            ->addAppData('libstancer-prestashop', Stancer::VERSION)
-            ->addAppData('prestashop', _PS_VERSION_);
+            ->addAppData('libstancer-prestashop', STANCER_PS_VERSION)
+            ->addAppData('prestashop', _PS_VERSION_)
+        ;
     }
 
     /**
