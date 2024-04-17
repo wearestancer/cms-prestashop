@@ -11,7 +11,7 @@
 <iframe
   class="stancer-payment__iframe js-stancer-payment-iframe"
   allow="payment"
-  sandbox="allow-forms allow-scripts allow-top-navigation"
+  sandbox="allow-forms allow-scripts allow-same-origin allow-top-navigation"
   data-inner-3ds="{$3ds|default:false|escape:'htmlall':'UTF-8'}"
   data-target="{$target|escape:'htmlall':'UTF-8'}"
   data-validation="{$validation|escape:'htmlall':'UTF-8'}"
