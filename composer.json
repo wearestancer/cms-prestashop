@@ -17,6 +17,9 @@
         "prestashop/php-dev-tools": "^3.16",
         "stancer/php-stubs-prestashop": "^1.7"
     },
+    "scripts": {
+        "phpcs": "./vendor/bin/php-cs-fixer check --diff"
+    },
     "license": "MIT",
     "config": {
         "prepend-autoloader": false,
