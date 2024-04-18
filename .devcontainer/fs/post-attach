@@ -64,6 +64,10 @@ if [ -n "$configurations" ]; then
 fi
 
 
+# Create an user
+php "${plugin_dir}/.devcontainer/scripts/create-user.php"
+
+
 # Remove the pretty URL options (it breaks products images, we did not configure Caddy to handle it)
 mysql -h $DB_SERVER -P $DB_PORT -u $DB_USER -p$DB_PASSWD -AN <<-SQL
   UPDATE \`${DB_NAME}\`.\`${DB_PREFIX}configuration\`
