@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.1] - 2024-04-18
 
+### Added
+- Automatically create an archive for every merge request
+
 ### Changed
 - Make 1.7.8 the minimum required PrestaShop version
 - Adapt to next payment page version
