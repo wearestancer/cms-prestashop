@@ -29,9 +29,7 @@ window.addEventListener('message', (event) => {
       queue: false,
     });
   }
-  if (typeof event.data.status !== 'undefined') {
-    if ('finished' === event.data.status) {
-      window.location.href = $iframe.data('validation');
-    }
+  if (typeof event.data.status !== 'undefined' && 'finished' === event.data.status) {
+    window.location.href = $iframe.data('validation');
   }
 });
