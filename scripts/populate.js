@@ -1,14 +1,14 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const glob = require('glob');
+const { globSync } = require('glob');
 
 const ignore = require('./ignored');
 const search = /\('Last-Modified: .+'\)/;
 const replace = `('Last-Modified: ${new Date().toUTCString()}')`;
 const ref = fs.readFileSync('index.php', 'utf8').replace(search, replace);
 
-glob('**/', { ignore }, (err, dirs) => {
+globSync('**/', { ignore }, (err, dirs) => {
   if (err) {
     throw err;
   }

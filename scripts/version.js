@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const glob = require('glob');
+const { globSync } = require('glob');
 
 const pack = require('../package.json');
 
@@ -30,7 +30,7 @@ fs.readFile(file, { encoding: 'utf8' }, (err, content) => {
   });
 });
 
-glob('**/*.php', globOptions, (err, files) => {
+globSync('**/*.php', globOptions, (err, files) => {
   if (err) {
     throw err;
   }

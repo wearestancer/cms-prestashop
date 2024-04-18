@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const glob = require('glob');
+const { globSync } = require('glob');
 
 const pack = require('../package.json');
 const currentYear = new Date().getFullYear();
@@ -95,7 +95,7 @@ const processFile = (file) => {
 
 processFile('LICENSE');
 
-glob(
+globSync(
   '**/*.{css,js,php,tpl}',
   {
     ignore: [
