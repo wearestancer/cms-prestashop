@@ -8,10 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Make 1.7.8 the minimum required PrestaShop version
+- Adapt to next payment page version
 
 ### Fixed
 - API mode radio button
-- Iframe secured with sandbox attributes.
+- Iframe secured with sandbox attributes (CMS-66)
 
 
 ## [1.2.0] - 2023-07-20
