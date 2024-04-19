@@ -205,10 +205,11 @@ class StancerApi
         }
 
         // Send payment to Stancer
-        $result = $this->sendToApi($apiPayment);
-
-        $log = $result['log'];
-        $errors = $result['errors'];
+        if ($apiPayment->isModified()) {
+            $result = $this->sendToApi($apiPayment);
+            $log = $result['log'];
+            $errors = $result['errors'];
+        }
 
         if (empty($log)) {
             $apiCustomer = $apiPayment->getCustomer();
