@@ -4,6 +4,8 @@ set -eu -o pipefail
 
 web_dir="/var/www/html"
 plugin_dir="${web_dir}/modules/stancer"
+devcontainer_dir="${plugin_dir}/.devcontainer"
+
 
 DB_PASSWD="${DB_PASSWD:-root}"
 DB_PORT="${DB_PORT:-3306}"
@@ -13,8 +15,8 @@ DB_USER="${DB_USER:-root}"
 
 # Configure git
 git --git-dir="${plugin_dir}/.git" config --global --add safe.directory "$plugin_dir"
-git --git-dir="${plugin_dir}/.git" config filter.dates.smudge './scripts/dates/smudge.sh %f'
-git --git-dir="${plugin_dir}/.git" config filter.dates.clean './scripts/dates/clean.sh'
+sh "${plugin_dir}/scripts/git-filters.sh"
+
 
 # Install dependencies
 composer install --working-dir="${plugin_dir}"
