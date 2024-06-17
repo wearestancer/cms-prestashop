@@ -49,6 +49,8 @@ configurations=$(env | grep STANCER_)
 
 if [ -n "$configurations" ]; then
   touch module-configuration.yml
+  echo "" > module-configuration.yml
+
   echo "configuration:" >> module-configuration.yml
   echo "  update:" >> module-configuration.yml
 
