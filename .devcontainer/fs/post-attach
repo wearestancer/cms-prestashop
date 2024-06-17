@@ -17,9 +17,8 @@ DB_USER="${DB_USER:-root}"
 git --git-dir="${plugin_dir}/.git" config --global --add safe.directory "$plugin_dir"
 sh "${plugin_dir}/scripts/git-filters.sh"
 
-
 # Install dependencies
-composer install --working-dir="${plugin_dir}"
+composer upgrade --working-dir="${plugin_dir}"
 pnpm config set store-dir "${HOME}/.cache/pnpm"
 pnpm install --dir "${plugin_dir}"
 
