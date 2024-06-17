@@ -88,3 +88,39 @@ SQL
 
 # Cache clearing
 php -d memory_limit=-1 "${web_dir}/bin/console" cache:clear -q
+
+
+# Output
+protocol="http://"
+
+if [ "$PS_ENABLE_SSL" = 1 ]; then
+  protocol="https://"
+fi
+
+underline=$(tput smul)
+nounderline=$(tput rmul)
+bold=$(tput bold)
+normal=$(tput sgr0)
+red="\033[38;5;9m"
+
+echo ""
+echo "${underline}${bold}Default settings${normal}${nounderline}"
+echo ""
+echo "Website accessible at:      ${protocol}${PS_DOMAIN}"
+echo "Admin panel accessible at:  ${protocol}${PS_DOMAIN}/ps-admin"
+echo ""
+echo "Admin mail:                 ${ADMIN_MAIL}"
+echo "Admin password:             ${ADMIN_PASSWD}"
+echo ""
+echo "Test user mail:             shop-user@stancer.com"
+echo "Test password:              shop-user"
+echo ""
+echo "Webmail:                    ${protocol}${PS_DOMAIN/prestashop/mailtrap}"
+echo "Webmail login:              mailtrap"
+echo "Webmail password:           mailtrap"
+echo ""
+
+if [ -z "${API_PUBLIC_KEY:-}" ] || [ -z "${API_SECRET_KEY:-}" ]; then
+  echo -e "${bold}${red}Your Stancer API keys are not properly setup do not forget to set them.${normal}"
+  echo ""
+fi
