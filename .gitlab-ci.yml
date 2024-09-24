@@ -57,7 +57,7 @@ phpcs:
     - composer --version
 
     - composer update --no-progress --prefer-stable
-    - mkdir ./.cache
+    - mkdir ./vendor/.cache
 
   script:
     - ./vendor/bin/php-cs-fixer fix --dry-run --diff || true

@@ -406,10 +406,9 @@ class Stancer extends PaymentModule
                 Configuration::updateValue($name, $value);
             }
 
-            if (Tools::getValue('STANCER_API_MODE') === null){
+            if (Tools::getValue('STANCER_API_MODE') === null) {
                 $apiMode = Stancer\Config::TEST_MODE;
-            }
-            else {
+            } else {
                 $apiMode = Tools::getValue('STANCER_API_MODE');
             }
 
