@@ -1,74 +1,131 @@
-version: '3'
-
 services:
-  mysql:
+  caddy:
+    image: caddy:alpine
+
+    depends_on:
+      prestashop:
+        condition: service_started
+
+    networks:
+      - app
+      - mail
+
+    ports:
+      - 127.0.0.1:10010:10010
+      - 127.0.0.1:10010:10010/udp
+      - 127.0.0.1:10011:10011
+
+    restart: unless-stopped
+
+    volumes:
+      - caddy-config:/config/caddy
+      - caddy-data:/data/caddy
+      - root-path:/var/www/html
+      - ./fs/etc/caddy:/etc/caddy
+      - ..:/var/www/html/modules/stancer:cached
+
+
+  database:
     image: mariadb:latest
 
     environment:
-      - MARIADB_ROOT_PASSWORD=${DB_PASSWD}
+      MARIADB_DATABASE: prestashop
+      MARIADB_ROOT_PASSWORD: root
 
     healthcheck:
       interval: 1s
       retries: 3
       start_period: 10s
-      test: mariadb-admin ping -u $DB_USER -p$DB_PASSWD
+      test: mariadb-admin ping -u root -proot
       timeout: 2s
 
-    ports:
-      - 3336:3306
+    networks:
+      - database
 
-    restart: always
+    ports:
+      - 127.0.0.1:10016:3306
+
+    restart: unless-stopped
 
     volumes:
       - db:/var/lib/mysql
+      - ./fs/etc/mysql/conf.d:/etc/mysql/conf.d
+
+
+  mailtrap:
+    image: dbck/mailtrap
+
+    environment:
+      MAILTRAP_ROUNDCUBE_NAME: Mailtrap PrestaShop
+
+    networks:
+      - mail
+
 
   prestashop:
     build:
-      context: .
-      dockerfile: dockerfile/prestashop.Dockerfile
       args:
-        - IMAGE_TAG=8.1-apache
-        - MODULE=${PS_MODULE_NAME}-${PS_MODULE_VERSION}
-
-    command: sleep infinity
+        - DOCKER_PROXY
+        - PHP_VERSION
+        - PRESTASHOP_VERSION
+      context: .
+      dockerfile: ./Dockerfile
 
     depends_on:
-      mysql:
+      database:
         condition: service_healthy
 
     environment:
-      - ADMIN_MAIL=${ADMIN_MAIL}
-      - ADMIN_PASSWD=${ADMIN_PASSWD}
+      ADMIN_MAIL: shop-admin@stancer.com
+      ADMIN_PASSWD: shop-admin
 
-      - DB_NAME=${DB_NAME}
-      - DB_PASSWD=${DB_PASSWD}
-      - DB_PREFIX=ps_
-      - DB_SERVER=mysql
-      - DB_USER=${DB_USER}
+      DB_NAME: prestashop
+      DB_PASSWD: root
+      DB_PREFIX: ps_
+      DB_SERVER: database
+      DB_USER: root
 
-      - PS_COUNTRY=${PS_COUNTRY}
-      - PS_DEV_MODE=${PS_DEV_MODE}
-      - PS_DOMAIN=${PS_DOMAIN}:8443
-      - PS_ENABLE_SSL=1
-      - PS_FOLDER_ADMIN=${PS_FOLDER_ADMIN}
-      - PS_FOLDER_INSTALL=installed
-      - PS_INSTALL_DB=1
-      - PS_INSTALL_AUTO=1
-      - PS_LANGUAGE=${PS_LANGUAGE}
-      - PS_MODULE_NAME=${PS_MODULE_NAME}
-      - PS_MODULE_VERSION=${PS_MODULE_VERSION}
+      PS_COUNTRY: FR
+      PS_DEV_MODE: 1
+      PS_DOMAIN: prestashop.localtest.stancer.network:10010
+      PS_ENABLE_SSL: 1
+      PS_INSTALL_DB: 1
+      PS_INSTALL_AUTO: 1
+      PS_LANGUAGE: fr
+      PS_MODULE_NAME: stancer
 
-    ports:
-      - 8080:80
-      - 8443:443
+      STANCER_API_MODE: ${STANCER_API_MODE:-test}
+      STANCER_API_TEST_PUBLIC_KEY: ${API_PUBLIC_KEY:-}
+      STANCER_API_TEST_SECRET_KEY: ${API_SECRET_KEY:-}
+      STANCER_CTA_LOGO: ${STANCER_CTA_LOGO:-all-schemes-suffixed}
+      STANCER_AUTH_LIMIT: ${STANCER_AUTH_LIMIT:-0}
+      STANCER_ORDER_FOR_NOK_PAYMENTS: ${STANCER_ORDER_FOR_NOK_PAYMENTS:-0}
+      STANCER_PAGE_URL: ${STANCER_PAGE_URL:-https://payment.stancer.com}
+      STANCER_REUSE_CARD: ${STANCER_REUSE_CARD:-0}
+      STANCER_REUSED_CARD_LOGO: ${STANCER_REUSED_CARD_LOGO:-0}
+      STANCER_PAGE_TYPE: ${STANCER_PAGE_TYPE:-iframe}
+
+    networks:
+      - app
+      - database
+      - mail
 
     volumes:
-      - prestashop:/var/www/html:cached
-      - /var/run/docker.sock:/var/run/docker-host.sock:cached
+      - root-path:/var/www/html:cached
       - ..:/var/www/html/modules/stancer:cached
 
 
+networks:
+  app:
+    name: prestashop-network-app
+  database:
+    name: prestashop-network-database
+  mail:
+    name: prestashop-network-mail
+
 
 volumes:
+  caddy-config:
+  caddy-data:
   db:
-  prestashop:
+  root-path:

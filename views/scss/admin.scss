@@ -47,8 +47,8 @@ $focused-input-color: #66afe9;
   & & {
     &__grid {
       display: grid;
-      gap: 1rem;
       grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
     }
 
     &__input {
@@ -65,20 +65,20 @@ $focused-input-color: #66afe9;
     }
 
     &__item {
-      box-sizing: content-box;
       display: grid;
       grid-template-rows: auto 2em;
       align-items: center;
       justify-items: center;
-      gap: .5em;
-      min-height: 6em;
-      padding: .5em;
+      gap: 0.5em;
       transition: border-color 150ms ease-in-out;
+      cursor: pointer;
+      box-sizing: content-box;
       border: 1px solid $base-input-color;
       border-radius: 4px;
-      text-align: center;
+      padding: 0.5em;
+      min-height: 6em;
       font-weight: normal;
-      cursor: pointer;
+      text-align: center;
 
       &--none {
         grid-template-rows: auto;

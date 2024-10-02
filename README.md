@@ -8,7 +8,7 @@ This official module allows you to accept credit card payments via the Stancer p
 
 | PrestaShop version | PHP Version      |
 |--------------------|------------------|
-| 1.7 - 8.1          | 7.4 or greater   |
+| 1.7.8 - 8.2        | 7.4 or greater   |
 
 ### API keys
 

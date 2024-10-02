@@ -1,7 +1,12 @@
 window.addEventListener('message', (event) => {
   'use strict';
 
-  if (typeof STANCER === 'undefined' || event.origin !== STANCER.origin) {
+  // We cannot check for origin (not allowed in the sandbox) so we check the data
+  if (
+    typeof event.data.status === 'undefined' ||
+    typeof event.data.width === 'undefined' ||
+    typeof event.data.height === 'undefined'
+  ) {
     return;
   }
 
@@ -24,10 +29,7 @@ window.addEventListener('message', (event) => {
       queue: false,
     });
   }
-
-  if (typeof event.data.url !== 'undefined') {
-    if (!$iframe.data('inner-3ds') || event.data.status !== 'secure-auth-start') {
-      window.location.href = event.data.url;
-    }
+  if (typeof event.data.status !== 'undefined' && 'finished' === event.data.status && event.data.url === null) {
+    window.location.href = $iframe.data('validation');
   }
 });

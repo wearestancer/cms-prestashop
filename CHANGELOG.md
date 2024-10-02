@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2024-10-02
+
+### Added
+- Prestashop 8.2 support (CMS-234)
+- Devcontainer to ease development process (CMS-81)
+- Automatically create an archive for every merge request
+
+### Changed
+- Make 1.7.8 the minimum required PrestaShop version (CMS-94)
+- New "GIE CB" logo (CMS-172)
+
+### Fixed
+- Failing a payment sometimes didn't allow you to retry paying for the same cart (CMS-27)
+- Iframe secured with sandbox attributes (CMS-66)
+
+
 ## [1.2.0] - 2023-07-20
 
 ### Added

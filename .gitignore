@@ -1,14 +1,10 @@
 
-# composer
+# Dependencies
+node_modules/
 vendor/
 
-# node
-node_modules/
-.pnpm-store/
-
-# Tests report
-.cache/
-reports/
+# Local
+.vscode/
 
 # OS specific files
 .DS_Store
@@ -16,9 +12,11 @@ reports/
 .directory
 
 # Generated content
-/translations/
+reports/
+translations/
 views/css/
 views/js/
 config*.xml
 index.php
+module-configuration.yml
 *.zip

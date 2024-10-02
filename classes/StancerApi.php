@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stancer PrestaShop
  *
@@ -153,9 +154,9 @@ class StancerApi
         Customer $customer,
         Language $language,
         Currency $currency,
-        StancerApiCard $card = null,
+        ?StancerApiCard $card = null,
         array &$errors = [],
-        string &$log = null
+        ?string &$log = null
     ): Stancer\Payment {
         $paymentData = $this->buildPaymentData($cart, $language, $currency);
         $psApiCustomer = StancerApiCustomer::find($customer);
@@ -175,7 +176,7 @@ class StancerApi
                 ->setOrderId($paymentData['orderId'])
                 ->setReturnUrl($paymentData['returnUrl'])
                 ->setCapture(false)
-            ;
+                ->setMethodsAllowed(['card']);
         }
 
         if ($paymentData['auth'] && empty($apiPayment->getAuth())) {
@@ -204,10 +205,11 @@ class StancerApi
         }
 
         // Send payment to Stancer
-        $result = $this->sendToApi($apiPayment);
-
-        $log = $result['log'];
-        $errors = $result['errors'];
+        if ($apiPayment->isModified()) {
+            $result = $this->sendToApi($apiPayment);
+            $log = $result['log'];
+            $errors = $result['errors'];
+        }
 
         if (empty($log)) {
             $apiCustomer = $apiPayment->getCustomer();

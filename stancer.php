@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stancer PrestaShop
  *
@@ -21,7 +22,7 @@ require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
  */
 class Stancer extends PaymentModule
 {
-    public const VERSION = '1.2.0';
+    public const VERSION = '1.2.1';
 
     protected $configurations = [];
     protected $languages = [];
@@ -36,14 +37,14 @@ class Stancer extends PaymentModule
      * @param string $name Module unique name
      * @param Context $context
      */
-    public function __construct($name = null, Context $context = null)
+    public function __construct($name = null, ?Context $context = null)
     {
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
-        $this->version = '1.2.0';
+        $this->version = '1.2.1';
         $this->author = 'Stancer';
         $this->need_instance = 1;
-        $this->ps_versions_compliancy = ['min' => '1.7.0', 'max' => '8.1.999'];
+        $this->ps_versions_compliancy = ['min' => '1.7.8', 'max' => '8.2.999'];
         $this->module_key = '405faa09756f808b77ad16948b321351';
         $this->bootstrap = true;
 
@@ -148,7 +149,8 @@ class Stancer extends PaymentModule
             ];
 
             $this->configurations['STANCER_API_MODE'] = [
-                'default' => $mode,
+                // By forcing the cast on Stance\Config Constant we make sure that it binds to values id and show the radio button checked in our form.
+                'default' => (string) $mode,
                 'desc' => $this->fetchTemplate('admin/descriptions/api_mode.tpl'),
                 'group' => 'settings',
                 'label' => $this->l('Mode'),
@@ -753,8 +755,7 @@ class Stancer extends PaymentModule
                 $cardOption
                     ->setModuleName($this->name)
                     ->setCallToActionText($text)
-                    ->setAction($target)
-                ;
+                    ->setAction($target);
 
                 if (Configuration::get('STANCER_REUSED_CARD_LOGO')) {
                     $url = _MODULE_DIR_ . $this->name . '/views/img/logo.svg#';
@@ -784,8 +785,7 @@ class Stancer extends PaymentModule
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
             ->setModuleName($this->name)
-            ->setCallToActionText(Configuration::get('STANCER_CTA_TEXT', $this->context->language->id))
-        ;
+            ->setCallToActionText(Configuration::get('STANCER_CTA_TEXT', $this->context->language->id));
 
         $logo = Configuration::get('STANCER_CTA_LOGO');
 
@@ -807,8 +807,7 @@ class Stancer extends PaymentModule
             default:
                 $paymentOption
                     ->setAction($target)
-                    ->setAdditionalInformation($this->fetchTemplate('front/option.tpl'))
-                ;
+                    ->setAdditionalInformation($this->fetchTemplate('front/option.tpl'));
 
                 break;
         }
