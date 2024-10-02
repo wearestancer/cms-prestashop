@@ -10,6 +10,9 @@
  *
  * @version   1.2.1
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Controller helper.

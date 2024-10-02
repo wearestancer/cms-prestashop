@@ -10,6 +10,9 @@
  *
  * @version   1.2.1
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Front controller receiving the payment from the gateway.
