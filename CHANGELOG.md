@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adapt to next payment page version
 
 ### Fixed
+- Failing a payment sometimes didn't allow you to retry paying for the same cart (CMS-27)
 - API mode radio button
 - Iframe secured with sandbox attributes (CMS-66)
 
