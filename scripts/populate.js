@@ -6,24 +6,10 @@ const { globSync } = require('glob');
 const ignore = require('./ignored');
 const search = /\('Last-Modified: .+'\)/;
 const replace = `('Last-Modified: ${new Date().toUTCString()}')`;
-const ref = fs.readFileSync('index.php', 'utf8').replace(search, replace);
+const ref = fs.readFileSync('index.php', {encoding: 'utf-8'}).replace(search, replace);
 
-globSync('**/', { ignore }, (err, dirs) => {
-  if (err) {
-    throw err;
-  }
+for (const dir of globSync('**/', { ignore })) {
+  fs.writeFileSync(path.join(dir, 'index.php'), ref, {encoding: 'utf-8'});
+}
 
-  dirs.forEach((dir) => {
-    fs.writeFile(path.join(dir, 'index.php'), ref, 'utf8', (e) => {
-      if (e) {
-        throw e;
-      }
-    });
-  });
-});
-
-fs.writeFile('index.php', ref, 'utf8', (e) => {
-  if (e) {
-    throw e;
-  }
-});
+fs.writeFileSync('index.php', ref, {encoding: 'utf-8'});
