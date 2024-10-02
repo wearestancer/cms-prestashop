@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stancer PrestaShop
  *
@@ -175,8 +176,7 @@ class StancerApi
                 ->setOrderId($paymentData['orderId'])
                 ->setReturnUrl($paymentData['returnUrl'])
                 ->setCapture(false)
-                ->setMethodsAllowed(['card'])
-            ;
+                ->setMethodsAllowed(['card']);
         }
 
         if ($paymentData['auth'] && empty($apiPayment->getAuth())) {

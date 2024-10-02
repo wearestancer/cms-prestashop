@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stancer PrestaShop
  *
@@ -60,7 +61,7 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
             $context->currency,
             $existingCard,
             $errors,
-            $log
+            $log,
         );
 
         if ($log) {
@@ -76,7 +77,7 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
         return $this->redirect(
             $apiPayment->getPaymentPageUrl([
                 'lang' => $context->language->language_code,
-            ])
+            ]),
         );
     }
 }

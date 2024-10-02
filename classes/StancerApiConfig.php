@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stancer PrestaShop
  *
@@ -69,8 +70,7 @@ class StancerApiConfig
 
         return $apiConfig
             ->addAppData('libstancer-prestashop', Stancer::VERSION)
-            ->addAppData('prestashop', _PS_VERSION_)
-        ;
+            ->addAppData('prestashop', _PS_VERSION_);
     }
 
     /**

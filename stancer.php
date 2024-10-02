@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stancer PrestaShop
  *
@@ -754,8 +755,7 @@ class Stancer extends PaymentModule
                 $cardOption
                     ->setModuleName($this->name)
                     ->setCallToActionText($text)
-                    ->setAction($target)
-                ;
+                    ->setAction($target);
 
                 if (Configuration::get('STANCER_REUSED_CARD_LOGO')) {
                     $url = _MODULE_DIR_ . $this->name . '/views/img/logo.svg#';
@@ -785,8 +785,7 @@ class Stancer extends PaymentModule
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
             ->setModuleName($this->name)
-            ->setCallToActionText(Configuration::get('STANCER_CTA_TEXT', $this->context->language->id))
-        ;
+            ->setCallToActionText(Configuration::get('STANCER_CTA_TEXT', $this->context->language->id));
 
         $logo = Configuration::get('STANCER_CTA_LOGO');
 
@@ -808,8 +807,7 @@ class Stancer extends PaymentModule
             default:
                 $paymentOption
                     ->setAction($target)
-                    ->setAdditionalInformation($this->fetchTemplate('front/option.tpl'))
-                ;
+                    ->setAdditionalInformation($this->fetchTemplate('front/option.tpl'));
 
                 break;
         }

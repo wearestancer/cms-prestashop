@@ -2,15 +2,15 @@
   "name": "@stancer/prestashop",
   "version": "1.2.1",
   "description": "Stancer Prestashop module",
-  "license": "MIT",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "archive": "env node ./scripts/zip.js",
     "build": "pnpm run create-assets && pnpm run translate && pnpm run version && pnpm run license && pnpm run populate",
     "build:archive": "rm -rf vendor && composer install --no-dev --optimize-autoloader && pnpm run build && pnpm run archive && composer install",
     "create-assets": "gulp build",
-    "lint": "stylelint 'views/**/*.scss'",
     "license": "env node ./scripts/license.js",
+    "lint": "stylelint 'views/**/*.scss'",
     "populate": "env node ./scripts/populate.js",
     "translate": "env node ./scripts/translate.js",
     "version": "env node ./scripts/version.js"
@@ -18,8 +18,8 @@
   "devDependencies": {
     "archiver": "^7.0.0",
     "autoprefixer": "^10.0.0",
-    "cssnano": "^6.0.0",
-    "glob": "^10.0.0",
+    "cssnano": "^7.0.0",
+    "glob": "^11.0.0",
     "gulp": "^5.0.0",
     "gulp-postcss": "^10.0.0",
     "gulp-sass": "^5.0.0",
@@ -31,7 +31,7 @@
     "sprintf-js": "^1.0.0",
     "stylelint": "^16.0.0",
     "stylelint-config-concentric-order": "^5.0.0",
-    "stylelint-config-sass-guidelines": "^11.0.0",
+    "stylelint-config-sass-guidelines": "^12.0.0",
     "stylelint-config-standard-scss": "^13.0.0"
   }
 }

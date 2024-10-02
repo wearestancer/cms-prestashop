@@ -3,9 +3,6 @@
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "prestashop",
 	"workspaceFolder": "/var/www/html/modules/stancer",
-	"remoteEnv": {
-		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
-	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -19,24 +16,100 @@
 				"xdebug.php-debug"
 			],
 			"settings": {
+				"editor.defaultFormatter": "esbenp.prettier-vscode",
+				"editor.formatOnSave": true,
 				"editor.rulers": [
 					120
 				],
-				"php-cs-fixer.configFile": "/var/www/html/modules/stancer/.php-cs-fixer.dist.php",
-				"php-cs-fixer.executable": "/var/www/html/modules/stancer/vendor/bin/php-cs-fixer",
+				"intelephense.stubs": [
+					"vendor/stancer/php-stubs-prestashop/stubs",
+					"apache",
+					"bcmath",
+					"bz2",
+					"calendar",
+					"com_dotnet",
+					"Core",
+					"ctype",
+					"curl",
+					"date",
+					"dba",
+					"dom",
+					"enchant",
+					"exif",
+					"FFI",
+					"fileinfo",
+					"filter",
+					"fpm",
+					"ftp",
+					"gd",
+					"gettext",
+					"gmp",
+					"hash",
+					"iconv",
+					"imap",
+					"intl",
+					"json",
+					"ldap",
+					"libxml",
+					"mbstring",
+					"meta",
+					"mysqli",
+					"oci8",
+					"odbc",
+					"openssl",
+					"pcntl",
+					"pcre",
+					"PDO",
+					"pdo_ibm",
+					"pdo_mysql",
+					"pdo_pgsql",
+					"pdo_sqlite",
+					"pgsql",
+					"Phar",
+					"posix",
+					"pspell",
+					"random",
+					"readline",
+					"Reflection",
+					"session",
+					"shmop",
+					"SimpleXML",
+					"snmp",
+					"soap",
+					"sockets",
+					"sodium",
+					"SPL",
+					"sqlite3",
+					"standard",
+					"superglobals",
+					"sysvmsg",
+					"sysvsem",
+					"sysvshm",
+					"tidy",
+					"tokenizer",
+					"xml",
+					"xmlreader",
+					"xmlrpc",
+					"xmlwriter",
+					"xsl",
+					"Zend OPcache",
+					"zip",
+					"zlib"
+				],
+				"php-cs-fixer.configFile": "${containerWorkspaceFolder}/.php-cs-fixer.dist.php",
+				"php-cs-fixer.executable": "${containerWorkspaceFolder}/vendor/bin/php-cs-fixer",
 				"php.validate.executablePath": "/usr/local/bin/php",
-				"[javascript]": {
-					"editor.defaultFormatter": "esbenp.prettier-vscode",
-					"editor.formatOnSave": true
+				"[php]": {
+					"editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
 				}
 			}
 		}
 	},
+	"postAttachCommand":"/post-attach",
 	"portsAttributes": {
 		"9003": {
 			"label": "xdebug"
 		}
 	},
-	"postCreateCommand": "git lfs install && composer install && pnpm install && sudo renew-certs && sudo --preserve-env /etc/docker_start",
 	"remoteUser": "vscode"
 }
