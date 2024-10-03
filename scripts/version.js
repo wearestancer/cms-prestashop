@@ -13,43 +13,24 @@ const globOptions = {
     file,
   ],
 };
+const fsOptions = {
+  encoding: 'utf-8',
+}
+const version = `* @version   ${pack.version}`;
 
-fs.readFile(file, { encoding: 'utf8' }, (err, content) => {
-  if (err) {
-    throw err;
-  }
+const content = fs.readFileSync(file, fsOptions);
 
-  const data = content
-    .replace(/\$this->version.+/, `$this->version = '${pack.version}';`)
-    .replace(/public const VERSION .+/, `public const VERSION = '${pack.version}';`);
+const data = content
+  .replace(/\* @version.+/, version)
+  .replace(/\$this->version.+/, `$this->version = '${pack.version}';`)
+  .replace(/public const VERSION .+/, `public const VERSION = '${pack.version}';`);
 
-  fs.writeFile(file, data, (err) => {
-    if (err) {
-      throw err;
-    }
-  });
-});
+fs.writeFileSync(file, data, fsOptions);
 
-globSync('**/*.php', globOptions, (err, files) => {
-  if (err) {
-    throw err;
-  }
+for (const file of globSync('**/*.{js,php,tpl}', globOptions)) {
+  const filepath = path.join(process.cwd(), file);
 
-  const version = `* @version   ${pack.version}`;
+  const content = fs.readFileSync(filepath, fsOptions);
 
-  files.forEach((file) => {
-    const filepath = path.join(process.cwd(), file);
-
-    fs.readFile(filepath, { encoding: 'utf-8' }, (err, content) => {
-      if (err) {
-        throw err;
-      }
-
-      fs.writeFile(filepath, content.replace(/\* @version.+/, version), (err) => {
-        if (err) {
-          throw err;
-        }
-      });
-    });
-  });
-});
+  fs.writeFileSync(filepath, content.replace(/\* @version.+/, version), fsOptions);
+}

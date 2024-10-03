@@ -55,61 +55,50 @@ const addYear = (mode, text) => {
 
 const processFile = (file) => {
   const filepath = path.join(process.cwd(), file);
+  let content = fs.readFileSync(filepath, { encoding: 'utf-8' });
 
-  fs.readFile(filepath, { encoding: 'utf-8' }, (err, data) => {
+  if (file.endsWith('.css') || file.endsWith('.js')) {
+    if (!content.startsWith('/*!')) {
+      content = licenseFront + content;
+    } else {
+      content = addYear('front', content);
+    }
+  }
+
+  if (file.endsWith('.php')) {
+    content = addYear('back', content.replace('<?php\n\n', licensePhp + '\n\n'));
+  }
+
+  if (file.endsWith('.tpl')) {
+    if (!content.startsWith('{*')) {
+      content = licenseSmarty + '\n\n' + content;
+    } else {
+      content = addYear('back', content);
+    }
+  }
+
+  if (file === 'LICENSE') {
+    content = addYear('front', content);
+  }
+
+  fs.writeFileSync(filepath, content, (err) => {
     if (err) {
       throw err;
     }
-
-    if (file.endsWith('.css') || file.endsWith('.js')) {
-      if (!data.startsWith('/*!')) {
-        data = licenseFront + data;
-      } else {
-        data = addYear('front', data);
-      }
-    }
-
-    if (file.endsWith('.php')) {
-      data = addYear('back', data.replace('<?php\n\n', licensePhp + '\n\n'));
-    }
-
-    if (file.endsWith('.tpl')) {
-      if (!data.startsWith('{*')) {
-        data = licenseSmarty + '\n\n' + data;
-      } else {
-        data = addYear('back', data);
-      }
-    }
-
-    if (file === 'LICENSE') {
-      data = addYear('front', data);
-    }
-
-    fs.writeFile(filepath, data, (err) => {
-      if (err) {
-        throw err;
-      }
-    });
   });
 };
 
 processFile('LICENSE');
 
-globSync(
-  '**/*.{css,js,php,tpl}',
-  {
-    ignore: [
-      'node_modules/**',
-      'scripts/**',
-      'vendor/**',
-      'views/scripts/**',
-    ],
-  },
-  (err, files) => {
-    if (err) {
-      throw err;
-    }
+const options = {
+  ignore: [
+    'node_modules/**',
+    'scripts/**',
+    'vendor/**',
+    'views/scripts/**',
+  ],
+};
 
-    files.forEach(processFile);
-  },
-);
+for (const file of globSync('**/*.{css,js,php,tpl}', options)) {
+  processFile(file);
+}

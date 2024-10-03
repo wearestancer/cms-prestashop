@@ -1,15 +1,14 @@
 <?php
-
 /**
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2023 Stancer / Iliad 78
+ * @copyright 2018-2024 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
  *
- * @version   1.0.0
+ * @version   1.2.2
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -22,7 +21,7 @@ require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
  */
 class Stancer extends PaymentModule
 {
-    public const VERSION = '1.2.1';
+    public const VERSION = '1.2.2';
 
     protected $configurations = [];
     protected $languages = [];
@@ -41,7 +40,7 @@ class Stancer extends PaymentModule
     {
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
-        $this->version = '1.2.1';
+        $this->version = '1.2.2';
         $this->author = 'Stancer';
         $this->need_instance = 1;
         $this->ps_versions_compliancy = ['min' => '1.7.8', 'max' => '8.2.999'];

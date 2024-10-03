@@ -2,10 +2,10 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2023 Stancer / Iliad 78
+ * @copyright 2023-2024 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  * @website   https://www.stancer.com
- * @version   1.2.0
+ * @version   1.2.2
  *}
 
 {l s='In test mode, no payment will be sent to a bank, only test cards can be used.' mod='stancer'}
