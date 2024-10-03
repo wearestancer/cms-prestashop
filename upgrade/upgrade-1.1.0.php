@@ -1,16 +1,19 @@
 <?php
-
 /**
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2023 Stancer / Iliad 78
+ * @copyright 2023-2024 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
  *
- * @version   1.2.0
+ * @version   1.2.1
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 function upgrade_module_1_1_0($module)
 {
     if (!$module->installConfigurations()) {
