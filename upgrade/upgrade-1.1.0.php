@@ -8,7 +8,7 @@
  *
  * @website   https://www.stancer.com
  *
- * @version   1.2.1
+ * @version   1.2.2
  */
 if (!defined('_PS_VERSION_')) {
     exit;
