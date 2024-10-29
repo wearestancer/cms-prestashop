@@ -215,7 +215,10 @@ class StancerApi
 
         if (empty($log)) {
             $apiCustomer = $apiPayment->getCustomer();
-            StancerApiCustomer::saveFrom($apiCustomer);
+
+            if ($apiCustomer) {
+                StancerApiCustomer::saveFrom($apiCustomer);
+            }
 
             // Save payment in Prestashop
             StancerApiPayment::saveFrom($apiPayment, $cart);
