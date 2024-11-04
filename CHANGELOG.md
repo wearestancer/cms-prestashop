@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change the api version and the sdk version (CMS-469)
 - Change the settings key order to suit the order in Stancer manage (CMS-487)
 - Better devcontainer following new version of stancer SDK
+- delete the possibility to not use 3ds for security and stability reason (CMS-257)
+
 
 ### Fixed
 - Problem with failed payment handling (CMS-387)

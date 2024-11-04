@@ -336,20 +336,6 @@ class Stancer extends PaymentModule
                 ],
             ];
 
-            $authLimit = 'STANCER_AUTH_LIMIT';
-
-            $this->context->smarty->assign('auth_limit', $authLimit);
-            $this->context->smarty->assign('value', Tools::getValue($authLimit, Configuration::get($authLimit)));
-
-            $this->configurations[$authLimit] = [
-                'default' => 0,
-                'desc' => $this->fetchTemplate('admin/descriptions/auth_limit.tpl'),
-                'group' => 'settings',
-                'html_content' => $this->fetchTemplate('admin/input/auth_limit.tpl'),
-                'label' => $this->l('Authentication limit'),
-                'type' => 'html',
-            ];
-
             $defaultDescriptions = [];
 
             foreach ($this->languages as $lang) {

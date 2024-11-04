@@ -58,8 +58,7 @@ class StancerApi
     ): array {
         $total = $cart->getOrderTotal(true, Cart::BOTH);
         $amount = (int) (string) ($total * 100);
-        $authLimit = $this->apiConfig->authLimit;
-        $auth = is_null($authLimit) || $authLimit === '' ? false : $total > $authLimit;
+        $auth = true;
         $currencyCode = strtoupper($currency->iso_code);
 
         $message = Configuration::get('STANCER_PAYMENT_DESCRIPTION', $language->id);
@@ -192,14 +191,12 @@ class StancerApi
             ->setCustomer($apiCustomer)
             ->setOrderId($paymentData['orderId'])
             ->setCapture(false)
-            ->setMethodsAllowed(['card']);
+            ->setMethodsAllowed(['card'])
+                ->set_auth(true);
+
 
         if (isset($paymentData['returnUrl'])) {
             $apiPayment->setReturnUrl($paymentData['returnUrl']);
-        }
-
-        if ($paymentData['auth'] && empty($apiPayment->getAuth())) {
-            $apiPayment->setAuth(true);
         }
 
         if ($apiPayment->getAmount() != $paymentData['amount']) {
