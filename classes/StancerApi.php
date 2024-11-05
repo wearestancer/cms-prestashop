@@ -75,15 +75,21 @@ class StancerApi
             ]);
         }
 
-        return [
+        $paymentData = [
             'amount' => $amount,
             'auth' => $auth,
             'currency' => strtolower($currency->iso_code),
             'description' => $description,
             'orderId' => (string) $cart->id,
-            'returnUrl' => Context::getContext()->link->getModuleLink('stancer', 'validation', [], true),
             'uniqueId' => $uniqueId,
         ];
+
+        if('iframe' !== Configuration::get('STANCER_PAGE_TYPE')){
+            $paymentData['returnUrl'] = Context::getContext()->link->getModuleLink('stancer', 'validation', [], true);
+
+        }
+
+        return $paymentData;
     }
 
     /**
@@ -176,9 +182,11 @@ class StancerApi
             $apiPayment
                 ->setCustomer($apiCustomer)
                 ->setOrderId($paymentData['orderId'])
-                ->setReturnUrl($paymentData['returnUrl'])
                 ->setCapture(false)
                 ->setMethodsAllowed(['card']);
+            if(isset($paymentData['returnUrl'])) {
+                $apiPayment->setReturnUrl(($paymentData['returnUrl']));
+            }
         }
 
         if ($paymentData['auth'] && empty($apiPayment->getAuth())) {
