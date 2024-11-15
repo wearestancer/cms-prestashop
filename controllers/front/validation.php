@@ -262,6 +262,6 @@ class StancerValidationModuleFrontController extends ModuleFrontController
 
         return $this->redirect($apiPayment->getPaymentPageUrl([
             'lang' => $this->context->language->language_code,
-        ],true));
+        ], true));
     }
 }

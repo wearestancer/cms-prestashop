@@ -84,9 +84,8 @@ class StancerApi
             'uniqueId' => $uniqueId,
         ];
 
-        if('iframe' !== Configuration::get('STANCER_PAGE_TYPE')){
+        if ('iframe' !== Configuration::get('STANCER_PAGE_TYPE')) {
             $paymentData['returnUrl'] = Context::getContext()->link->getModuleLink('stancer', 'validation', [], true);
-
         }
 
         return $paymentData;
@@ -184,8 +183,8 @@ class StancerApi
                 ->setOrderId($paymentData['orderId'])
                 ->setCapture(false)
                 ->setMethodsAllowed(['card']);
-            if(isset($paymentData['returnUrl'])) {
-                $apiPayment->setReturnUrl(($paymentData['returnUrl']));
+            if (isset($paymentData['returnUrl'])) {
+                $apiPayment->setReturnUrl($paymentData['returnUrl']);
             }
         }
 
