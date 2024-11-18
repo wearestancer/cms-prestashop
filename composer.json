@@ -11,7 +11,7 @@
     },
     "require": {
         "php": ">=7.4",
-        "stancer/stancer": "^1.0"
+        "stancer/stancer": "^1.1.4"
     },
     "require-dev": {
         "prestashop/php-dev-tools": "^4.3",
