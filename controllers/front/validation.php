@@ -8,7 +8,7 @@
  *
  * @website   https://www.stancer.com
  *
- * @version   1.2.2
+ * @version   1.2.3
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -262,6 +262,6 @@ class StancerValidationModuleFrontController extends ModuleFrontController
 
         return $this->redirect($apiPayment->getPaymentPageUrl([
             'lang' => $this->context->language->language_code,
-        ]));
+        ], true));
     }
 }

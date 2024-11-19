@@ -8,7 +8,7 @@
  *
  * @website   https://www.stancer.com
  *
- * @version   1.2.2
+ * @version   1.2.3
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -75,15 +75,20 @@ class StancerApi
             ]);
         }
 
-        return [
+        $paymentData = [
             'amount' => $amount,
             'auth' => $auth,
             'currency' => strtolower($currency->iso_code),
             'description' => $description,
             'orderId' => (string) $cart->id,
-            'returnUrl' => Context::getContext()->link->getModuleLink('stancer', 'validation', [], true),
             'uniqueId' => $uniqueId,
         ];
+
+        if ('iframe' !== Configuration::get('STANCER_PAGE_TYPE')) {
+            $paymentData['returnUrl'] = Context::getContext()->link->getModuleLink('stancer', 'validation', [], true);
+        }
+
+        return $paymentData;
     }
 
     /**
@@ -176,9 +181,11 @@ class StancerApi
             $apiPayment
                 ->setCustomer($apiCustomer)
                 ->setOrderId($paymentData['orderId'])
-                ->setReturnUrl($paymentData['returnUrl'])
                 ->setCapture(false)
                 ->setMethodsAllowed(['card']);
+            if (isset($paymentData['returnUrl'])) {
+                $apiPayment->setReturnUrl($paymentData['returnUrl']);
+            }
         }
 
         if ($paymentData['auth'] && empty($apiPayment->getAuth())) {
@@ -215,7 +222,10 @@ class StancerApi
 
         if (empty($log)) {
             $apiCustomer = $apiPayment->getCustomer();
-            StancerApiCustomer::saveFrom($apiCustomer);
+
+            if ($apiCustomer) {
+                StancerApiCustomer::saveFrom($apiCustomer);
+            }
 
             // Save payment in Prestashop
             StancerApiPayment::saveFrom($apiPayment, $cart);
