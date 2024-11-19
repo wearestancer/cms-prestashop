@@ -8,7 +8,7 @@
  *
  * @website   https://www.stancer.com
  *
- * @version   1.2.2
+ * @version   1.2.3
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -21,7 +21,7 @@ require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
  */
 class Stancer extends PaymentModule
 {
-    public const VERSION = '1.2.2';
+    public const VERSION = '1.2.3';
 
     protected $configurations = [];
     protected $languages = [];
@@ -40,7 +40,7 @@ class Stancer extends PaymentModule
     {
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
-        $this->version = '1.2.2';
+        $this->version = '1.2.3';
         $this->author = 'Stancer';
         $this->need_instance = 1;
         $this->ps_versions_compliancy = ['min' => '1.7.8', 'max' => '8.2.999'];
