@@ -36,7 +36,7 @@ class Stancer extends PaymentModule
      * @param string $name Module unique name
      * @param Context $context
      */
-    public function __construct($name = null, ?Context $context = null)
+    public function __construct($name = null, $context = null)
     {
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
@@ -709,6 +709,7 @@ class Stancer extends PaymentModule
      *
      * @return string
      */
+    // This hook is deprecated and will be changed in the next release.
     public function hookHeader(): string
     {
         $this->registerStylesheet('global');
