@@ -27,7 +27,7 @@ class Stancer extends PaymentModule
     protected $languages = [];
     protected $hooks = [
         'paymentOptions',
-        'header',
+        'displayHeader',
     ];
 
     /**
@@ -710,7 +710,7 @@ class Stancer extends PaymentModule
      * @return string
      */
     // This hook is deprecated and will be changed in the next release.
-    public function hookHeader(): string
+    public function hookDisplayHeader(): string
     {
         $this->registerStylesheet('global');
 
