@@ -7,8 +7,6 @@
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
- *
- * @version   1.2.3
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -709,7 +707,6 @@ class Stancer extends PaymentModule
      *
      * @return string
      */
-    // This hook is deprecated and will be changed in the next release.
     public function hookDisplayHeader(): string
     {
         $this->registerStylesheet('global');

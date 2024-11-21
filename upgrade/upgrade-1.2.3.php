@@ -7,14 +7,12 @@
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
- *
- * @version   1.2.3
  */
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_1_2_5($module)
+function upgrade_module_1_2_3($module)
 {
     if (!$module->installConfigurations()) {
         return false;
