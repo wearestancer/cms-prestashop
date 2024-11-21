@@ -33,14 +33,14 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
         $context = $this->context;
 
         // phpcs:disable PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace
-        if (
-            !Validate::isLoadedObject($context->cart)
+        if (!Validate::isLoadedObject($context->cart)
             || !$context->cart->id_address_delivery
             || !$context->cart->id_address_invoice
             || !Validate::isLoadedObject($context->currency)
             || !Validate::isLoadedObject($context->customer)
             || $this->module->isNotAvailable()
         ) {
+            // Redirect always terminate. No return needed.
             $this->redirect();
         }
 
@@ -76,11 +76,19 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
             return;
         }
 
+        // Redirect always terminate. No return needed.
         if (!empty($existingCard)) {
-            $this->redirect($context->link->getModuleLink($this->module->name, 'validation', [], true));
-	     return;
+            $this->redirect(
+                $context->link->getModuleLink(
+                    $this->module->name,
+                    'validation',
+                    [],
+                    true
+                )
+            );
         }
 
+        // Redirect always terminate. No return needed.
         $this->redirect(
             $apiPayment->getPaymentPageUrl([
                 'lang' => $context->language->language_code,

@@ -12,13 +12,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_1_2_3($module)
+function upgrade_module_1_2_3(Stancer $module): bool
 {
     if (!$module->installConfigurations()) {
         return false;
     }
     $module->unregisterHook('header');
-    $module->unregisterExceptions('header');
+    $module->unregisterExceptions(Hook::getIdByName('header'));
     $module->registerHook('displayHeader');
 
     return true;

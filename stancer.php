@@ -51,12 +51,12 @@ class Stancer extends PaymentModule
      * @param string $name Module unique name
      * @param Context|null $context
      */
-    public function __construct(string $name = 'stancer', ?Context $context = null)
+    public function __construct(string $name = 'Stancer', ?Context $context = null)
     {
-        $this->name = $name;
+        $this->name = 'stancer';
         $this->tab = 'payments_gateways';
         $this->version = '1.2.4';
-        $this->author = 'Stancer';
+        $this->author = $name;
         $this->need_instance = 1;
         $this->ps_versions_compliancy = ['min' => '1.7.8', 'max' => '8.2.999'];
         $this->module_key = '405faa09756f808b77ad16948b321351';
@@ -65,7 +65,7 @@ class Stancer extends PaymentModule
 
         parent::__construct();
 
-        $this->displayName = 'Stancer';
+        $this->displayName = $name;
         $this->description = $this->l('Simple payment solution at low prices.');
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
@@ -96,7 +96,7 @@ class Stancer extends PaymentModule
      *
      * @param string|null $group
      *
-     * @return array<string,SettingData>
+     * @return array<string, SettingData>
      */
     public function getConfigurationsList(?string $group = null): array
     {
@@ -1058,7 +1058,7 @@ class Stancer extends PaymentModule
      * updateConfigurationList
      *
      * @param string $name
-     * @param array<string,string|mixed[]> $params
+     * @param array<string, string|mixed[]> $params
      *
      * @return void
      */

@@ -1,0 +1,85 @@
+
+includes:
+  - phar://phpstan.phar/conf/bleedingEdge.neon
+  - phpstan-baseline.neon
+
+parameters:
+  scanDirectories:
+    - vendor/stancer/php-stubs-prestashop/stubs/
+  level: 6
+  paths:
+    - classes/
+    - controllers/
+    - upgrade/
+    - stancer.php
+
+  phpVersion: 70100
+
+  treatPhpDocTypesAsCertain: false
+
+  tmpDir: vendor/.cache/phpstan
+
+  dynamicConstantNames:
+    - _PS_MODE_DEV_
+
+  ignoreErrors:
+    - '#Unsafe usage of new static\(\).#'
+
+  typeAliases:
+    PaymentData: '''
+      array{
+        'amount': int,
+        'auth': bool,
+        'currency': string,
+        'description': string|null,
+        'orderId': string,
+        'returnUrl'?: string,
+        'uniqueId': string|null,
+      }
+    '''
+    ErrorData: '''
+      array{
+        'errors': string[],
+        'log': string,
+      }
+    '''
+
+    SettingData: '''
+      array{
+        'default'?: ?mixed,
+        'desc'?: ?string,
+        'class'?: string,
+        'group'?: string|int,
+        'html_content'?: ?string,
+        'label'?: ?string,
+        'lang'?: ?bool,
+        'name'?: ?string,
+        'required'?: ?bool,
+        'size'?: int,
+        'template'?: ?string,
+        'type'?: ?string,
+        'values'?: ValueType[],
+      }
+    '''
+
+    ValueType: '''
+      array{
+        'id': ?string,
+        'value': null|string|int|float|bool,
+      }
+    '''
+    DisplaySetting: '''
+      array{
+        'legend': array{
+          'icon': string,
+          'title': string,
+        },
+        'description'?: ?string,
+        'input': array{SettingData},
+      }
+    '''
+    DisplaySettingForm: '''
+      array{
+        form: DisplaySetting,
+      }
+    '''

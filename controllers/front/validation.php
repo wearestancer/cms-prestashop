@@ -191,6 +191,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             || !Validate::isLoadedObject($customer)
             || $this->module->isNotAvailable()
         ) {
+            // Redirect always terminate. No return needed.
             $this->redirect();
         }
 
@@ -277,10 +278,9 @@ class StancerValidationModuleFrontController extends ModuleFrontController
                         'key' => $customer->secure_key,
                     ]
                 );
-
                 Tools::redirect($url);
         }
-
+        // Redirect always terminate. No return needed.
         $this->redirect($apiPayment->getPaymentPageUrl([
             'lang' => $this->context->language->language_code,
         ], true));

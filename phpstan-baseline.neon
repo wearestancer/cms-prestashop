@@ -1,0 +1,37 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Dead catch \- Stancer\\Exceptions\\ClientException is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
+			count: 1
+			path: classes/StancerApi.php
+
+		-
+			message: '#^Dead catch \- Stancer\\Exceptions\\NotAuthorizedException is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
+			count: 1
+			path: classes/StancerApi.php
+
+		-
+			message: '#^Dead catch \- Stancer\\Exceptions\\ServerException is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
+			count: 1
+			path: classes/StancerApi.php
+
+		-
+			message: '#^Access to property \$language_code on an unknown class InstallLanguage\.$#'
+			identifier: class.notFound
+			count: 1
+			path: controllers/front/payment.php
+
+		-
+			message: '#^Access to property \$language_code on an unknown class InstallLanguage\.$#'
+			identifier: class.notFound
+			count: 1
+			path: controllers/front/validation.php
+
+		-
+			message: '#^Access to property \$id on an unknown class InstallLanguage\.$#'
+			identifier: class.notFound
+			count: 1
+			path: stancer.php

@@ -37,7 +37,7 @@ class StancerApi
      * @param Language $language
      * @param Currency $currency
      *
-     * @return array<string,mixed>
+     * @return array<string, mixed>
      *
      * @phpstan-return PaymentData
      */
@@ -135,7 +135,6 @@ class StancerApi
             $log = $exception->getMessage();
         }
 
-        // @phpstan-ignore-next-line _PS_MODE_DEV_ is defined as FALSE in the stubs
         if ($exception && _PS_MODE_DEV_) {
             throw $exception;
         }
