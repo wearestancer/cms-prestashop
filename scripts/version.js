@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const glob = require('glob');
+const {glob} = require('glob');
 
 const pack = require('../package.json');
 
@@ -24,7 +24,7 @@ fs.readFile(file, { encoding: 'utf8' }, (err, content) => {
   }
   const data = content
     .replace(/\$this->version.+/, `$this->version = '${pack.version}';`)
-    .replace(/const STANCER_PS_VERSION .+/, `const STANCER_PS_VERSION = '${pack.version}';`);
+    .replace(/const STANCER_MODULE_VERSION .+/, `const STANCER_MODULE_VERSION = '${pack.version}';`);
 
   fs.writeFile(file, data, (err) => {
     if (err) {

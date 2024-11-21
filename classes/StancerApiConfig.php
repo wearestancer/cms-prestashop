@@ -11,7 +11,6 @@
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
 use Stancer;
 
 /**
@@ -71,7 +70,7 @@ class StancerApiConfig
         }
 
         return $apiConfig
-            ->addAppData('libstancer-prestashop', STANCER_PS_VERSION)
+            ->addAppData('libstancer-prestashop', STANCER_MODULE_VERSION)
             ->addAppData('prestashop', _PS_VERSION_)
         ;
     }

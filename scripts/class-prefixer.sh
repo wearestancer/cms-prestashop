@@ -11,3 +11,6 @@ files=$(grep -REl '^use Stancer(;| as StancerSDK;)$' --exclude-dir=node_modules/
 for file in $files; do
   sed -i'.old' -re 's/use Stancer\b/use Stancer\\Scoped\\Isolated\\Stancer/g' "$file"
 done
+
+rm -rf vendors
+mv build vendors

@@ -13,7 +13,7 @@ fi
 
 # Do adjust the URL based on the latest release
 curl -Lso scoper.phar "https://github.com/humbug/php-scoper/releases/download/${scoper_version}/php-scoper.phar"
+curl -Lso scoper.phar.asc "https://github.com/humbug/php-scoper/releases/download/${scoper_version}/php-scoper.phar.asc"
 
 mv scoper.phar /usr/bin/scoper
 chmod +x /usr/bin/scoper
-

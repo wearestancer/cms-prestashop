@@ -11,12 +11,12 @@
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-const STANCER_PS_VERSION = '1.2.0';
 
 use Stancer as StancerSDK;
 
 require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
 
+const STANCER_MODULE_VERSION = '2.0.1';
 /**
  * Stancer payment module.
  *
@@ -48,8 +48,6 @@ require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
  */
 class Stancer extends PaymentModule
 {
-    public const VERSION = '2.0.1';
-
     /**
      * Configurations Settings
      *
@@ -195,7 +193,7 @@ class Stancer extends PaymentModule
 
             $this->configurations['STANCER_API_MODE'] = [
                 // By forcing the cast on Stance\Config Constant we make sure that it binds to values id and show the radio button checked in our form.
-                'default' => (string) $mode ?: Stancer\Config::TEST_MODE,
+                'default' => (string) $mode ?: StancerSDK\Config::TEST_MODE,
                 'desc' => $this->fetchTemplate('admin/descriptions/api_mode.tpl'),
                 'group' => 'settings',
                 'label' => $this->l('Mode'),

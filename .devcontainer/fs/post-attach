@@ -24,7 +24,7 @@ pnpm config set store-dir "${HOME}/.cache/pnpm"
 pnpm install --dir "${plugin_dir}"
 
 # Prepare assets
-pnpm run --dir "${plugin_dir}" create-assets
+pnpm run --dir "${plugin_dir}" build:assets
 pnpm run --dir "${plugin_dir}" translate
 
 

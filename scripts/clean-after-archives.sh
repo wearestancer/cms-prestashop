@@ -12,5 +12,5 @@ for file in $files; do
   mv -f "$file" ${file/%.php.old/.php}
 done
 
-# We keep sure that our vendor-prefixer is still followed by git
-touch "${search_dir}/vendor-prefixer/.gitkeep"
+# We keep sure that our vendors is still followed by git
+touch "${search_dir}/vendors/.gitkeep"

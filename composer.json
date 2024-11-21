@@ -12,11 +12,13 @@
         "classmap": [
             "classes/",
             "controllers/",
-            "vendor-prefixer"
+            "vendors/"
         ]
     },
     "scripts": {
-        "after:scoping":"bash ./scripts/clean-after-archives.sh && composer install",
+        "after:scoping": "bash ./scripts/clean-after-archives.sh && composer install",
+        "phpcs": "./vendor/bin/php-cs-fixer check --diff",
+        "phpcs-fix": "./vendor/bin/php-cs-fixer fix",
         "phpstan": "./vendor/bin/phpstan",
         "prefix-stancer": "bash ./scripts/class-prefixer.sh",
         "prep-vendor": "bash ./scripts/scoper-dl.sh && scoper add-prefix -nf && rm -rf vendor/*",
@@ -31,11 +33,7 @@
         "prestashop/php-dev-tools": "^4.3",
         "stancer/php-stubs-prestashop": "^1.7"
     },
-    "scripts": {
-        "phpcs": "./vendor/bin/php-cs-fixer check --diff",
-        "phpcs-fix": "./vendor/bin/php-cs-fixer fix",
-        "phpstan": "./vendor/bin/phpstan"
-    },
+
     "support": {
         "docs": "https://gitlab.com/wearestancer/cms/prestashop/-/wikis/home",
         "issues": "https://gitlab.com/wearestancer/cms/prestashop/-/issues",
