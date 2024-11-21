@@ -7,8 +7,6 @@
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
- *
- * @version   1.2.3
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -161,9 +159,9 @@ class StancerApi
         Customer $customer,
         Language $language,
         Currency $currency,
-        ?StancerApiCard $card = null,
+        $card = null,
         array &$errors = [],
-        ?string &$log = null
+        &$log = null
     ): Stancer\Payment {
         $paymentData = $this->buildPaymentData($cart, $language, $currency);
         $psApiCustomer = StancerApiCustomer::find($customer);
