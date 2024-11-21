@@ -30,7 +30,7 @@ class StancerErrors extends ObjectModel
     /**
      * Get error message
      *
-     * @param mixed $key
+     * @param int $key
      *
      * @return string
      */
@@ -40,6 +40,7 @@ class StancerErrors extends ObjectModel
         $errors = [];
         $message = [];
 
+        // @phpstan-ignore-next-line _PS_MODE_DEV_ is defined as false in the stubs.
         if (_PS_MODE_DEV_) {
             $tmp = $module->l('Configuration error, unknown mode "%s".', 'StancerErrors');
             $message[] = sprintf($tmp, Configuration::get('STANCER_API_MODE'));

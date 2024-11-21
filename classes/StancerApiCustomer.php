@@ -17,10 +17,10 @@ if (!defined('_PS_VERSION_')) {
  */
 class StancerApiCustomer extends ObjectModel
 {
-    /** @var int Customer id */
+    /** @var ?string Customer id */
     public $id_customer;
 
-    /** @var string Customer id */
+    /** @var ?string Customer id */
     public $customer_id;
 
     /** @var bool Is a live mode object? */
@@ -47,10 +47,13 @@ class StancerApiCustomer extends ObjectModel
     /** @var string Object last modification date */
     public $date_upd;
 
-    protected $api;
+    /** @var ?Stancer\Customer the api object. */
+    protected ?Stancer\Customer $api = null;
 
     /**
      * @see ObjectModel::$definition
+     *
+     * @var array<string, string|array<string,mixed>>
      */
     public static $definition = [
         'table' => 'stancer_customer',

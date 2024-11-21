@@ -18,6 +18,10 @@ if (!defined('_PS_VERSION_')) {
 class StancerPaymentModuleFrontController extends ModuleFrontController
 {
     use StancerControllerTrait;
+    /**
+     * @var Stancer
+     */
+    public $module;
 
     /**
      * Process payment
@@ -37,7 +41,7 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
             || !Validate::isLoadedObject($context->customer)
             || $this->module->isNotAvailable()
         ) {
-            return $this->redirect();
+            $this->redirect();
         }
 
         $log = '';
@@ -67,14 +71,17 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
         if ($log) {
             $this->errors = $errors;
 
-            return $this->displayError($log);
+            $this->displayError($log);
+
+            return;
         }
 
         if (!empty($existingCard)) {
-            return $this->redirect($context->link->getModuleLink($this->module->name, 'validation', [], true));
+            $this->redirect($context->link->getModuleLink($this->module->name, 'validation', [], true));
+	     return;
         }
 
-        return $this->redirect(
+        $this->redirect(
             $apiPayment->getPaymentPageUrl([
                 'lang' => $context->language->language_code,
             ], true),

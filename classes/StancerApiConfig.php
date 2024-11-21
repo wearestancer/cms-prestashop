@@ -41,7 +41,7 @@ class StancerApiConfig
     {
         $this->mode = Configuration::get('STANCER_API_MODE') ?: Stancer\Config::TEST_MODE;
         $this->host = Configuration::get('STANCER_API_HOST');
-        $this->timeout = Configuration::get('STANCER_API_TIMEOUT');
+        $this->timeout = (int) Configuration::get('STANCER_API_TIMEOUT');
         $this->authLimit = Configuration::get('STANCER_AUTH_LIMIT');
         $this->isConfigured = $this->isConfigured();
     }

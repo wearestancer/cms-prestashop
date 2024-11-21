@@ -37,7 +37,9 @@ class StancerApi
      * @param Language $language
      * @param Currency $currency
      *
-     * @return array
+     * @return array<string,mixed>
+     *
+     * @phpstan-return PaymentData
      */
     public function buildPaymentData(
         Cart $cart,
@@ -52,10 +54,10 @@ class StancerApi
 
         $message = Configuration::get('STANCER_PAYMENT_DESCRIPTION', $language->id);
         $params = [
-            'SHOP_NAME' => Configuration::get('PS_SHOP_NAME'),
-            'CART_ID' => (int) $cart->id,
-            'TOTAL_AMOUNT' => sprintf('%.02f', $total),
-            'CURRENCY' => $currencyCode,
+            'SHOP_NAME' => Configuration::get('PS_SHOP_NAME', $language->id),
+            'CART_ID' => (string) $cart->id,
+            'TOTAL_AMOUNT' => (string) sprintf('%.02f', $total),
+            'CURRENCY' => (string) $currencyCode,
         ];
         $description = $message ? str_replace(array_keys($params), $params, $message) : null;
 
@@ -109,9 +111,9 @@ class StancerApi
      *
      * @param Stancer\Payment $apiPayment
      *
-     * @return void
+     * @return array<mixed>
      */
-    public function sendToApi(Stancer\Payment $apiPayment)
+    public function sendToApi(Stancer\Payment $apiPayment): array
     {
         $errors = [];
         $exception = null;
@@ -133,6 +135,7 @@ class StancerApi
             $log = $exception->getMessage();
         }
 
+        // @phpstan-ignore-next-line _PS_MODE_DEV_ is defined as FALSE in the stubs
         if ($exception && _PS_MODE_DEV_) {
             throw $exception;
         }
@@ -151,6 +154,8 @@ class StancerApi
      * @param Language $language
      * @param Currency $currency
      * @param StancerApiCard|null $card
+     * @param string[] $errors called by reference
+     * @param string|null $log called by reference
      *
      * @return Stancer\Payment
      */
@@ -174,7 +179,7 @@ class StancerApi
             $apiPayment = $currentPayment->getApiObject();
         }
 
-        if (!$apiPayment || (!empty($apiPayment) && $apiPayment->getStatus() === 'refused')) {
+        if (!$apiPayment || $apiPayment->getStatus() === 'refused') {
             $apiPayment = new Stancer\Payment();
             $apiPayment
                 ->setCustomer($apiCustomer)
