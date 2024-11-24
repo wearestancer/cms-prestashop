@@ -7,8 +7,6 @@
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
- *
- * @version   1.2.3
  */
 if (!defined('_PS_VERSION_')) {
     exit;

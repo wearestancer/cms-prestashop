@@ -12,17 +12,14 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_1_1_0($module)
+function upgrade_module_1_2_3($module)
 {
     if (!$module->installConfigurations()) {
         return false;
     }
-
-    $mode = Configuration::get('STANCER_API_MODE');
-
-    if (!in_array($mode, [Stancer\Config::TEST_MODE, Stancer\Config::LIVE_MODE], true)) {
-        Configuration::updateValue('STANCER_API_MODE', $mode ? Stancer\Config::LIVE_MODE : Stancer\Config::TEST_MODE);
-    }
+    $module->unregisterHook('header');
+    $module->unregisterException('header');
+    $module->registerHook('displayHeader');
 
     return true;
 }

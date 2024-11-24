@@ -7,8 +7,6 @@
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
- *
- * @version   1.2.3
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -27,7 +25,7 @@ class Stancer extends PaymentModule
     protected $languages = [];
     protected $hooks = [
         'paymentOptions',
-        'header',
+        'displayHeader',
     ];
 
     /**
@@ -36,7 +34,7 @@ class Stancer extends PaymentModule
      * @param string $name Module unique name
      * @param Context $context
      */
-    public function __construct($name = null, ?Context $context = null)
+    public function __construct($name = null, $context = null)
     {
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
@@ -709,7 +707,7 @@ class Stancer extends PaymentModule
      *
      * @return string
      */
-    public function hookHeader(): string
+    public function hookDisplayHeader(): string
     {
         $this->registerStylesheet('global');
 
