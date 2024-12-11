@@ -18,7 +18,7 @@ function upgrade_module_1_2_3($module)
         return false;
     }
     $module->unregisterHook('header');
-    $module->unregisterException('header');
+    $module->unregisterExceptions('header');
     $module->registerHook('displayHeader');
 
     return true;
