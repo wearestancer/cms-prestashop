@@ -35,6 +35,9 @@ if [ -d "${web_dir}/install" ]; then
   # Prepare the database
   mysql -h $DB_SERVER -P $DB_PORT -u $DB_USER -p$DB_PASSWD -ANe "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
 
+  # set SMARTY_FAST_LOAD  as true to prevent installation conflict
+  find ../../install/controllers/*/process.php -exec sed -in-place= "/define('_PS_SMARTY_FAST_LOAD_/s/true/false/g" {} \;
+
   # Install PrestaShop
   ps-install
 
