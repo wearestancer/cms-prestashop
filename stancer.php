@@ -85,7 +85,7 @@ class Stancer extends PaymentModule
         $this->version = '1.2.4';
         $this->author = 'Stancer';
         $this->need_instance = 1;
-        $this->ps_versions_compliancy = ['min' => '1.7.8', 'max' => '8.2.999'];
+        $this->ps_versions_compliancy = ['min' => '1.7.8', 'max' => '9.0.999'];
         $this->module_key = '405faa09756f808b77ad16948b321351';
         $this->bootstrap = true;
         $this->context = $context;
@@ -242,7 +242,6 @@ class Stancer extends PaymentModule
                 'default' => $defaultValue,
                 'group' => 'display',
                 'label' => $this->l('Payment option text'),
-                'lang' => true,
                 'required' => true,
                 'type' => 'text',
             ];
@@ -375,7 +374,6 @@ class Stancer extends PaymentModule
                 'desc' => $this->fetchTemplate('admin/descriptions/payment_description.tpl'),
                 'group' => 'settings',
                 'label' => $this->l('Payment description'),
-                'lang' => true,
                 'type' => 'text',
             ];
         }
@@ -490,16 +488,8 @@ class Stancer extends PaymentModule
             }
 
             Configuration::updateValue('STANCER_API_MODE', $apiMode);
-
             if (!$hasError) {
-                $link = [
-                    AdminController::$currentIndex,
-                    'configure=' . $this->name,
-                    'conf=4',
-                    'token=' . Tools::getAdminTokenLite('AdminModules'),
-                ];
-
-                return Tools::redirectAdmin(implode('&', $link));
+                $output = $this->displayConfirmation($this->trans('Settings updated', [], 'Admin.Global'));
             }
         }
 
@@ -716,11 +706,6 @@ class Stancer extends PaymentModule
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
 
-        // Language
-        $helper->default_form_language = $this->context->controller->default_form_language;
-        $helper->allow_employee_form_lang = $this->context->controller->allow_employee_form_lang;
-        $helper->languages = $this->languages;
-
         // Title and toolbar
         $helper->title = $this->displayName;
         $helper->show_toolbar = true;
@@ -832,7 +817,7 @@ class Stancer extends PaymentModule
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
             ->setModuleName($this->name)
-            ->setCallToActionText(Configuration::get('STANCER_CTA_TEXT', $this->context->language->id));
+            ->setCallToActionText(Configuration::get('STANCER_CTA_TEXT'));
 
         $logo = Configuration::get('STANCER_CTA_LOGO');
 
