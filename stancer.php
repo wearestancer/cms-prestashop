@@ -97,11 +97,8 @@ class Stancer extends PaymentModule
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
         foreach (Language::getLanguages(false) as $lang) {
-            if ($this->context->controller instanceof AdminController) {
-                $default = $this->context->controller->default_form_language;
-                $lang['is_default'] = $lang['id_lang'] == $default;
-            }
-
+            $default = $this->context->language;
+            $lang['is_default'] = $lang['id_lang'] == $default->id;
             $this->languages[] = $lang;
         }
         // Just to use stancer as the validator doesn't like `$this->name = $name` and we might need the context
@@ -241,6 +238,7 @@ class Stancer extends PaymentModule
             $this->configurations['STANCER_CTA_TEXT'] = [
                 'default' => $defaultValue,
                 'group' => 'display',
+                'lang' => true,
                 'label' => $this->l('Payment option text'),
                 'required' => true,
                 'type' => 'text',
@@ -373,6 +371,7 @@ class Stancer extends PaymentModule
                 'default' => $defaultDescriptions,
                 'desc' => $this->fetchTemplate('admin/descriptions/payment_description.tpl'),
                 'group' => 'settings',
+                'lang' => true,
                 'label' => $this->l('Payment description'),
                 'type' => 'text',
             ];
@@ -561,19 +560,7 @@ class Stancer extends PaymentModule
 
                 $helper->fields_value[$name] = $value;
             } else {
-                $clean = array_diff_key($infos, $excep);
-                $settings['input'][] = array_merge($clean, [
-                    'name' => $name,
-                ]);
-
-                if (array_key_exists('lang', $infos) && $infos['lang']) {
-                    foreach ($this->languages as $lang) {
-                        $value = Configuration::get($name, $lang['id_lang']);
-                        $helper->fields_value[$name][$lang['id_lang']] = $value;
-                    }
-                } else {
-                    $helper->fields_value[$name] = Configuration::get($name);
-                }
+                $settings['input'][] = $this->getContentStandardField($helper,$name,$infos);
             }
         }
 
@@ -667,28 +654,39 @@ class Stancer extends PaymentModule
 
         $mode = 'STANCER_API_MODE';
         $helper->fields_value[$mode] = Configuration::get($mode) === Stancer\Config::LIVE_MODE;
+
+        foreach ($this->getConfigurationsList('settings') as $name => $infos) {
+            $settings['input'][] = $this->getContentStandardField($helper,$name,$infos);
+        }
+        return ['form' => $settings];
+    }
+
+    /**
+     * Handle the formatting of non customized fields.
+     *
+     * @param HelperForm $helper
+     * @param string $name
+     * @param array[string,any] $infos
+     *
+     * @return void
+     */
+    public function getContentStandardField(HelperForm $helper, string $name, array $infos)
+    {
         $excep = [
             'default' => 1,
             'group' => 1,
         ];
+        $clean = array_diff_key($infos, $excep);
 
-        foreach ($this->getConfigurationsList('settings') as $name => $infos) {
-            $clean = array_diff_key($infos, $excep);
-            $settings['input'][] = array_merge($clean, [
-                'name' => $name,
-            ]);
-
-            if (array_key_exists('lang', $infos) && $infos['lang']) {
-                foreach ($this->languages as $lang) {
-                    $value = Configuration::get($name, $lang['id_lang']);
-                    $helper->fields_value[$name][$lang['id_lang']] = $value;
-                }
-            } else {
-                $helper->fields_value[$name] = Configuration::get($name);
+        if (array_key_exists('lang', $infos) && $infos['lang']) {
+            foreach ($this->languages as $lang) {
+                $value = Configuration::get($name, $lang['id_lang']);
+                $helper->fields_value[$name][$lang['id_lang']] = $value;
             }
+        } else {
+            $helper->fields_value[$name] = Configuration::get($name);
         }
-
-        return ['form' => $settings];
+        return array_merge($clean, ['name' => $name,]);
     }
 
     /**
@@ -706,6 +704,7 @@ class Stancer extends PaymentModule
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
 
+        $helper->languages = $this->languages;
         // Title and toolbar
         $helper->title = $this->displayName;
         $helper->show_toolbar = true;
@@ -817,7 +816,7 @@ class Stancer extends PaymentModule
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
             ->setModuleName($this->name)
-            ->setCallToActionText(Configuration::get('STANCER_CTA_TEXT'));
+            ->setCallToActionText(Configuration::get('STANCER_CTA_TEXT', $this->context->language->id));
 
         $logo = Configuration::get('STANCER_CTA_LOGO');
 
