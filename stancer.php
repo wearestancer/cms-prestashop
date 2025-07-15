@@ -560,7 +560,7 @@ class Stancer extends PaymentModule
 
                 $helper->fields_value[$name] = $value;
             } else {
-                $settings['input'][] = $this->getContentStandardField($helper,$name,$infos);
+                $settings['input'][] = $this->getContentStandardField($helper, $name, $infos);
             }
         }
 
@@ -656,8 +656,9 @@ class Stancer extends PaymentModule
         $helper->fields_value[$mode] = Configuration::get($mode) === Stancer\Config::LIVE_MODE;
 
         foreach ($this->getConfigurationsList('settings') as $name => $infos) {
-            $settings['input'][] = $this->getContentStandardField($helper,$name,$infos);
+            $settings['input'][] = $this->getContentStandardField($helper, $name, $infos);
         }
+
         return ['form' => $settings];
     }
 
@@ -686,7 +687,8 @@ class Stancer extends PaymentModule
         } else {
             $helper->fields_value[$name] = Configuration::get($name);
         }
-        return array_merge($clean, ['name' => $name,]);
+
+        return array_merge($clean, ['name' => $name]);
     }
 
     /**
