@@ -4,16 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### [Unreleased]
+
+### Added
+- Compatibility with PrestaShop 9.0 (CMS-101)
+
+
 ## [1.2.4] - 2024-12-11
 
 ### Fixed
 - Fix a typo in `upgrade.php` (CMS-274)
+
 
 ## [1.2.3] - 2024-11-19
 
 ### Fixed
 - Handling of customer null edge cases. (CMS-255)
 - Better iframe integration. (CMS-261)
+
 
 ## [1.2.2] - 2024-10-03
 
