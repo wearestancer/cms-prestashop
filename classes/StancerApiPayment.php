@@ -219,7 +219,7 @@ class StancerApiPayment extends ObjectModel
     public function getOrderState(): int
     {
         $statuses = [
-            Stancer\Payment\Status::AUTHORIZED => 'PS_OS_AUTHORIZED',
+            Stancer\Payment\Status::AUTHORIZED => 'PS_CHECKOUT_STATE_AUTHORIZED',
             Stancer\Payment\Status::CANCELED => 'PS_OS_CANCELED',
             Stancer\Payment\Status::CAPTURED => 'PS_OS_PAYMENT',
             Stancer\Payment\Status::DISPUTED => 'PS_OS_DISPUTED',

@@ -18,7 +18,7 @@ git --git-dir="${plugin_dir}/.git" config --global --add safe.directory "$plugin
 sh "${plugin_dir}/scripts/git-filters.sh"
 
 # Install dependencies
-composer upgrade --working-dir="${plugin_dir}"
+composer install --working-dir="${plugin_dir}"
 pnpm config set store-dir "${HOME}/.cache/pnpm"
 pnpm install --dir "${plugin_dir}"
 
