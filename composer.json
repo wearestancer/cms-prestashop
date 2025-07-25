@@ -14,7 +14,8 @@
         "stancer/stancer": "^1.0"
     },
     "require-dev": {
-        "prestashop/php-dev-tools": "^3.16"
+        "prestashop/php-dev-tools": "^3.16",
+        "stancer/php-stubs-prestashop": "^1.7"
     },
     "license": "MIT",
     "config": {
