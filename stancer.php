@@ -17,7 +17,7 @@ if (!defined('_PS_VERSION_')) {
  */
 class Stancer extends PaymentModule
 {
-    public const VERSION = '1.2.4';
+    const VERSION = '1.2.4';
 
     protected $configurations = [];
     protected $languages = [];
@@ -59,7 +59,7 @@ class Stancer extends PaymentModule
 
             $this->languages[] = $lang;
         }
-        $this->ps_versions_compliancy = ['min' => '1.7.5', 'max' => '8.2'];
+        $this->ps_versions_compliancy = ['min' => '1.7.1', 'max' => '8.2'];
     }
 
     /**
