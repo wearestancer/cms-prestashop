@@ -10,15 +10,11 @@
         ]
     },
     "require": {
-        "php": ">=7.4",
-        "stancer/stancer": "^1.1.4"
+        "php": ">=7.1",
+        "stancer/stancer": "^1.0"
     },
     "require-dev": {
-        "prestashop/php-dev-tools": "^4.3",
-        "stancer/php-stubs-prestashop": "^1.7"
-    },
-    "scripts": {
-        "phpcs": "./vendor/bin/php-cs-fixer check --diff"
+        "prestashop/php-dev-tools": "^3.16"
     },
     "license": "MIT",
     "config": {
