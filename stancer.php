@@ -12,8 +12,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
-
 /**
  * Stancer payment module.
  */
@@ -34,14 +32,14 @@ class Stancer extends PaymentModule
      * @param string $name Module unique name
      * @param Context $context
      */
-    public function __construct($name = null, $context = null)
+    public function __construct()
     {
+        require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
         $this->version = '1.2.4';
         $this->author = 'Stancer';
         $this->need_instance = 1;
-        $this->ps_versions_compliancy = ['min' => '1.7.5', 'max' => '8.1.999'];
         $this->module_key = '405faa09756f808b77ad16948b321351';
         $this->bootstrap = true;
 
@@ -51,6 +49,7 @@ class Stancer extends PaymentModule
         $this->description = $this->l('Simple payment solution at low prices.');
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
         $this->limited_currencies = ['EUR'];
+        $this->limited_countries = ['FR'];
 
         foreach (Language::getLanguages(false) as $lang) {
             if ($this->context->controller instanceof AdminController) {
@@ -60,6 +59,7 @@ class Stancer extends PaymentModule
 
             $this->languages[] = $lang;
         }
+        $this->ps_versions_compliancy = ['min' => '1.7.5', 'max' => '8.2'];
     }
 
     /**
@@ -71,7 +71,7 @@ class Stancer extends PaymentModule
      */
     protected function fetchTemplate(string $path)
     {
-        return $this->context->smarty->fetch('module:' . $this->name . '/views/templates/' . $path);
+        return $this->context->smarty->fetch(__DIR__ . '/views/templates/' . $path);
     }
 
     /**
@@ -406,7 +406,12 @@ class Stancer extends PaymentModule
                 Configuration::updateValue($name, $value);
             }
 
-            $apiMode = Tools::getValue('STANCER_API_MODE') ?? Stancer\Config::TEST_MODE;
+            if (Tools::getValue('STANCER_API_MODE') === null){
+                $apiMode = Stancer\Config::TEST_MODE;
+            }
+            else {
+                $apiMode = Tools::getValue('STANCER_API_MODE');
+            }
 
             if ($apiMode === Stancer\Config::LIVE_MODE) {
                 $public = Configuration::get('STANCER_API_LIVE_PUBLIC_KEY');
@@ -752,7 +757,8 @@ class Stancer extends PaymentModule
                 $cardOption
                     ->setModuleName($this->name)
                     ->setCallToActionText($text)
-                    ->setAction($target);
+                    ->setAction($target)
+                ;
 
                 if (Configuration::get('STANCER_REUSED_CARD_LOGO')) {
                     $url = _MODULE_DIR_ . $this->name . '/views/img/logo.svg#';
@@ -782,7 +788,8 @@ class Stancer extends PaymentModule
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
             ->setModuleName($this->name)
-            ->setCallToActionText(Configuration::get('STANCER_CTA_TEXT', $this->context->language->id));
+            ->setCallToActionText(Configuration::get('STANCER_CTA_TEXT', $this->context->language->id))
+        ;
 
         $logo = Configuration::get('STANCER_CTA_LOGO');
 
@@ -804,7 +811,8 @@ class Stancer extends PaymentModule
             default:
                 $paymentOption
                     ->setAction($target)
-                    ->setAdditionalInformation($this->fetchTemplate('front/option.tpl'));
+                    ->setAdditionalInformation($this->fetchTemplate('front/option.tpl'))
+                ;
 
                 break;
         }

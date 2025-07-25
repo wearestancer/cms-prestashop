@@ -61,7 +61,7 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
             $context->currency,
             $existingCard,
             $errors,
-            $log,
+            $log
         );
 
         if ($log) {

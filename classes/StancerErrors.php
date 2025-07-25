@@ -17,15 +17,15 @@ if (!defined('_PS_VERSION_')) {
  */
 class StancerErrors extends ObjectModel
 {
-    public const UNKNOWN_ERROR = 1;
-    public const NOT_AVAILABLE = 2;
-    public const BAD_MODE = 3;
-    public const NOT_AUTHORIZED = 9;
-    public const SERVER_ERROR = 10;
-    public const CLIENT_ERROR = 11;
-    public const NO_PAYMENT = 12;
-    public const NO_PAYMENT_REINSURANCE = 13;
-    public const PAYMENT_FAILED = 14;
+    const UNKNOWN_ERROR = 1;
+    const NOT_AVAILABLE = 2;
+    const BAD_MODE = 3;
+    const NOT_AUTHORIZED = 9;
+    const SERVER_ERROR = 10;
+    const CLIENT_ERROR = 11;
+    const NO_PAYMENT = 12;
+    const NO_PAYMENT_REINSURANCE = 13;
+    const PAYMENT_FAILED = 14;
 
     /**
      * Get error message
@@ -46,7 +46,7 @@ class StancerErrors extends ObjectModel
 
             $message[] = $module->l(
                 'Please reconfigure the module or ask the site administrator to do it.',
-                'StancerErrors',
+                'StancerErrors'
             );
         } else {
             $message[] = $module->l('This payment method is currently unavailable.', 'StancerErrors');
@@ -70,7 +70,7 @@ class StancerErrors extends ObjectModel
         $errors[static::PAYMENT_FAILED] = $module->l('The payment attempt failed.', 'StancerErrors');
         $errors[static::UNKNOWN_ERROR] = $module->l(
             'An unknown error occurred while connecting to the payment platform.',
-            'StancerErrors',
+            'StancerErrors'
         );
 
         if (array_key_exists($key, $errors)) {

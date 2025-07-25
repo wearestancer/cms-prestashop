@@ -63,7 +63,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
      *
      * @return Order
      */
-    protected function createOrder(Cart $cart, Stancer\Payment $apiPayment, int $orderState): Order
+    protected function createOrder(Cart $cart, Stancer\Payment $apiPayment, int $orderState)
     {
         $this->module->validateOrder(
             $cart->id,
@@ -74,7 +74,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             ['transaction_id' => $apiPayment->getId()],
             (int) $cart->id_currency,
             false,
-            $cart->secure_key,
+            $cart->secure_key
         );
 
         $newOrder = new Order((int) $this->module->currentOrder);
@@ -102,7 +102,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
      *
      * @return array
      */
-    protected function getOrderMessage(Stancer\Payment $apiPayment): string
+    protected function getOrderMessage(Stancer\Payment $apiPayment)
     {
         $amount = vsprintf('%.02f %s', [
             $apiPayment->getAmount() / 100,
