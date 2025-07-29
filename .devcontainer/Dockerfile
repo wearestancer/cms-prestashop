@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 ARG DOCKER_PROXY=docker.io/wearestancer
-ARG PRESTASHOP_VERSION=1.7.3
+ARG PRESTASHOP_VERSION=1.7.2
 ARG PHP_VERSION=7.1
 
 FROM ${DOCKER_PROXY}/prestashop:${PRESTASHOP_VERSION}-php${PHP_VERSION}
