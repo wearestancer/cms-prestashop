@@ -38,34 +38,7 @@ if [ -d "${web_dir}/install" ]; then
   # Install PrestaShop
   ps-install
 
-  # Install our module
-  php -d memory_limit=-1 "${web_dir}/app/console" prestashop:module -q install stancer
 fi
-
-
-# Configure the module
-configurations=$(env | grep STANCER_)
-
-if [ -n "$configurations" ]; then
-  touch module-configuration.yml
-  echo "" > module-configuration.yml
-
-  echo "configuration:" >> module-configuration.yml
-  echo "  update:" >> module-configuration.yml
-
-  for conf in $configurations; do
-    value=$(echo "$conf" | cut -d= -f2)
-
-    if [ -n "$value" ] ; then
-      echo "    ${conf/=/: }" >> module-configuration.yml
-    fi
-  done
-
-  php -d memory_limit=-1 "${web_dir}/app/console" prestashop:module -q configure stancer module-configuration.yml
-
-  rm module-configuration.yml
-fi
-
 
 # Create an user
 php "${plugin_dir}/.devcontainer/scripts/create-user.php"
@@ -118,8 +91,7 @@ echo "Webmail:                    ${protocol}${PS_DOMAIN/prestashop/mailtrap}"
 echo "Webmail login:              mailtrap"
 echo "Webmail password:           mailtrap"
 echo ""
-
-if [ -z "${API_PUBLIC_KEY:-}" ] || [ -z "${API_SECRET_KEY:-}" ]; then
-  echo -e "${bold}${red}Your Stancer API keys are not properly setup do not forget to set them.${normal}"
-  echo ""
-fi
+echo "${red}The module is currently uninstalled, but the file are at the good place"
+exho "just install the module from the marketplace and it will install this codebase. "
+echo "${bold}Stancer API keys cannot be properly setup as we cannot install the module in cli.${normal}"
+echo ""
