@@ -114,7 +114,13 @@ services:
     volumes:
       - root-path:/var/www/html:cached
       - ..:/var/www/html/modules/stancer:cached
-
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - database
 
 networks:
   app:

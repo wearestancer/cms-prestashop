@@ -39,7 +39,7 @@ if [ -d "${web_dir}/install" ]; then
   ps-install
 
   # Install our module
-  php -d memory_limit=-1 "${web_dir}/bin/console" prestashop:module -q install stancer
+  php -d memory_limit=-1 "${web_dir}/app/console" prestashop:module -q install stancer
 fi
 
 
@@ -61,7 +61,7 @@ if [ -n "$configurations" ]; then
     fi
   done
 
-  php -d memory_limit=-1 "${web_dir}/bin/console" prestashop:module -q configure stancer module-configuration.yml
+  php -d memory_limit=-1 "${web_dir}/app/console" prestashop:module -q configure stancer module-configuration.yml
 
   rm module-configuration.yml
 fi
@@ -86,7 +86,7 @@ SQL
 
 
 # Cache clearing
-php -d memory_limit=-1 "${web_dir}/bin/console" cache:clear -q
+php -d memory_limit=-1 "${web_dir}/app/console" cache:clear -q
 
 
 # Output
