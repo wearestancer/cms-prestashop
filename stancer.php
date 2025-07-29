@@ -238,8 +238,8 @@ class Stancer extends PaymentModule
             $this->configurations['STANCER_CTA_TEXT'] = [
                 'default' => $defaultValue,
                 'group' => 'display',
-                'lang' => true,
                 'label' => $this->l('Payment option text'),
+                'lang' => true,
                 'required' => true,
                 'type' => 'text',
             ];
@@ -371,8 +371,8 @@ class Stancer extends PaymentModule
                 'default' => $defaultDescriptions,
                 'desc' => $this->fetchTemplate('admin/descriptions/payment_description.tpl'),
                 'group' => 'settings',
-                'lang' => true,
                 'label' => $this->l('Payment description'),
+                'lang' => true,
                 'type' => 'text',
             ];
         }
@@ -667,9 +667,9 @@ class Stancer extends PaymentModule
      *
      * @param HelperForm $helper
      * @param string $name
-     * @param array[string,any] $infos
+     * @param SettingData $infos
      *
-     * @return void
+     * @return SettingData
      */
     public function getContentStandardField(HelperForm $helper, string $name, array $infos)
     {

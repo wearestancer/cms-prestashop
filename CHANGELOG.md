@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Compatibility with PrestaShop 9.0 (CMS-101)
 
+### Fixed
+- Check test mode in UI to reflect the database state on module install (CMS-53)
+
 
 ## [1.2.4] - 2024-12-11
 

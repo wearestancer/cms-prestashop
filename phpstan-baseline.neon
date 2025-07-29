@@ -17,5 +17,5 @@ parameters:
 		-
 			message: '#^Access to property \$id on an unknown class InstallLanguage\.$#'
 			identifier: class.notFound
-			count: 1
+			count: 2
 			path: stancer.php
