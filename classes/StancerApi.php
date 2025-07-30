@@ -6,7 +6,7 @@
  * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
- * @website   https://www.stancer.com
+ * @website https://www.stancer.com
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -17,7 +17,9 @@ if (!defined('_PS_VERSION_')) {
  */
 class StancerApi
 {
-    /** @var StancerApiConfig Stancer API configuration */
+    /**
+     * @var StancerApiConfig Stancer API configuration 
+     */
     public $apiConfig;
 
     /**
@@ -33,7 +35,7 @@ class StancerApi
     /**
      * Prepare payment data for send a payment to Stancer
      *
-     * @param Cart $cart
+     * @param Cart     $cart
      * @param Language $language
      * @param Currency $currency
      *
@@ -65,12 +67,14 @@ class StancerApi
             $now = new DateTime();
             $now->setTimezone(new DateTimeZone('UTC'));
 
-            $uniqueId = implode('-', [
+            $uniqueId = implode(
+                '-', [
                 'PS',
                 'MP',
                 $now->format('U'),
                 str_pad((string) $cart->id, 6, '0', STR_PAD_LEFT),
-            ]);
+                ]
+            );
         }
 
         $paymentData = [
@@ -146,10 +150,10 @@ class StancerApi
     /**
      * Send payment to Stancer Api
      *
-     * @param Cart $cart
-     * @param Customer $customer
-     * @param Language $language
-     * @param Currency $currency
+     * @param Cart                $cart
+     * @param Customer            $customer
+     * @param Language            $language
+     * @param Currency            $currency
      * @param StancerApiCard|null $card
      *
      * @return Stancer\Payment

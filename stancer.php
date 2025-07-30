@@ -6,7 +6,7 @@
  * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
- * @website   https://www.stancer.com
+ * @website https://www.stancer.com
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -29,12 +29,12 @@ class Stancer extends PaymentModule
     /**
      * Constructor
      *
-     * @param string $name Module unique name
+     * @param string  $name    Module unique name
      * @param Context $context
      */
     public function __construct()
     {
-        require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
+        include_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
         $this->version = '1.2.4';
@@ -331,9 +331,11 @@ class Stancer extends PaymentModule
         }
 
         if ($group) {
-            return array_filter($this->configurations, function ($infos) use ($group) {
-                return $infos['group'] === $group;
-            });
+            return array_filter(
+                $this->configurations, function ($infos) use ($group) {
+                    return $infos['group'] === $group;
+                }
+            );
         }
 
         return $this->configurations;
@@ -517,18 +519,22 @@ class Stancer extends PaymentModule
                 $this->context->smarty->assign('stancer_module_img', _MODULE_DIR_ . $this->name . '/views/img');
                 $this->context->smarty->assign($name . '_VALUE', $value);
 
-                $settings['input'][] = array_merge($clean, [
+                $settings['input'][] = array_merge(
+                    $clean, [
                     'html_content' => $this->fetchTemplate('admin/' . $infos['template'] . '.tpl'),
                     'name' => $name,
                     'type' => 'html',
-                ]);
+                    ]
+                );
 
                 $helper->fields_value[$name] = $value;
             } else {
                 $clean = array_diff_key($infos, $excep);
-                $settings['input'][] = array_merge($clean, [
+                $settings['input'][] = array_merge(
+                    $clean, [
                     'name' => $name,
-                ]);
+                    ]
+                );
 
                 if (array_key_exists('lang', $infos) && $infos['lang']) {
                     foreach ($this->languages as $lang) {
@@ -638,9 +644,11 @@ class Stancer extends PaymentModule
 
         foreach ($this->getConfigurationsList('settings') as $name => $infos) {
             $clean = array_diff_key($infos, $excep);
-            $settings['input'][] = array_merge($clean, [
+            $settings['input'][] = array_merge(
+                $clean, [
                 'name' => $name,
-            ]);
+                ]
+            );
 
             if (array_key_exists('lang', $infos) && $infos['lang']) {
                 foreach ($this->languages as $lang) {
@@ -756,8 +764,7 @@ class Stancer extends PaymentModule
                 $cardOption
                     ->setModuleName($this->name)
                     ->setCallToActionText($text)
-                    ->setAction($target)
-                ;
+                    ->setAction($target);
 
                 if (Configuration::get('STANCER_REUSED_CARD_LOGO')) {
                     $url = _MODULE_DIR_ . $this->name . '/views/img/logo.svg#';
@@ -787,8 +794,7 @@ class Stancer extends PaymentModule
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption
             ->setModuleName($this->name)
-            ->setCallToActionText(Configuration::get('STANCER_CTA_TEXT', $this->context->language->id))
-        ;
+            ->setCallToActionText(Configuration::get('STANCER_CTA_TEXT', $this->context->language->id));
 
         $logo = Configuration::get('STANCER_CTA_LOGO');
 
@@ -797,23 +803,22 @@ class Stancer extends PaymentModule
         }
 
         switch (Configuration::get('STANCER_PAGE_TYPE')) {
-            case 'full-iframe':
-                $this->context->smarty->assign('3ds', true);
-                // no break
-            case 'iframe':
-                $link = $this->context->link->getModuleLink($this->name, 'validation', [], true);
-                $this->context->smarty->assign('target', $target);
-                $this->context->smarty->assign('validation', $link);
-                $paymentOption->setAdditionalInformation($this->fetchTemplate('front/iframe.tpl'));
+        case 'full-iframe':
+            $this->context->smarty->assign('3ds', true);
+            // no break
+        case 'iframe':
+            $link = $this->context->link->getModuleLink($this->name, 'validation', [], true);
+            $this->context->smarty->assign('target', $target);
+            $this->context->smarty->assign('validation', $link);
+            $paymentOption->setAdditionalInformation($this->fetchTemplate('front/iframe.tpl'));
 
-                break;
-            default:
-                $paymentOption
-                    ->setAction($target)
-                    ->setAdditionalInformation($this->fetchTemplate('front/option.tpl'))
-                ;
+            break;
+        default:
+            $paymentOption
+                ->setAction($target)
+                ->setAdditionalInformation($this->fetchTemplate('front/option.tpl'));
 
-                break;
+            break;
         }
 
         $list[] = $paymentOption;
@@ -1046,7 +1051,7 @@ class Stancer extends PaymentModule
      * updateConfigurationList
      *
      * @param string $name
-     * @param array $params
+     * @param array  $params
      *
      * @return void
      */

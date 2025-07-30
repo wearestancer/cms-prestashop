@@ -6,7 +6,7 @@
  * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
- * @website   https://www.stancer.com
+ * @website https://www.stancer.com
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -17,40 +17,64 @@ if (!defined('_PS_VERSION_')) {
  */
 class StancerApiCard extends ObjectModel
 {
-    /** @var int Customer id */
+    /**
+     * @var int Customer id 
+     */
     public $id_customer;
 
-    /** @var int Card id */
+    /**
+     * @var int Card id 
+     */
     public $card_id;
 
-    /** @var bool Is a live mode object? */
+    /**
+     * @var bool Is a live mode object? 
+     */
     public $live_mode;
 
-    /** @var string Card last4 */
+    /**
+     * @var string Card last4 
+     */
     public $last4;
 
-    /** @var string Card expiration date */
+    /**
+     * @var string Card expiration date 
+     */
     public $expiration;
 
-    /** @var string Card brand */
+    /**
+     * @var string Card brand 
+     */
     public $brand;
 
-    /** @var string Card brand name */
+    /**
+     * @var string Card brand name 
+     */
     public $brandname;
 
-    /** @var string Card name */
+    /**
+     * @var string Card name 
+     */
     public $name;
 
-    /** @var string Card creation date in Stancer Api */
+    /**
+     * @var string Card creation date in Stancer Api 
+     */
     public $created;
 
-    /** @var string Last date of use */
+    /**
+     * @var string Last date of use 
+     */
     public $last_used;
 
-    /** @var string Object creation date */
+    /**
+     * @var string Object creation date 
+     */
     public $date_add;
 
-    /** @var string Object last modification date */
+    /**
+     * @var string Object last modification date 
+     */
     public $date_upd;
 
     protected $api;
@@ -169,7 +193,7 @@ class StancerApiCard extends ObjectModel
      * Retrieve a card
      *
      * @param Customer $customer
-     * @param int $id
+     * @param int      $id
      *
      * @return array
      */
@@ -254,7 +278,7 @@ class StancerApiCard extends ObjectModel
      * Create or update an Stancer card from Stancer API card object
      *
      * @param Stancer\Card $card
-     * @param Customer $customer
+     * @param Customer     $customer
      *
      * @return StancerApiCard
      */

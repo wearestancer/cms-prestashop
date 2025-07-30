@@ -6,7 +6,7 @@
  * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
- * @website   https://www.stancer.com
+ * @website https://www.stancer.com
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -38,18 +38,22 @@ class StancerValidationModuleFrontController extends ModuleFrontController
 
         CartRule::autoAddToCart($this->context);
 
-        $sql = implode(' ', [
+        $sql = implode(
+            ' ', [
             'SELECT checkout_session_data',
             'FROM `' . _DB_PREFIX_ . 'cart`',
             'WHERE id_cart = ' . (int) $cart->id,
-        ]);
+            ]
+        );
         $checkoutSessionData = Db::getInstance()->getValue($sql);
 
-        $sql = implode(' ', [
+        $sql = implode(
+            ' ', [
             'UPDATE `' . _DB_PREFIX_ . 'cart`',
             'SET checkout_session_data = "' . pSQL($checkoutSessionData) . '"',
             'WHERE id_cart = ' . (int) $this->context->cart->id,
-        ]);
+            ]
+        );
         Db::getInstance()->execute($sql);
 
         $this->context->cookie->write();
@@ -58,7 +62,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
     /**
      * Create a new order
      *
-     * @param Cart $cart
+     * @param Cart            $cart
      * @param Stancer\Payment $apiPayment
      *
      * @return Order
@@ -104,10 +108,12 @@ class StancerValidationModuleFrontController extends ModuleFrontController
      */
     protected function getOrderMessage(Stancer\Payment $apiPayment)
     {
-        $amount = vsprintf('%.02f %s', [
+        $amount = vsprintf(
+            '%.02f %s', [
             $apiPayment->getAmount() / 100,
             strtoupper($apiPayment->getCurrency()),
-        ]);
+            ]
+        );
 
         if (class_exists('NumberFormatter')) {
             $formatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
@@ -125,28 +131,28 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         $message[] = '';
 
         switch ($apiPayment->getMethod()) {
-            case 'card':
-                $apiCard = $apiPayment->getCard();
+        case 'card':
+            $apiCard = $apiPayment->getCard();
 
-                $message[] = 'Card';
-                $message[] = $apiCard->getId();
-                $message[] = '';
-                $message[] = 'Brand: ' . $apiCard->getBrandName();
-                $message[] = 'Last numbers: ' . $apiCard->getLast4();
+            $message[] = 'Card';
+            $message[] = $apiCard->getId();
+            $message[] = '';
+            $message[] = 'Brand: ' . $apiCard->getBrandName();
+            $message[] = 'Last numbers: ' . $apiCard->getLast4();
 
-                $date = $apiCard->getExpirationDate();
-                $message[] = sprintf('Expiration: %02d/%04d', $date->format('m'), $date->format('Y'));
-                break;
-            case 'sepa':
-                $apiSepa = $apiPayment->getSepa();
+            $date = $apiCard->getExpirationDate();
+            $message[] = sprintf('Expiration: %02d/%04d', $date->format('m'), $date->format('Y'));
+            break;
+        case 'sepa':
+            $apiSepa = $apiPayment->getSepa();
 
-                $message[] = 'Sepa';
-                $message[] = $apiSepa->getId();
-                $message[] = '';
-                $message[] = 'Country: ' . $apiSepa->getCountry();
-                $message[] = 'Last numbers: ' . $apiSepa->getLast4();
-                $message[] = 'Mandate: ' . $apiSepa->getMandate();
-                break;
+            $message[] = 'Sepa';
+            $message[] = $apiSepa->getId();
+            $message[] = '';
+            $message[] = 'Country: ' . $apiSepa->getCountry();
+            $message[] = 'Last numbers: ' . $apiSepa->getLast4();
+            $message[] = 'Mandate: ' . $apiSepa->getMandate();
+            break;
         }
 
         return trim(implode("\n", $message));
@@ -165,8 +171,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         $customer = $context->customer;
 
         // phpcs:disable PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace
-        if (
-            !Validate::isLoadedObject($cart)
+        if (!Validate::isLoadedObject($cart)
             || !$cart->id_address_delivery
             || !$cart->id_address_invoice
             || !Validate::isLoadedObject($currency)
@@ -215,51 +220,55 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         }
 
         switch ($status) {
-            case Stancer\Payment\Status::FAILED:
-            case Stancer\Payment\Status::REFUSED:
-                $err = StancerErrors::getMessage(StancerErrors::PAYMENT_FAILED);
-                $this->errors[] = $err;
+        case Stancer\Payment\Status::FAILED:
+        case Stancer\Payment\Status::REFUSED:
+            $err = StancerErrors::getMessage(StancerErrors::PAYMENT_FAILED);
+            $this->errors[] = $err;
 
-                if (Configuration::get('STANCER_ORDER_FOR_NOK_PAYMENTS')) {
-                    $this->createOrder($cart, $apiPayment, $payment->getOrderState());
-                    $this->cloneCart($cart);
-                }
+            if (Configuration::get('STANCER_ORDER_FOR_NOK_PAYMENTS')) {
+                $this->createOrder($cart, $apiPayment, $payment->getOrderState());
+                $this->cloneCart($cart);
+            }
 
-                return $this->displayError($err);
-            case Stancer\Payment\Status::AUTHORIZED:
-            case Stancer\Payment\Status::TO_CAPTURE:
-            case Stancer\Payment\Status::CAPTURE:
-                // @todo : remove check of property when property deleted will be added
-                $deleted = property_exists($apiCard, 'deleted') && $apiCard->deleted ?? false;
+            return $this->displayError($err);
+        case Stancer\Payment\Status::AUTHORIZED:
+        case Stancer\Payment\Status::TO_CAPTURE:
+        case Stancer\Payment\Status::CAPTURE:
+            // @todo : remove check of property when property deleted will be added
+            $deleted = property_exists($apiCard, 'deleted') && $apiCard->deleted ?? false;
 
-                if ($deleted) {
-                    StancerApiCard::deleteFrom($apiCard);
-                } else {
-                    StancerApiCard::saveFrom($apiCard, $customer);
-                }
+            if ($deleted) {
+                StancerApiCard::deleteFrom($apiCard);
+            } else {
+                StancerApiCard::saveFrom($apiCard, $customer);
+            }
 
-                $newOrder = $this->createOrder($cart, $apiPayment, $payment->getOrderState());
+            $newOrder = $this->createOrder($cart, $apiPayment, $payment->getOrderState());
 
-                $payment->id_order = $newOrder->id;
-                $payment->save();
+            $payment->id_order = $newOrder->id;
+            $payment->save();
 
-                $url = $context->link->getPageLink(
-                    'order-confirmation',
-                    true,
-                    null,
-                    [
-                        'id_cart' => (int) $cart->id,
-                        'id_module' => (int) $this->module->id,
-                        'id_order' => (int) $newOrder->id,
-                        'key' => $customer->secure_key,
-                    ]
-                );
+            $url = $context->link->getPageLink(
+                'order-confirmation',
+                true,
+                null,
+                [
+                    'id_cart' => (int) $cart->id,
+                    'id_module' => (int) $this->module->id,
+                    'id_order' => (int) $newOrder->id,
+                    'key' => $customer->secure_key,
+                ]
+            );
 
-                return Tools::redirect($url);
+            return Tools::redirect($url);
         }
 
-        return $this->redirect($apiPayment->getPaymentPageUrl([
-            'lang' => $this->context->language->language_code,
-        ], true));
+        return $this->redirect(
+            $apiPayment->getPaymentPageUrl(
+                [
+                'lang' => $this->context->language->language_code,
+                ], true
+            )
+        );
     }
 }

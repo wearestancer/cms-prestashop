@@ -6,7 +6,7 @@
  * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
- * @website   https://www.stancer.com
+ * @website https://www.stancer.com
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -17,19 +17,29 @@ if (!defined('_PS_VERSION_')) {
  */
 class StancerApiConfig
 {
-    /** @var string Mode Live or Test */
+    /**
+     * @var string Mode Live or Test 
+     */
     public $mode;
 
-    /** @var string API Host */
+    /**
+     * @var string API Host 
+     */
     public $host;
 
-    /** @var int|null API Timeout */
+    /**
+     * @var int|null API Timeout 
+     */
     public $timeout;
 
-    /** @var string Auth limit */
+    /**
+     * @var string Auth limit 
+     */
     public $authLimit;
 
-    /** @var bool API is configured ? */
+    /**
+     * @var bool API is configured ? 
+     */
     public $isConfigured;
 
     /**
@@ -53,10 +63,12 @@ class StancerApiConfig
      */
     private function getConfig(): Stancer\Config
     {
-        $apiConfig = Stancer\Config::init([
+        $apiConfig = Stancer\Config::init(
+            [
             $this->getPublicKey(),
             $this->getSecretKey(),
-        ]);
+            ]
+        );
 
         $apiConfig->setMode($this->mode);
 
@@ -70,8 +82,7 @@ class StancerApiConfig
 
         return $apiConfig
             ->addAppData('libstancer-prestashop', Stancer::VERSION)
-            ->addAppData('prestashop', _PS_VERSION_)
-        ;
+            ->addAppData('prestashop', _PS_VERSION_);
     }
 
     /**

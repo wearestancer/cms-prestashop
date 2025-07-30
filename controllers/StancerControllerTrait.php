@@ -6,7 +6,7 @@
  * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
- * @website   https://www.stancer.com
+ * @website https://www.stancer.com
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -21,7 +21,7 @@ trait StancerControllerTrait
      * Display error and add log for Prestashop
      *
      * @param string $message
-     * @param int $logLevel
+     * @param int    $logLevel
      *
      * @return void
      */

@@ -6,7 +6,7 @@
  * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
- * @website   https://www.stancer.com
+ * @website https://www.stancer.com
  */
 header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 60) . ' GMT');
 header('Last-Modified: $[current-date]');

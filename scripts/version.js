@@ -6,15 +6,15 @@ const pack = require('../package.json');
 
 const file = 'stancer.php';
 const globOptions = {
-  ignore: [
+    ignore: [
     'node_modules/**',
     'scripts/**',
     'vendor/**',
     file,
-  ],
+    ],
 };
 const fsOptions = {
-  encoding: 'utf-8',
+    encoding: 'utf-8',
 }
 const version = `* @version   ${pack.version}`;
 
@@ -28,9 +28,9 @@ const data = content
 fs.writeFileSync(file, data, fsOptions);
 
 for (const file of globSync('**/*.{js,php,tpl}', globOptions)) {
-  const filepath = path.join(process.cwd(), file);
+    const filepath = path.join(process.cwd(), file);
 
-  const content = fs.readFileSync(filepath, fsOptions);
+    const content = fs.readFileSync(filepath, fsOptions);
 
-  fs.writeFileSync(filepath, content.replace(/\* @version.+/, version), fsOptions);
+    fs.writeFileSync(filepath, content.replace(/\* @version.+/, version), fsOptions);
 }

@@ -6,7 +6,7 @@
  * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
- * @website   https://www.stancer.com
+ * @website https://www.stancer.com
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -29,8 +29,7 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
         $context = $this->context;
 
         // phpcs:disable PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace
-        if (
-            !Validate::isLoadedObject($context->cart)
+        if (!Validate::isLoadedObject($context->cart)
             || !$context->cart->id_address_delivery
             || !$context->cart->id_address_invoice
             || !Validate::isLoadedObject($context->currency)
@@ -75,9 +74,11 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
         }
 
         return $this->redirect(
-            $apiPayment->getPaymentPageUrl([
+            $apiPayment->getPaymentPageUrl(
+                [
                 'lang' => $context->language->language_code,
-            ], true)
+                ], true
+            )
         );
     }
 }
