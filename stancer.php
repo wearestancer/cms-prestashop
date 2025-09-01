@@ -29,7 +29,7 @@ class Stancer extends PaymentModule
     /**
      * Constructor
      *
-     * @param string  $name    Module unique name
+     * @param string $name Module unique name
      * @param Context $context
      */
     public function __construct()
@@ -1051,7 +1051,7 @@ class Stancer extends PaymentModule
      * updateConfigurationList
      *
      * @param string $name
-     * @param array  $params
+     * @param array $params
      *
      * @return void
      */

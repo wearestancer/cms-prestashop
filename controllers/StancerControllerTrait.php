@@ -21,7 +21,7 @@ trait StancerControllerTrait
      * Display error and add log for Prestashop
      *
      * @param string $message
-     * @param int    $logLevel
+     * @param int $logLevel
      *
      * @return void
      */

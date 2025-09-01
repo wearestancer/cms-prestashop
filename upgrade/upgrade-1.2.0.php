@@ -89,8 +89,8 @@ function fix_payments(bool $isProd)
     $payments = (new PrestaShopCollection('StancerApiPayment'))->where('live_mode', '=', (int) $isProd);
 
     /**
- * @var StancerApiPayment $payment 
-*/
+     * @var StancerApiPayment $payment
+     */
     foreach ($payments as $payment) {
         try {
             $api = $payment->getApiObject();
@@ -130,8 +130,8 @@ function upgrade_modes()
     $payments = new PrestaShopCollection('StancerApiPayment');
 
     /**
- * @var StancerApiPayment $payment 
-*/
+     * @var StancerApiPayment $payment
+     */
     foreach ($payments as $payment) {
         try {
             $api = $payment->getApiObject();

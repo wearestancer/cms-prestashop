@@ -18,27 +18,27 @@ if (!defined('_PS_VERSION_')) {
 class StancerApiConfig
 {
     /**
-     * @var string Mode Live or Test 
+     * @var string Mode Live or Test
      */
     public $mode;
 
     /**
-     * @var string API Host 
+     * @var string API Host
      */
     public $host;
 
     /**
-     * @var int|null API Timeout 
+     * @var int|null API Timeout
      */
     public $timeout;
 
     /**
-     * @var string Auth limit 
+     * @var string Auth limit
      */
     public $authLimit;
 
     /**
-     * @var bool API is configured ? 
+     * @var bool API is configured ?
      */
     public $isConfigured;
 

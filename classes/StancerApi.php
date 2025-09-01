@@ -18,7 +18,7 @@ if (!defined('_PS_VERSION_')) {
 class StancerApi
 {
     /**
-     * @var StancerApiConfig Stancer API configuration 
+     * @var StancerApiConfig Stancer API configuration
      */
     public $apiConfig;
 
@@ -35,7 +35,7 @@ class StancerApi
     /**
      * Prepare payment data for send a payment to Stancer
      *
-     * @param Cart     $cart
+     * @param Cart $cart
      * @param Language $language
      * @param Currency $currency
      *
@@ -150,10 +150,10 @@ class StancerApi
     /**
      * Send payment to Stancer Api
      *
-     * @param Cart                $cart
-     * @param Customer            $customer
-     * @param Language            $language
-     * @param Currency            $currency
+     * @param Cart $cart
+     * @param Customer $customer
+     * @param Language $language
+     * @param Currency $currency
      * @param StancerApiCard|null $card
      *
      * @return Stancer\Payment

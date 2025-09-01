@@ -62,7 +62,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
     /**
      * Create a new order
      *
-     * @param Cart            $cart
+     * @param Cart $cart
      * @param Stancer\Payment $apiPayment
      *
      * @return Order

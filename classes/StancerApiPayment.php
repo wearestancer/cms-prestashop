@@ -18,62 +18,62 @@ if (!defined('_PS_VERSION_')) {
 class StancerApiPayment extends ObjectModel
 {
     /**
-     * @var string Payment id 
+     * @var string Payment id
      */
     public $payment_id;
 
     /**
-     * @var string Customer id 
+     * @var string Customer id
      */
     public $customer_id;
 
     /**
-     * @var string Card id 
+     * @var string Card id
      */
     public $card_id;
 
     /**
-     * @var int Cart id 
+     * @var int Cart id
      */
     public $id_cart;
 
     /**
-     * @var int Order id 
+     * @var int Order id
      */
     public $id_order;
 
     /**
-     * @var bool Is a live mode object? 
+     * @var bool Is a live mode object?
      */
     public $live_mode;
 
     /**
-     * @var string Currency 
+     * @var string Currency
      */
     public $currency;
 
     /**
-     * @var string Payment amount 
+     * @var string Payment amount
      */
     public $amount;
 
     /**
-     * @var string Payment status 
+     * @var string Payment status
      */
     public $status = 'pending';
 
     /**
-     * @var string Payment creation date in Stancer Api 
+     * @var string Payment creation date in Stancer Api
      */
     public $created;
 
     /**
-     * @var string Object creation date 
+     * @var string Object creation date
      */
     public $date_add;
 
     /**
-     * @var string Object last modification date 
+     * @var string Object last modification date
      */
     public $date_upd;
 
@@ -196,7 +196,7 @@ class StancerApiPayment extends ObjectModel
     /**
      * Retrieves pending payment depends on cart and currency
      *
-     * @param Cart     $cart
+     * @param Cart $cart
      * @param Currency $currency
      *
      * @return StancerApiPayment
@@ -316,7 +316,7 @@ class StancerApiPayment extends ObjectModel
      * Create or update an Stancer payment from Stancer API payment object
      *
      * @param Stancer\Payment $payment
-     * @param Cart            $cart
+     * @param Cart $cart
      *
      * @return StancerApiPayment
      */

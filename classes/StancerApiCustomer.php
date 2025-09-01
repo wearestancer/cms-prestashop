@@ -18,52 +18,52 @@ if (!defined('_PS_VERSION_')) {
 class StancerApiCustomer extends ObjectModel
 {
     /**
-     * @var int Customer id 
+     * @var int Customer id
      */
     public $id_customer;
 
     /**
-     * @var string Customer id 
+     * @var string Customer id
      */
     public $customer_id;
 
     /**
-     * @var bool Is a live mode object? 
+     * @var bool Is a live mode object?
      */
     public $live_mode;
 
     /**
-     * @var string Customer name 
+     * @var string Customer name
      */
     public $name;
 
     /**
-     * @var string Customer email 
+     * @var string Customer email
      */
     public $email;
 
     /**
-     * @var string Customer mobile 
+     * @var string Customer mobile
      */
     public $mobile;
 
     /**
-     * @var bool Customer is deleted 
+     * @var bool Customer is deleted
      */
     public $deleted = false;
 
     /**
-     * @var string Customer creation date in Stancer Api 
+     * @var string Customer creation date in Stancer Api
      */
     public $created;
 
     /**
-     * @var string Object creation date 
+     * @var string Object creation date
      */
     public $date_add;
 
     /**
-     * @var string Object last modification date 
+     * @var string Object last modification date
      */
     public $date_upd;
 
