@@ -18,7 +18,7 @@ if (!defined('_PS_VERSION_')) {
 class StancerApiCustomer extends ObjectModel
 {
     /**
-     * @var int Customer id
+     * @var int|string Customer id should be int not string
      */
     public $id_customer;
 
@@ -146,6 +146,7 @@ class StancerApiCustomer extends ObjectModel
                 WHERE TRUE
                 AND `id_customer` = ' . ((int) $customer->id);
 
+        // @phpstan-ignore new.static
         $obj = new static();
         $obj->hydrate((array) Db::getInstance()->getRow($sql));
 
@@ -243,8 +244,10 @@ class StancerApiCustomer extends ObjectModel
         $existingCustomerId = Db::getInstance()->getValue($query);
 
         if ($existingCustomerId) {
+            // @phpstan-ignore new.static
             $customer = new static($existingCustomerId);
         } else {
+            // @phpstan-ignore new.static
             $customer = new static();
         }
 

@@ -34,8 +34,11 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
             || !$context->cart->id_address_invoice
             || !Validate::isLoadedObject($context->currency)
             || !Validate::isLoadedObject($context->customer)
-            || $this->module->isNotAvailable()
+            // @phpstan-ignore property.notFound
+            || (method_exists($this->module, 'isNotAvailable') && $this->module->isNotAvailable())
         ) {
+            // We return a void value, the return is here for lisibility
+            // @phpstan-ignore method.void
             return $this->redirect();
         }
 
@@ -70,9 +73,13 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
         }
 
         if (!empty($existingCard)) {
+            // We return a void value, the return is here for lisibility
+            // @phpstan-ignore method.void
             return $this->redirect($context->link->getModuleLink($this->module->name, 'validation', [], true));
         }
 
+        // We return a void value, the return is here for lisibility
+        // @phpstan-ignore method.void
         return $this->redirect(
             $apiPayment->getPaymentPageUrl(
                 [

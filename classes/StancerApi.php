@@ -123,12 +123,15 @@ class StancerApi
 
         try {
             $apiPayment->send();
+            // @phpstan-ignore catch.neverThrown
         } catch (Stancer\Exceptions\NotAuthorizedException $exception) {
             $errors[] = StancerErrors::getMessage(StancerErrors::NOT_AUTHORIZED);
             $log = $exception->getMessage();
+            // @phpstan-ignore catch.neverThrown
         } catch (Stancer\Exceptions\ServerException $exception) {
             $errors[] = StancerErrors::getMessage(StancerErrors::SERVER_ERROR);
             $log = $exception->getMessage();
+            // @phpstan-ignore catch.neverThrown
         } catch (Stancer\Exceptions\ClientException $exception) {
             $errors[] = StancerErrors::getMessage(StancerErrors::CLIENT_ERROR);
             $log = $exception->getMessage();
@@ -178,7 +181,7 @@ class StancerApi
             $apiPayment = $currentPayment->getApiObject();
         }
 
-        if (!$apiPayment || (!empty($apiPayment) && $apiPayment->getStatus() === 'refused')) {
+        if (!$apiPayment || $apiPayment->getStatus() === 'refused') {
             $apiPayment = new Stancer\Payment();
             $apiPayment
                 ->setCustomer($apiCustomer)

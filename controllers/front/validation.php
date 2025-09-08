@@ -31,7 +31,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         if (!$newCart || !$newCart['success'] || !Validate::isLoadedObject($newCart['cart'])) {
             return;
         }
-
+        // @phpstan-ignore property.notFound
         $this->context->cookie->id_cart = $newCart['cart']->id;
         $this->context->cart = $newCart['cart'];
         $this->context->smarty->assign('cart_qties', $this->context->cart->nbProducts());
@@ -69,6 +69,9 @@ class StancerValidationModuleFrontController extends ModuleFrontController
      */
     protected function createOrder(Cart $cart, Stancer\Payment $apiPayment, int $orderState)
     {
+        if (!($this->module instanceof PaymentModuleCore)) {
+            throw new Exception('module must be a payment module');
+        }
         $this->module->validateOrder(
             $cart->id,
             $orderState,
@@ -81,8 +84,9 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             $cart->secure_key
         );
 
+        // @phpstan-ignore property.notFound
         $newOrder = new Order((int) $this->module->currentOrder);
-        $orderPayments = OrderPayment::getByOrderReference($newOrder->reference);
+        $orderPayments = OrderPayment::getByOrderReference((int) $newOrder->reference);
 
         if (!empty($orderPayments)) {
             $apiCard = $apiPayment->getCard();
@@ -153,7 +157,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
                 $message[] = 'Last numbers: ' . $apiSepa->getLast4();
                 $message[] = 'Mandate: ' . $apiSepa->getMandate();
                 break;
-            }
+        }
 
         return trim(implode("\n", $message));
     }
@@ -176,8 +180,11 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             || !$cart->id_address_invoice
             || !Validate::isLoadedObject($currency)
             || !Validate::isLoadedObject($customer)
-            || $this->module->isNotAvailable()
+            // @phpstan-ignore property.notFound
+            || (method_exists($this->module, 'isNotAvailable') && $this->module->isNotAvailable())
         ) {
+            // We return a void value, the return is here for lisibility
+            // @phpstan-ignore method.void
             return $this->redirect();
         }
 
@@ -235,7 +242,8 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             case Stancer\Payment\Status::TO_CAPTURE:
             case Stancer\Payment\Status::CAPTURE:
                 // @todo : remove check of property when property deleted will be added
-                $deleted = property_exists($apiCard, 'deleted') && $apiCard->deleted ?? false;
+                // @phpstan-ignore property.notFound
+                $deleted = property_exists($apiCard, 'deleted') && $apiCard->deleted;
 
                 if ($deleted) {
                     StancerApiCard::deleteFrom($apiCard);
@@ -263,6 +271,8 @@ class StancerValidationModuleFrontController extends ModuleFrontController
                 return Tools::redirect($url);
         }
 
+        // We return a void value, the return is here for lisibility
+        // @phpstan-ignore method.void
         return $this->redirect(
             $apiPayment->getPaymentPageUrl(
                 [

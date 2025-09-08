@@ -28,12 +28,12 @@ class StancerApiConfig
     public $host;
 
     /**
-     * @var int|null API Timeout
+     * @var string|int|null API Timeout
      */
     public $timeout;
 
     /**
-     * @var string Auth limit
+     * @var string|null Auth limit
      */
     public $authLimit;
 
@@ -63,6 +63,7 @@ class StancerApiConfig
      */
     private function getConfig(): Stancer\Config
     {
+        // @phpstan-ignore class.notFound
         $apiConfig = Stancer\Config::init(
             [
             $this->getPublicKey(),

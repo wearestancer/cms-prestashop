@@ -23,12 +23,12 @@ class StancerApiPayment extends ObjectModel
     public $payment_id;
 
     /**
-     * @var string Customer id
+     * @var string|null Customer id
      */
     public $customer_id;
 
     /**
-     * @var string Card id
+     * @var string|null Card id
      */
     public $card_id;
 
@@ -53,7 +53,7 @@ class StancerApiPayment extends ObjectModel
     public $currency;
 
     /**
-     * @var string Payment amount
+     * @var string|int|null Payment amount
      */
     public $amount;
 
@@ -166,6 +166,7 @@ class StancerApiPayment extends ObjectModel
             return null;
         }
 
+        // @phpstan-ignore new.static
         $payment = new static();
         $payment->hydrate((array) $row);
 
@@ -215,6 +216,7 @@ class StancerApiPayment extends ObjectModel
             return null;
         }
 
+        // @phpstan-ignore new.static
         $payment = new static();
         $payment->hydrate((array) $row);
 
@@ -258,7 +260,7 @@ class StancerApiPayment extends ObjectModel
             $key = $statuses[$this->api->getStatus()];
         }
 
-        if ($key === Stancer\Payment\Status::CAPTURED && count($this->api->getRefunds())) {
+        if ($key === $statuses[Stancer\Payment\Status::CAPTURED] && count($this->api->getRefunds())) {
             if ($this->api->getRefundableAmount()) {
                 $key = 'PS_OS_PARTIAL_REFUND';
             } else {
@@ -266,7 +268,7 @@ class StancerApiPayment extends ObjectModel
             }
         }
 
-        return Configuration::get($key);
+        return (int) Configuration::get($key);
     }
 
     /**
@@ -325,6 +327,7 @@ class StancerApiPayment extends ObjectModel
         $payment = static::findByApiPayment($apiPayment);
 
         if (!$payment) {
+            // @phpstan-ignore new.static
             $payment = new static();
         }
 

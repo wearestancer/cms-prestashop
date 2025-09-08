@@ -45,7 +45,6 @@ class Stancer extends PaymentModule
         $this->displayName = 'Stancer';
         $this->description = $this->l('Simple payment solution at low prices.');
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
-        $this->limited_currencies = ['EUR'];
         $this->limited_countries = ['FR'];
 
         foreach (Language::getLanguages(false) as $lang) {
