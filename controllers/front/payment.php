@@ -22,7 +22,7 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
     /**
      * Process payment
      *
-     * @return void
+     * @return null
      */
     public function postProcess()
     {

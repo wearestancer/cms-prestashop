@@ -104,7 +104,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
      *
      * @param Stancer\Payment $apiPayment
      *
-     * @return array
+     * @return string
      */
     protected function getOrderMessage(Stancer\Payment $apiPayment)
     {
@@ -131,29 +131,29 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         $message[] = '';
 
         switch ($apiPayment->getMethod()) {
-        case 'card':
-            $apiCard = $apiPayment->getCard();
+            case 'card':
+                $apiCard = $apiPayment->getCard();
 
-            $message[] = 'Card';
-            $message[] = $apiCard->getId();
-            $message[] = '';
-            $message[] = 'Brand: ' . $apiCard->getBrandName();
-            $message[] = 'Last numbers: ' . $apiCard->getLast4();
+                $message[] = 'Card';
+                $message[] = $apiCard->getId();
+                $message[] = '';
+                $message[] = 'Brand: ' . $apiCard->getBrandName();
+                $message[] = 'Last numbers: ' . $apiCard->getLast4();
 
-            $date = $apiCard->getExpirationDate();
-            $message[] = sprintf('Expiration: %02d/%04d', $date->format('m'), $date->format('Y'));
-            break;
-        case 'sepa':
-            $apiSepa = $apiPayment->getSepa();
+                $date = $apiCard->getExpirationDate();
+                $message[] = sprintf('Expiration: %02d/%04d', $date->format('m'), $date->format('Y'));
+                break;
+            case 'sepa':
+                $apiSepa = $apiPayment->getSepa();
 
-            $message[] = 'Sepa';
-            $message[] = $apiSepa->getId();
-            $message[] = '';
-            $message[] = 'Country: ' . $apiSepa->getCountry();
-            $message[] = 'Last numbers: ' . $apiSepa->getLast4();
-            $message[] = 'Mandate: ' . $apiSepa->getMandate();
-            break;
-        }
+                $message[] = 'Sepa';
+                $message[] = $apiSepa->getId();
+                $message[] = '';
+                $message[] = 'Country: ' . $apiSepa->getCountry();
+                $message[] = 'Last numbers: ' . $apiSepa->getLast4();
+                $message[] = 'Mandate: ' . $apiSepa->getMandate();
+                break;
+            }
 
         return trim(implode("\n", $message));
     }
@@ -161,7 +161,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
     /**
      * Process validation
      *
-     * @return void
+     * @return null
      */
     public function postProcess()
     {
@@ -220,47 +220,47 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         }
 
         switch ($status) {
-        case Stancer\Payment\Status::FAILED:
-        case Stancer\Payment\Status::REFUSED:
-            $err = StancerErrors::getMessage(StancerErrors::PAYMENT_FAILED);
-            $this->errors[] = $err;
+            case Stancer\Payment\Status::FAILED:
+            case Stancer\Payment\Status::REFUSED:
+                $err = StancerErrors::getMessage(StancerErrors::PAYMENT_FAILED);
+                $this->errors[] = $err;
 
-            if (Configuration::get('STANCER_ORDER_FOR_NOK_PAYMENTS')) {
-                $this->createOrder($cart, $apiPayment, $payment->getOrderState());
-                $this->cloneCart($cart);
-            }
+                if (Configuration::get('STANCER_ORDER_FOR_NOK_PAYMENTS')) {
+                    $this->createOrder($cart, $apiPayment, $payment->getOrderState());
+                    $this->cloneCart($cart);
+                }
 
-            return $this->displayError($err);
-        case Stancer\Payment\Status::AUTHORIZED:
-        case Stancer\Payment\Status::TO_CAPTURE:
-        case Stancer\Payment\Status::CAPTURE:
-            // @todo : remove check of property when property deleted will be added
-            $deleted = property_exists($apiCard, 'deleted') && $apiCard->deleted ?? false;
+                return $this->displayError($err);
+            case Stancer\Payment\Status::AUTHORIZED:
+            case Stancer\Payment\Status::TO_CAPTURE:
+            case Stancer\Payment\Status::CAPTURE:
+                // @todo : remove check of property when property deleted will be added
+                $deleted = property_exists($apiCard, 'deleted') && $apiCard->deleted ?? false;
 
-            if ($deleted) {
-                StancerApiCard::deleteFrom($apiCard);
-            } else {
-                StancerApiCard::saveFrom($apiCard, $customer);
-            }
+                if ($deleted) {
+                    StancerApiCard::deleteFrom($apiCard);
+                } else {
+                    StancerApiCard::saveFrom($apiCard, $customer);
+                }
 
-            $newOrder = $this->createOrder($cart, $apiPayment, $payment->getOrderState());
+                $newOrder = $this->createOrder($cart, $apiPayment, $payment->getOrderState());
 
-            $payment->id_order = $newOrder->id;
-            $payment->save();
+                $payment->id_order = $newOrder->id;
+                $payment->save();
 
-            $url = $context->link->getPageLink(
-                'order-confirmation',
-                true,
-                null,
-                [
-                    'id_cart' => (int) $cart->id,
-                    'id_module' => (int) $this->module->id,
-                    'id_order' => (int) $newOrder->id,
-                    'key' => $customer->secure_key,
-                ]
-            );
+                $url = $context->link->getPageLink(
+                    'order-confirmation',
+                    true,
+                    null,
+                    [
+                        'id_cart' => (int) $cart->id,
+                        'id_module' => (int) $this->module->id,
+                        'id_order' => (int) $newOrder->id,
+                        'key' => $customer->secure_key,
+                    ]
+                );
 
-            return Tools::redirect($url);
+                return Tools::redirect($url);
         }
 
         return $this->redirect(

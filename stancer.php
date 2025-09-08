@@ -28,9 +28,6 @@ class Stancer extends PaymentModule
 
     /**
      * Constructor
-     *
-     * @param string $name Module unique name
-     * @param Context $context
      */
     public function __construct()
     {
@@ -553,7 +550,7 @@ class Stancer extends PaymentModule
     /**
      * Create admin form for keys.
      *
-     * @param mixed $helper
+     * @param HelperForm $helper
      *
      * @return array
      */
@@ -803,22 +800,22 @@ class Stancer extends PaymentModule
         }
 
         switch (Configuration::get('STANCER_PAGE_TYPE')) {
-        case 'full-iframe':
-            $this->context->smarty->assign('3ds', true);
-            // no break
-        case 'iframe':
-            $link = $this->context->link->getModuleLink($this->name, 'validation', [], true);
-            $this->context->smarty->assign('target', $target);
-            $this->context->smarty->assign('validation', $link);
-            $paymentOption->setAdditionalInformation($this->fetchTemplate('front/iframe.tpl'));
+            case 'full-iframe':
+                $this->context->smarty->assign('3ds', true);
+                // no break
+            case 'iframe':
+                $link = $this->context->link->getModuleLink($this->name, 'validation', [], true);
+                $this->context->smarty->assign('target', $target);
+                $this->context->smarty->assign('validation', $link);
+                $paymentOption->setAdditionalInformation($this->fetchTemplate('front/iframe.tpl'));
 
-            break;
-        default:
-            $paymentOption
-                ->setAction($target)
-                ->setAdditionalInformation($this->fetchTemplate('front/option.tpl'));
+                break;
+            default:
+                $paymentOption
+                    ->setAction($target)
+                    ->setAdditionalInformation($this->fetchTemplate('front/option.tpl'));
 
-            break;
+                break;
         }
 
         $list[] = $paymentOption;
@@ -953,7 +950,7 @@ class Stancer extends PaymentModule
 
         $return &= $db->execute($sql);
 
-        return $return;
+        return (bool) $return;
     }
 
     /**
@@ -1107,7 +1104,7 @@ class Stancer extends PaymentModule
         $return &= $db->execute('DROP TABLE IF EXISTS `' . bqSQL(_DB_PREFIX_ . 'stancer_customer') . '`;');
         $return &= $db->execute('DROP TABLE IF EXISTS `' . bqSQL(_DB_PREFIX_ . 'stancer_payment') . '`;');
 
-        return $return;
+        return (bool) $return;
     }
 
     /**
@@ -1123,6 +1120,6 @@ class Stancer extends PaymentModule
             $return &= $this->unregisterExceptions($hookName);
         }
 
-        return $return;
+        return (bool) $return;
     }
 }

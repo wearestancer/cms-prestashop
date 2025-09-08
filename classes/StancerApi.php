@@ -69,10 +69,10 @@ class StancerApi
 
             $uniqueId = implode(
                 '-', [
-                'PS',
-                'MP',
-                $now->format('U'),
-                str_pad((string) $cart->id, 6, '0', STR_PAD_LEFT),
+                    'PS',
+                    'MP',
+                    $now->format('U'),
+                    str_pad((string) $cart->id, 6, '0', STR_PAD_LEFT),
                 ]
             );
         }
@@ -113,7 +113,7 @@ class StancerApi
      *
      * @param Stancer\Payment $apiPayment
      *
-     * @return void
+     * @return array
      */
     public function sendToApi(Stancer\Payment $apiPayment)
     {

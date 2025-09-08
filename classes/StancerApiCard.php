@@ -23,7 +23,7 @@ class StancerApiCard extends ObjectModel
     public $id_customer;
 
     /**
-     * @var int Card id
+     * @var string Card id
      */
     public $card_id;
 
@@ -258,7 +258,7 @@ class StancerApiCard extends ObjectModel
      * @param mixed $null_values
      * @param mixed $auto_date
      *
-     * @return void
+     * @return bool
      */
     public function save($null_values = false, $auto_date = true)
     {
@@ -277,7 +277,7 @@ class StancerApiCard extends ObjectModel
     /**
      * Create or update an Stancer card from Stancer API card object
      *
-     * @param Stancer\Card $card
+     * @param Stancer\Card $apiCard
      * @param Customer $customer
      *
      * @return StancerApiCard

@@ -23,7 +23,7 @@ trait StancerControllerTrait
      * @param string $message
      * @param int $logLevel
      *
-     * @return void
+     * @return mixed
      */
     public function displayError(string $message, int $logLevel = 4)
     {
@@ -49,7 +49,7 @@ trait StancerControllerTrait
     /**
      * Get redirect link
      *
-     * @return void
+     * @return string
      */
     public function getRedirectLink()
     {

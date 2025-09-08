@@ -30,7 +30,7 @@ class StancerErrors extends ObjectModel
     /**
      * Get error message
      *
-     * @param mixed $key
+     * @param int $key
      *
      * @return string
      */

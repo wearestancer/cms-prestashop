@@ -150,9 +150,9 @@ class StancerApiPayment extends ObjectModel
     /**
      * Retrieves Stancer Prestashop payment depends on Stancer API payment object
      *
-     * @param mixed $apiPayment
+     * @param Stancer\Payment $apiPayment
      *
-     * @return StancerApiPayment
+     * @return StancerApiPayment|null
      */
     public static function findByApiPayment(Stancer\Payment $apiPayment): ?StancerApiPayment
     {
@@ -315,7 +315,7 @@ class StancerApiPayment extends ObjectModel
     /**
      * Create or update an Stancer payment from Stancer API payment object
      *
-     * @param Stancer\Payment $payment
+     * @param Stancer\Payment $apiPayment
      * @param Cart $cart
      *
      * @return StancerApiPayment

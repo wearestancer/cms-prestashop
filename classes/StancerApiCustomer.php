@@ -23,7 +23,7 @@ class StancerApiCustomer extends ObjectModel
     public $id_customer;
 
     /**
-     * @var string Customer id
+     * @var string|null Customer id
      */
     public $customer_id;
 
