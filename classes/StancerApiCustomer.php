@@ -128,7 +128,7 @@ class StancerApiCustomer extends ObjectModel
                 USING (`id_customer`)
                 WHERE TRUE
                 AND `id_customer` = ' . ((int) $customer->id);
-
+        // @phpstan-ignore new.static
         $obj = new static();
         $obj->hydrate((array) Db::getInstance()->getRow($sql));
 
@@ -226,8 +226,10 @@ class StancerApiCustomer extends ObjectModel
         $existingCustomerId = Db::getInstance()->getValue($query);
 
         if ($existingCustomerId) {
+            // @phpstan-ignore new.static
             $customer = new static($existingCustomerId);
         } else {
+            // @phpstan-ignore new.static
             $customer = new static();
         }
 

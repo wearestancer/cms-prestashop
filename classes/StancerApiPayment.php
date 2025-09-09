@@ -144,7 +144,7 @@ class StancerApiPayment extends ObjectModel
         if (!$row) {
             return null;
         }
-
+        // @phpstan-ignore new.static
         $payment = new static();
         $payment->hydrate((array) $row);
 
@@ -193,7 +193,7 @@ class StancerApiPayment extends ObjectModel
         if (!$row) {
             return null;
         }
-
+        // @phpstan-ignore new.static
         $payment = new static();
         $payment->hydrate((array) $row);
 
@@ -304,6 +304,7 @@ class StancerApiPayment extends ObjectModel
         $payment = static::findByApiPayment($apiPayment);
 
         if (!$payment) {
+            // @phpstan-ignore new.static
             $payment = new static();
         }
 

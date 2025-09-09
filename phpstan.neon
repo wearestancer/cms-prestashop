@@ -22,64 +22,66 @@ parameters:
   dynamicConstantNames:
     - _PS_MODE_DEV_
 
-  ignoreErrors:
-    - '#Unsafe usage of new static\(\).#'
+  # We cannot ignore in our neon we have to do it line by line
+  # We know why we have those error.
+  # ignoreErrors:
+  #   - '#Unsafe usage of new static\(\).#'
 
   typeAliases:
-    PaymentData: '''
-      array{
-        'amount': int,
-        'auth': bool,
-        'currency': string,
-        'description': string|null,
-        'orderId': string,
-        'returnUrl'?: string,
-        'uniqueId': string|null,
-      }
-    '''
-    ErrorData: '''
-      array{
-        'errors': string[],
-        'log': string,
-      }
-    '''
+    # PaymentData: '''
+    #   array{
+    #     'amount': int,
+    #     'auth': bool,
+    #     'currency': string,
+    #     'description': string|null,
+    #     'orderId': string,
+    #     'returnUrl'?: string,
+    #     'uniqueId': string|null,
+    #   }
+    # '''
+    # ErrorData: '''
+    #   array{
+    #     'errors': string[],
+    #     'log': string,
+    #   }
+    # '''
 
-    SettingData: '''
-      array{
-        'default'?: ?mixed,
-        'desc'?: ?string,
-        'class'?: string,
-        'group'?: string|int,
-        'html_content'?: ?string,
-        'label'?: ?string,
-        'lang'?: ?bool,
-        'name'?: ?string,
-        'required'?: ?bool,
-        'size'?: int,
-        'template'?: ?string,
-        'type'?: ?string,
-        'values'?: ValueType[],
-      }
-    '''
+    # SettingData: '''
+    #   array{
+    #     'default'?: ?mixed,
+    #     'desc'?: ?string,
+    #     'class'?: string,
+    #     'group'?: string|int,
+    #     'html_content'?: ?string,
+    #     'label'?: ?string,
+    #     'lang'?: ?bool,
+    #     'name'?: ?string,
+    #     'required'?: ?bool,
+    #     'size'?: int,
+    #     'template'?: ?string,
+    #     'type'?: ?string,
+    #     'values'?: ValueType[],
+    #   }
+    # '''
 
-    ValueType: '''
-      array{
-        'id': ?string,
-        'value': null|string|int|float|bool,
-      }
-    '''
-    DisplaySetting: '''
-      array{
-        'legend': array{
-          'icon': string,
-          'title': string,
-        },
-        'description'?: ?string,
-        'input': array{SettingData},
-      }
-    '''
-    DisplaySettingForm: '''
-      array{
-        form: DisplaySetting,
-      }
-    '''
+    # ValueType: '''
+    #   array{
+    #     'id': ?string,
+    #     'value': null|string|int|float|bool,
+    #   }
+    # '''
+    # DisplaySetting: '''
+    #   array{
+    #     'legend': array{
+    #       'icon': string,
+    #       'title': string,
+    #     },
+    #     'description'?: ?string,
+    #     'input': array{SettingData},
+    #   }
+    # '''
+    # DisplaySettingForm: '''
+    #   array{
+    #     form: DisplaySetting,
+    #   }
+    # '''

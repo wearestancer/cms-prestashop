@@ -44,8 +44,6 @@ trait StancerControllerTrait
         $this->setTemplate('module:' . $this->module->name . '/views/templates/front/error.tpl');
 
         parent::postProcess();
-
-        return;
     }
 
     /**

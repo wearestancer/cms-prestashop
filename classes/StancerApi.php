@@ -14,6 +14,16 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * API helper.
+ *
+ * @phpstan-type PaymentData array{
+ *       'amount': int,
+ *       'auth': bool,
+ *       'currency': string,
+ *       'description': string|null,
+ *       'orderId': string,
+ *       'returnUrl'?: string,
+ *       'uniqueId': string|null,
+ *     }
  */
 class StancerApi
 {
@@ -121,12 +131,15 @@ class StancerApi
 
         try {
             $apiPayment->send();
+            // @phpstan-ignore catch.neverThrown
         } catch (Stancer\Exceptions\NotAuthorizedException $exception) {
             $errors[] = StancerErrors::getMessage(StancerErrors::NOT_AUTHORIZED);
             $log = $exception->getMessage();
+            // @phpstan-ignore catch.neverThrown
         } catch (Stancer\Exceptions\ServerException $exception) {
             $errors[] = StancerErrors::getMessage(StancerErrors::SERVER_ERROR);
             $log = $exception->getMessage();
+            // @phpstan-ignore catch.neverThrown
         } catch (Stancer\Exceptions\ClientException $exception) {
             $errors[] = StancerErrors::getMessage(StancerErrors::CLIENT_ERROR);
             $log = $exception->getMessage();

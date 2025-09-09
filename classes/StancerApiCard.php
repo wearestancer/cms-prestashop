@@ -161,7 +161,7 @@ class StancerApiCard extends ObjectModel
         if (!$row) {
             return null;
         }
-
+        // @phpstan-ignore new.static
         $card = new static();
         $card->hydrate((array) $row);
 
@@ -190,6 +190,7 @@ class StancerApiCard extends ObjectModel
             return null;
         }
 
+        // @phpstan-ignore new.static
         $card = new static();
         $card->hydrate($row);
 
@@ -269,6 +270,7 @@ class StancerApiCard extends ObjectModel
         $card = static::findByApiCard($apiCard);
 
         if (!$card) {
+            // @phpstan-ignore new.static
             $card = new static();
             $card->id_customer = $customer->id;
             $card->card_id = $apiCard->getId();

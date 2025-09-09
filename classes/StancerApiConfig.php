@@ -26,7 +26,7 @@ class StancerApiConfig
     /** @var int|null API Timeout */
     public $timeout;
 
-    /** @var string Auth limit */
+    /** @var string|null Auth limit */
     public $authLimit;
 
     /** @var bool API is configured ? */

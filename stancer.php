@@ -16,6 +16,32 @@ require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
 
 /**
  * Stancer payment module.
+ *
+ * @phpstan-type SettingData array{
+ *  'default'?: ?mixed,
+ *  'desc'?: ?string,
+ *  'class'?: string,
+ *  'group'?: string|int,
+ *  'html_content'?: ?string,
+ *  'label'?: ?string,
+ *  'lang'?: ?bool,
+ *  'mode' ?: string,
+ *  'name'?: ?string,
+ *  'required'?: ?bool,
+ *  'pattern' ?: string,
+ *  'public' ?: string,
+ *  'size'?: int,
+ *  'template'?: ?string,
+ *  'type'?: ?string,
+ *  'values'?: ValueType[],
+ *  }
+ * @phpstan-type ValueType array{'id': ?string, 'value': null|string|int|float|bool}
+ * @phpstan-type DisplaySetting array{
+ *  'legend': array{'icon': string, 'title': string },
+ *  'description'?: ?string,
+ *  'input': array{SettingData},
+ *  }
+ * @phpstan-type DisplaySettingForm array{form: DisplaySetting}
  */
 class Stancer extends PaymentModule
 {
@@ -51,12 +77,12 @@ class Stancer extends PaymentModule
      * @param string $name Module unique name
      * @param Context|null $context
      */
-    public function __construct(string $name = 'Stancer', ?Context $context = null)
+    public function __construct(string $name = 'stancer', ?Context $context = null)
     {
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
         $this->version = '1.2.4';
-        $this->author = $name;
+        $this->author = 'Stancer';
         $this->need_instance = 1;
         $this->ps_versions_compliancy = ['min' => '1.7.8', 'max' => '8.2.999'];
         $this->module_key = '405faa09756f808b77ad16948b321351';
@@ -65,7 +91,7 @@ class Stancer extends PaymentModule
 
         parent::__construct();
 
-        $this->displayName = $name;
+        $this->displayName = 'Stancer';
         $this->description = $this->l('Simple payment solution at low prices.');
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
@@ -76,6 +102,10 @@ class Stancer extends PaymentModule
             }
 
             $this->languages[] = $lang;
+        }
+        // Just to use stancer as the validator doesn't like `$this->name = $name` and we might need the context
+        if ($name === '') {
+            return;
         }
     }
 
