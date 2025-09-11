@@ -29,12 +29,6 @@ Create archive:
 
     - pnpm install
     - composer update
-    # Fix locales files
-    - git config filter.locales.smudge './scripts/locales/smudge.sh %f'
-    - git config filter.locales.clean './scripts/locales/clean.sh'
-
-    - grep locales .gitattributes | awk '{ print $1 }' | xargs -I % sh -c 'rm -rf % ; git checkout %'
-
 
   script:
     - pnpm run build:archive

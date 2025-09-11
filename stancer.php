@@ -11,6 +11,7 @@
 if (!defined('_PS_VERSION_')) {
     exit;
 }
+require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
 
 /**
  * Stancer payment module.
@@ -31,12 +32,12 @@ class Stancer extends PaymentModule
      */
     public function __construct()
     {
-        include_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
         $this->version = '1.2.4';
         $this->author = 'Stancer';
         $this->need_instance = 1;
+        $this->ps_versions_compliancy = ['min' => '1.7.1', 'max' => '1.7.999'];
         $this->module_key = '405faa09756f808b77ad16948b321351';
         $this->bootstrap = true;
 
@@ -55,7 +56,6 @@ class Stancer extends PaymentModule
 
             $this->languages[] = $lang;
         }
-        $this->ps_versions_compliancy = ['min' => '1.7.1', 'max' => '1.7.999'];
     }
 
     /**
