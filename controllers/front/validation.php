@@ -40,9 +40,9 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         }
 
         /*
-        * @phpstan-ignore-next-line 'Access to an undefined property Cookie::$id_cart.'
-        * Cookie has magicMethod __set so their is never an undefined property.
-        */
+         * @phpstan-ignore-next-line 'Access to an undefined property Cookie::$id_cart.'
+         * Cookie has magicMethod __set so their is never an undefined property.
+         */
         $this->context->cookie->id_cart = $newCart['cart']->id;
         $this->context->cart = $newCart['cart'];
         $this->context->smarty->assign('cart_qties', $this->context->cart->nbProducts());
@@ -90,7 +90,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         );
 
         $newOrder = new Order((int) $this->module->currentOrder);
-        /**
+        /*
          * @phpstan-ignore-next-line depending on the Prestashop version, reference is typed as an int or a string.
          *
          * In the database as far as I've seen it is always stored as a string.

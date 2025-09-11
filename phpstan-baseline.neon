@@ -1,4 +1,6 @@
 parameters:
+# Those error exists locally but not on the prestashop validator
+# As such we ignore them in our config file and not in our php files.
 	ignoreErrors:
 		-
 			message: '#^Access to property \$language_code on an unknown class InstallLanguage\.$#'

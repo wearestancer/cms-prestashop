@@ -28,6 +28,8 @@ parameters:
   #   - '#Unsafe usage of new static\(\).#'
 
   typeAliases:
+    #
+    # @ classes/StancerApi.php::18
     # PaymentData: '''
     #   array{
     #     'amount': int,
@@ -39,13 +41,8 @@ parameters:
     #     'uniqueId': string|null,
     #   }
     # '''
-    # ErrorData: '''
-    #   array{
-    #     'errors': string[],
-    #     'log': string,
-    #   }
-    # '''
 
+    # @ stancer.php::20
     # SettingData: '''
     #   array{
     #     'default'?: ?mixed,
@@ -64,12 +61,15 @@ parameters:
     #   }
     # '''
 
+    # @ stancer.php::38
     # ValueType: '''
     #   array{
     #     'id': ?string,
     #     'value': null|string|int|float|bool,
     #   }
     # '''
+
+    # @ stancer.php::39
     # DisplaySetting: '''
     #   array{
     #     'legend': array{
@@ -79,6 +79,8 @@ parameters:
     #     'description'?: ?string,
     #     'input': array{SettingData},
     #   }
+
+    # @ stancer.php::44
     # '''
     # DisplaySettingForm: '''
     #   array{

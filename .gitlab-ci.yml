@@ -12,16 +12,16 @@ variables:
   PHP_VERSION: "7.4"
 
 .base-php:
-  stage: test
   image: ${DOCKER_REGISTRY}/php:${PHP_VERSION}
+  stage: test
   before_script:
     - php --version
     - composer --version
     - composer install
 
 .base-prestashop:
-  stage: deploy
   image:  ${DOCKER_REGISTRY}/prestashop:php8
+  stage: deploy
   before_script:
     - php --version
     - composer --version
@@ -35,7 +35,8 @@ variables:
 
 
 Create archive:
-  extends: .base-prestashop
+  extends:
+    - .base-prestashop
 
   script:
     - pnpm run build:archive
@@ -49,7 +50,8 @@ Create archive:
 
 
 phpcs:
-  extends: .base-php
+  extends:
+    - .base-php
 
   script:
     - composer run phpcs || true
@@ -60,11 +62,12 @@ phpcs:
       codequality: gl-code-quality-report.json
 
 phpstan:
-  extends: .base-php
+  extends:
+    - .base-php
 
   script:
-  - composer run phpstan || true
-  - composer run phpstan -- --error-format=gitlab > gl-static-analysis-report.json
+    - composer run phpstan || true
+    - composer run phpstan -- --error-format=gitlab > gl-static-analysis-report.json
 
   artifacts:
     reports:
