@@ -68,7 +68,8 @@ class StancerApi
             $now->setTimezone(new DateTimeZone('UTC'));
 
             $uniqueId = implode(
-                '-', [
+                '-',
+                [
                     'PS',
                     'MP',
                     $now->format('U'),

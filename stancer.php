@@ -516,10 +516,11 @@ class Stancer extends PaymentModule
                 $this->context->smarty->assign($name . '_VALUE', $value);
 
                 $settings['input'][] = array_merge(
-                    $clean, [
-                    'html_content' => $this->fetchTemplate('admin/' . $infos['template'] . '.tpl'),
-                    'name' => $name,
-                    'type' => 'html',
+                    $clean,
+                    [
+                        'html_content' => $this->fetchTemplate('admin/' . $infos['template'] . '.tpl'),
+                        'name' => $name,
+                        'type' => 'html',
                     ]
                 );
 
@@ -527,8 +528,9 @@ class Stancer extends PaymentModule
             } else {
                 $clean = array_diff_key($infos, $excep);
                 $settings['input'][] = array_merge(
-                    $clean, [
-                    'name' => $name,
+                    $clean,
+                    [
+                        'name' => $name,
                     ]
                 );
 
@@ -641,8 +643,9 @@ class Stancer extends PaymentModule
         foreach ($this->getConfigurationsList('settings') as $name => $infos) {
             $clean = array_diff_key($infos, $excep);
             $settings['input'][] = array_merge(
-                $clean, [
-                'name' => $name,
+                $clean,
+                [
+                    'name' => $name,
                 ]
             );
 

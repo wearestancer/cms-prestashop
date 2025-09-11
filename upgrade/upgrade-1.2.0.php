@@ -48,8 +48,8 @@ function upgrade_module_1_2_0($module)
     $liveKeys = array_values(
         Configuration::getMultiple(
             [
-            'STANCER_API_LIVE_PUBLIC_KEY',
-            'STANCER_API_LIVE_SECRET_KEY',
+                'STANCER_API_LIVE_PUBLIC_KEY',
+                'STANCER_API_LIVE_SECRET_KEY',
             ]
         )
     );
@@ -65,8 +65,8 @@ function upgrade_module_1_2_0($module)
     $testKeys = array_values(
         Configuration::getMultiple(
             [
-            'STANCER_API_TEST_PUBLIC_KEY',
-            'STANCER_API_TEST_SECRET_KEY',
+                'STANCER_API_TEST_PUBLIC_KEY',
+                'STANCER_API_TEST_SECRET_KEY',
             ]
         )
     );

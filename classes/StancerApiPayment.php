@@ -240,9 +240,9 @@ class StancerApiPayment extends ObjectModel
     /**
      * Get order state prestashop from stancer payment status
      *
-     * @return int
+     * @return string|false
      */
-    public function getOrderState(): int
+    public function getOrderState()
     {
         $statuses = [
             Stancer\Payment\Status::AUTHORIZED => 'PS_CHECKOUT_STATE_AUTHORIZED',
@@ -268,7 +268,7 @@ class StancerApiPayment extends ObjectModel
             }
         }
 
-        return (int) Configuration::get($key);
+        return Configuration::get($key);
     }
 
     /**

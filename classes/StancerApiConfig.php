@@ -63,11 +63,11 @@ class StancerApiConfig
      */
     private function getConfig(): Stancer\Config
     {
-        // @phpstan-ignore class.notFound
+        // @phpstan-ignore-next-line
         $apiConfig = Stancer\Config::init(
             [
-            $this->getPublicKey(),
-            $this->getSecretKey(),
+                $this->getPublicKey(),
+                $this->getSecretKey(),
             ]
         );
 

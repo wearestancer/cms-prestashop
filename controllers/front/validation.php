@@ -39,19 +39,21 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         CartRule::autoAddToCart($this->context);
 
         $sql = implode(
-            ' ', [
-            'SELECT checkout_session_data',
-            'FROM `' . _DB_PREFIX_ . 'cart`',
-            'WHERE id_cart = ' . (int) $cart->id,
+            ' ',
+            [
+                'SELECT checkout_session_data',
+                'FROM `' . _DB_PREFIX_ . 'cart`',
+                'WHERE id_cart = ' . (int) $cart->id,
             ]
         );
         $checkoutSessionData = Db::getInstance()->getValue($sql);
 
         $sql = implode(
-            ' ', [
-            'UPDATE `' . _DB_PREFIX_ . 'cart`',
-            'SET checkout_session_data = "' . pSQL($checkoutSessionData) . '"',
-            'WHERE id_cart = ' . (int) $this->context->cart->id,
+            ' ',
+            [
+                'UPDATE `' . _DB_PREFIX_ . 'cart`',
+                'SET checkout_session_data = "' . pSQL($checkoutSessionData) . '"',
+                'WHERE id_cart = ' . (int) $this->context->cart->id,
             ]
         );
         Db::getInstance()->execute($sql);
@@ -64,17 +66,18 @@ class StancerValidationModuleFrontController extends ModuleFrontController
      *
      * @param Cart $cart
      * @param Stancer\Payment $apiPayment
+     * @param string|false $orderState
      *
      * @return Order
      */
-    protected function createOrder(Cart $cart, Stancer\Payment $apiPayment, int $orderState)
+    protected function createOrder(Cart $cart, Stancer\Payment $apiPayment, $orderState)
     {
         if (!($this->module instanceof PaymentModuleCore)) {
             throw new Exception('module must be a payment module');
         }
         $this->module->validateOrder(
             $cart->id,
-            $orderState,
+            (int) $orderState,
             $apiPayment->getAmount() / 100,
             $this->module->displayName,
             $this->getOrderMessage($apiPayment),
@@ -113,9 +116,10 @@ class StancerValidationModuleFrontController extends ModuleFrontController
     protected function getOrderMessage(Stancer\Payment $apiPayment)
     {
         $amount = vsprintf(
-            '%.02f %s', [
-            $apiPayment->getAmount() / 100,
-            strtoupper($apiPayment->getCurrency()),
+            '%.02f %s',
+            [
+                $apiPayment->getAmount() / 100,
+                strtoupper($apiPayment->getCurrency()),
             ]
         );
 
@@ -276,8 +280,9 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         return $this->redirect(
             $apiPayment->getPaymentPageUrl(
                 [
-                'lang' => $this->context->language->language_code,
-                ], true
+                    'lang' => $this->context->language->language_code,
+                ],
+                true
             )
         );
     }

@@ -83,8 +83,9 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
         return $this->redirect(
             $apiPayment->getPaymentPageUrl(
                 [
-                'lang' => $context->language->language_code,
-                ], true
+                    'lang' => $context->language->language_code,
+                ],
+                true
             )
         );
     }
