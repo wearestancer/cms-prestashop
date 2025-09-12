@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 ### Changed
-- add compatibility with Prestashop 1.7.1 and after (CMS-182)
+- Add compatibility with Prestashop 1.7.1 and after (CMS-182)
+
 
 ## [1.2.4] - 2024-12-11
 
