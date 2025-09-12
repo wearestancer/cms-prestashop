@@ -6,7 +6,7 @@
  * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
- * @website   https://www.stancer.com
+ * @website https://www.stancer.com
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -22,21 +22,23 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
     /**
      * Process payment
      *
-     * @return void
+     * @return null
      */
     public function postProcess()
     {
         $context = $this->context;
 
         // phpcs:disable PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace
-        if (
-            !Validate::isLoadedObject($context->cart)
+        if (!Validate::isLoadedObject($context->cart)
             || !$context->cart->id_address_delivery
             || !$context->cart->id_address_invoice
             || !Validate::isLoadedObject($context->currency)
             || !Validate::isLoadedObject($context->customer)
-            || $this->module->isNotAvailable()
+            // @phpstan-ignore property.notFound
+            || (method_exists($this->module, 'isNotAvailable') && $this->module->isNotAvailable())
         ) {
+            // We return a void value, the return is here for lisibility
+            // @phpstan-ignore method.void
             return $this->redirect();
         }
 
@@ -61,7 +63,7 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
             $context->currency,
             $existingCard,
             $errors,
-            $log,
+            $log
         );
 
         if ($log) {
@@ -71,13 +73,20 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
         }
 
         if (!empty($existingCard)) {
+            // We return a void value, the return is here for lisibility
+            // @phpstan-ignore method.void
             return $this->redirect($context->link->getModuleLink($this->module->name, 'validation', [], true));
         }
 
+        // We return a void value, the return is here for lisibility
+        // @phpstan-ignore method.void
         return $this->redirect(
-            $apiPayment->getPaymentPageUrl([
-                'lang' => $context->language->language_code,
-            ], true),
+            $apiPayment->getPaymentPageUrl(
+                [
+                    'lang' => $context->language->language_code,
+                ],
+                true
+            )
         );
     }
 }

@@ -6,7 +6,7 @@
  * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
- * @website   https://www.stancer.com
+ * @website https://www.stancer.com
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -17,34 +17,54 @@ if (!defined('_PS_VERSION_')) {
  */
 class StancerApiCustomer extends ObjectModel
 {
-    /** @var int Customer id */
+    /**
+     * @var int|string Customer id should be int not string
+     */
     public $id_customer;
 
-    /** @var string Customer id */
+    /**
+     * @var string|null Customer id
+     */
     public $customer_id;
 
-    /** @var bool Is a live mode object? */
+    /**
+     * @var bool Is a live mode object?
+     */
     public $live_mode;
 
-    /** @var string Customer name */
+    /**
+     * @var string Customer name
+     */
     public $name;
 
-    /** @var string Customer email */
+    /**
+     * @var string Customer email
+     */
     public $email;
 
-    /** @var string Customer mobile */
+    /**
+     * @var string Customer mobile
+     */
     public $mobile;
 
-    /** @var bool Customer is deleted */
+    /**
+     * @var bool Customer is deleted
+     */
     public $deleted = false;
 
-    /** @var string Customer creation date in Stancer Api */
+    /**
+     * @var string Customer creation date in Stancer Api
+     */
     public $created;
 
-    /** @var string Object creation date */
+    /**
+     * @var string Object creation date
+     */
     public $date_add;
 
-    /** @var string Object last modification date */
+    /**
+     * @var string Object last modification date
+     */
     public $date_upd;
 
     protected $api;
@@ -126,6 +146,7 @@ class StancerApiCustomer extends ObjectModel
                 WHERE TRUE
                 AND `id_customer` = ' . ((int) $customer->id);
 
+        // @phpstan-ignore new.static
         $obj = new static();
         $obj->hydrate((array) Db::getInstance()->getRow($sql));
 
@@ -223,8 +244,10 @@ class StancerApiCustomer extends ObjectModel
         $existingCustomerId = Db::getInstance()->getValue($query);
 
         if ($existingCustomerId) {
+            // @phpstan-ignore new.static
             $customer = new static($existingCustomerId);
         } else {
+            // @phpstan-ignore new.static
             $customer = new static();
         }
 

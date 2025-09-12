@@ -6,7 +6,7 @@
  * @copyright 2023-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
- * @website   https://www.stancer.com
+ * @website https://www.stancer.com
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -45,10 +45,14 @@ function upgrade_module_1_2_0($module)
 
     // Patch database
 
-    $liveKeys = array_values(Configuration::getMultiple([
-        'STANCER_API_LIVE_PUBLIC_KEY',
-        'STANCER_API_LIVE_SECRET_KEY',
-    ]));
+    $liveKeys = array_values(
+        Configuration::getMultiple(
+            [
+                'STANCER_API_LIVE_PUBLIC_KEY',
+                'STANCER_API_LIVE_SECRET_KEY',
+            ]
+        )
+    );
 
     if ($liveKeys) {
         $config = Stancer\Config::init($liveKeys);
@@ -58,10 +62,14 @@ function upgrade_module_1_2_0($module)
         fix_payments(true);
     }
 
-    $testKeys = array_values(Configuration::getMultiple([
-        'STANCER_API_TEST_PUBLIC_KEY',
-        'STANCER_API_TEST_SECRET_KEY',
-    ]));
+    $testKeys = array_values(
+        Configuration::getMultiple(
+            [
+                'STANCER_API_TEST_PUBLIC_KEY',
+                'STANCER_API_TEST_SECRET_KEY',
+            ]
+        )
+    );
 
     if ($testKeys) {
         $config = Stancer\Config::init($testKeys);
@@ -80,7 +88,9 @@ function fix_payments(bool $isProd)
 
     $payments = (new PrestaShopCollection('StancerApiPayment'))->where('live_mode', '=', (int) $isProd);
 
-    /** @var StancerApiPayment $payment */
+    /**
+     * @var StancerApiPayment $payment
+     */
     foreach ($payments as $payment) {
         try {
             $api = $payment->getApiObject();
@@ -119,7 +129,9 @@ function upgrade_modes()
 
     $payments = new PrestaShopCollection('StancerApiPayment');
 
-    /** @var StancerApiPayment $payment */
+    /**
+     * @var StancerApiPayment $payment
+     */
     foreach ($payments as $payment) {
         try {
             $api = $payment->getApiObject();

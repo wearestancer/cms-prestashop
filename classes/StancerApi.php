@@ -6,7 +6,7 @@
  * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
- * @website   https://www.stancer.com
+ * @website https://www.stancer.com
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -17,7 +17,9 @@ if (!defined('_PS_VERSION_')) {
  */
 class StancerApi
 {
-    /** @var StancerApiConfig Stancer API configuration */
+    /**
+     * @var StancerApiConfig Stancer API configuration
+     */
     public $apiConfig;
 
     /**
@@ -65,12 +67,15 @@ class StancerApi
             $now = new DateTime();
             $now->setTimezone(new DateTimeZone('UTC'));
 
-            $uniqueId = implode('-', [
-                'PS',
-                'MP',
-                $now->format('U'),
-                str_pad((string) $cart->id, 6, '0', STR_PAD_LEFT),
-            ]);
+            $uniqueId = implode(
+                '-',
+                [
+                    'PS',
+                    'MP',
+                    $now->format('U'),
+                    str_pad((string) $cart->id, 6, '0', STR_PAD_LEFT),
+                ]
+            );
         }
 
         $paymentData = [
@@ -109,7 +114,7 @@ class StancerApi
      *
      * @param Stancer\Payment $apiPayment
      *
-     * @return void
+     * @return array
      */
     public function sendToApi(Stancer\Payment $apiPayment)
     {
@@ -119,12 +124,15 @@ class StancerApi
 
         try {
             $apiPayment->send();
+            // @phpstan-ignore catch.neverThrown
         } catch (Stancer\Exceptions\NotAuthorizedException $exception) {
             $errors[] = StancerErrors::getMessage(StancerErrors::NOT_AUTHORIZED);
             $log = $exception->getMessage();
+            // @phpstan-ignore catch.neverThrown
         } catch (Stancer\Exceptions\ServerException $exception) {
             $errors[] = StancerErrors::getMessage(StancerErrors::SERVER_ERROR);
             $log = $exception->getMessage();
+            // @phpstan-ignore catch.neverThrown
         } catch (Stancer\Exceptions\ClientException $exception) {
             $errors[] = StancerErrors::getMessage(StancerErrors::CLIENT_ERROR);
             $log = $exception->getMessage();
@@ -174,7 +182,7 @@ class StancerApi
             $apiPayment = $currentPayment->getApiObject();
         }
 
-        if (!$apiPayment || (!empty($apiPayment) && $apiPayment->getStatus() === 'refused')) {
+        if (!$apiPayment || $apiPayment->getStatus() === 'refused') {
             $apiPayment = new Stancer\Payment();
             $apiPayment
                 ->setCustomer($apiCustomer)
