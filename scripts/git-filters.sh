@@ -18,5 +18,5 @@ if [ -n "$apply" ]; then
   grep 'filter=' "${main_dir}/.gitattributes" | awk '{ print $1 }' \
     | xargs -I % find "$main_dir" -name '%' -delete
 
-  git restore .
+  git checkout -- .
 fi

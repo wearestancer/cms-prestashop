@@ -3,10 +3,10 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2024 Stancer / Iliad 78
+ * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
- * @website   https://www.stancer.com
+ * @website https://www.stancer.com
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -17,40 +17,64 @@ if (!defined('_PS_VERSION_')) {
  */
 class StancerApiPayment extends ObjectModel
 {
-    /** @var string Payment id */
+    /**
+     * @var string Payment id
+     */
     public $payment_id;
 
-    /** @var string Customer id */
+    /**
+     * @var string|null Customer id
+     */
     public $customer_id;
 
-    /** @var string Card id */
+    /**
+     * @var string|null Card id
+     */
     public $card_id;
 
-    /** @var int Cart id */
+    /**
+     * @var int Cart id
+     */
     public $id_cart;
 
-    /** @var int Order id */
+    /**
+     * @var int Order id
+     */
     public $id_order;
 
-    /** @var bool Is a live mode object? */
+    /**
+     * @var bool Is a live mode object?
+     */
     public $live_mode;
 
-    /** @var string Currency */
+    /**
+     * @var string Currency
+     */
     public $currency;
 
-    /** @var string Payment amount */
+    /**
+     * @var string|int|null Payment amount
+     */
     public $amount;
 
-    /** @var string Payment status */
+    /**
+     * @var string Payment status
+     */
     public $status = 'pending';
 
-    /** @var string Payment creation date in Stancer Api */
+    /**
+     * @var string Payment creation date in Stancer Api
+     */
     public $created;
 
-    /** @var string Object creation date */
+    /**
+     * @var string Object creation date
+     */
     public $date_add;
 
-    /** @var string Object last modification date */
+    /**
+     * @var string Object last modification date
+     */
     public $date_upd;
 
     protected $api;
@@ -126,9 +150,9 @@ class StancerApiPayment extends ObjectModel
     /**
      * Retrieves Stancer Prestashop payment depends on Stancer API payment object
      *
-     * @param mixed $apiPayment
+     * @param Stancer\Payment $apiPayment
      *
-     * @return StancerApiPayment
+     * @return StancerApiPayment|null
      */
     public static function findByApiPayment(Stancer\Payment $apiPayment): ?StancerApiPayment
     {
@@ -142,6 +166,7 @@ class StancerApiPayment extends ObjectModel
             return null;
         }
 
+        // @phpstan-ignore new.static
         $payment = new static();
         $payment->hydrate((array) $row);
 
@@ -191,6 +216,7 @@ class StancerApiPayment extends ObjectModel
             return null;
         }
 
+        // @phpstan-ignore new.static
         $payment = new static();
         $payment->hydrate((array) $row);
 
@@ -214,12 +240,12 @@ class StancerApiPayment extends ObjectModel
     /**
      * Get order state prestashop from stancer payment status
      *
-     * @return int
+     * @return string|false
      */
-    public function getOrderState(): int
+    public function getOrderState()
     {
         $statuses = [
-            Stancer\Payment\Status::AUTHORIZED => 'PS_OS_AUTHORIZED',
+            Stancer\Payment\Status::AUTHORIZED => 'PS_CHECKOUT_STATE_AUTHORIZED',
             Stancer\Payment\Status::CANCELED => 'PS_OS_CANCELED',
             Stancer\Payment\Status::CAPTURED => 'PS_OS_PAYMENT',
             Stancer\Payment\Status::DISPUTED => 'PS_OS_DISPUTED',
@@ -234,7 +260,7 @@ class StancerApiPayment extends ObjectModel
             $key = $statuses[$this->api->getStatus()];
         }
 
-        if ($key === Stancer\Payment\Status::CAPTURED && count($this->api->getRefunds())) {
+        if ($key === $statuses[Stancer\Payment\Status::CAPTURED] && count($this->api->getRefunds())) {
             if ($this->api->getRefundableAmount()) {
                 $key = 'PS_OS_PARTIAL_REFUND';
             } else {
@@ -291,7 +317,7 @@ class StancerApiPayment extends ObjectModel
     /**
      * Create or update an Stancer payment from Stancer API payment object
      *
-     * @param Stancer\Payment $payment
+     * @param Stancer\Payment $apiPayment
      * @param Cart $cart
      *
      * @return StancerApiPayment
@@ -301,6 +327,7 @@ class StancerApiPayment extends ObjectModel
         $payment = static::findByApiPayment($apiPayment);
 
         if (!$payment) {
+            // @phpstan-ignore new.static
             $payment = new static();
         }
 

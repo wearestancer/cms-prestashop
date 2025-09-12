@@ -3,15 +3,14 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2024 Stancer / Iliad 78
+ * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
- * @website   https://www.stancer.com
+ * @website https://www.stancer.com
  */
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
 require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
 
 /**
@@ -19,7 +18,7 @@ require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
  */
 class Stancer extends PaymentModule
 {
-    public const VERSION = '1.2.4';
+    const VERSION = '1.2.4';
 
     protected $configurations = [];
     protected $languages = [];
@@ -30,18 +29,15 @@ class Stancer extends PaymentModule
 
     /**
      * Constructor
-     *
-     * @param string $name Module unique name
-     * @param Context $context
      */
-    public function __construct($name = null, $context = null)
+    public function __construct()
     {
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
-        $this->version = '1.2.4';
+        $this->version = '1.7.0';
         $this->author = 'Stancer';
         $this->need_instance = 1;
-        $this->ps_versions_compliancy = ['min' => '1.7.8', 'max' => '8.2.999'];
+        $this->ps_versions_compliancy = ['min' => '1.7.1', 'max' => '1.7.999'];
         $this->module_key = '405faa09756f808b77ad16948b321351';
         $this->bootstrap = true;
 
@@ -50,7 +46,7 @@ class Stancer extends PaymentModule
         $this->displayName = 'Stancer';
         $this->description = $this->l('Simple payment solution at low prices.');
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
-        $this->limited_currencies = ['EUR'];
+        $this->limited_countries = ['FR'];
 
         foreach (Language::getLanguages(false) as $lang) {
             if ($this->context->controller instanceof AdminController) {
@@ -71,7 +67,7 @@ class Stancer extends PaymentModule
      */
     protected function fetchTemplate(string $path)
     {
-        return $this->context->smarty->fetch('module:' . $this->name . '/views/templates/' . $path);
+        return $this->context->smarty->fetch(__DIR__ . '/views/templates/' . $path);
     }
 
     /**
@@ -331,9 +327,11 @@ class Stancer extends PaymentModule
         }
 
         if ($group) {
-            return array_filter($this->configurations, function ($infos) use ($group) {
-                return $infos['group'] === $group;
-            });
+            return array_filter(
+                $this->configurations, function ($infos) use ($group) {
+                    return $infos['group'] === $group;
+                }
+            );
         }
 
         return $this->configurations;
@@ -406,7 +404,11 @@ class Stancer extends PaymentModule
                 Configuration::updateValue($name, $value);
             }
 
-            $apiMode = Tools::getValue('STANCER_API_MODE') ?? Stancer\Config::TEST_MODE;
+            if (Tools::getValue('STANCER_API_MODE') === null) {
+                $apiMode = Stancer\Config::TEST_MODE;
+            } else {
+                $apiMode = Tools::getValue('STANCER_API_MODE');
+            }
 
             if ($apiMode === Stancer\Config::LIVE_MODE) {
                 $public = Configuration::get('STANCER_API_LIVE_PUBLIC_KEY');
@@ -513,18 +515,24 @@ class Stancer extends PaymentModule
                 $this->context->smarty->assign('stancer_module_img', _MODULE_DIR_ . $this->name . '/views/img');
                 $this->context->smarty->assign($name . '_VALUE', $value);
 
-                $settings['input'][] = array_merge($clean, [
-                    'html_content' => $this->fetchTemplate('admin/' . $infos['template'] . '.tpl'),
-                    'name' => $name,
-                    'type' => 'html',
-                ]);
+                $settings['input'][] = array_merge(
+                    $clean,
+                    [
+                        'html_content' => $this->fetchTemplate('admin/' . $infos['template'] . '.tpl'),
+                        'name' => $name,
+                        'type' => 'html',
+                    ]
+                );
 
                 $helper->fields_value[$name] = $value;
             } else {
                 $clean = array_diff_key($infos, $excep);
-                $settings['input'][] = array_merge($clean, [
-                    'name' => $name,
-                ]);
+                $settings['input'][] = array_merge(
+                    $clean,
+                    [
+                        'name' => $name,
+                    ]
+                );
 
                 if (array_key_exists('lang', $infos) && $infos['lang']) {
                     foreach ($this->languages as $lang) {
@@ -543,7 +551,7 @@ class Stancer extends PaymentModule
     /**
      * Create admin form for keys.
      *
-     * @param mixed $helper
+     * @param HelperForm $helper
      *
      * @return array
      */
@@ -634,9 +642,12 @@ class Stancer extends PaymentModule
 
         foreach ($this->getConfigurationsList('settings') as $name => $infos) {
             $clean = array_diff_key($infos, $excep);
-            $settings['input'][] = array_merge($clean, [
-                'name' => $name,
-            ]);
+            $settings['input'][] = array_merge(
+                $clean,
+                [
+                    'name' => $name,
+                ]
+            );
 
             if (array_key_exists('lang', $infos) && $infos['lang']) {
                 foreach ($this->languages as $lang) {
@@ -941,7 +952,7 @@ class Stancer extends PaymentModule
 
         $return &= $db->execute($sql);
 
-        return $return;
+        return (bool) $return;
     }
 
     /**
@@ -1095,7 +1106,7 @@ class Stancer extends PaymentModule
         $return &= $db->execute('DROP TABLE IF EXISTS `' . bqSQL(_DB_PREFIX_ . 'stancer_customer') . '`;');
         $return &= $db->execute('DROP TABLE IF EXISTS `' . bqSQL(_DB_PREFIX_ . 'stancer_payment') . '`;');
 
-        return $return;
+        return (bool) $return;
     }
 
     /**
@@ -1111,6 +1122,6 @@ class Stancer extends PaymentModule
             $return &= $this->unregisterExceptions($hookName);
         }
 
-        return $return;
+        return (bool) $return;
     }
 }

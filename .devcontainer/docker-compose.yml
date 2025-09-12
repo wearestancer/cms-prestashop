@@ -1,6 +1,6 @@
 services:
   caddy:
-    image: caddy:alpine
+    image: caddy:2.8
 
     depends_on:
       prestashop:
@@ -26,11 +26,12 @@ services:
 
 
   database:
-    image: mariadb:latest
+    image: mariadb:11.6
 
     environment:
       MARIADB_DATABASE: prestashop
       MARIADB_ROOT_PASSWORD: root
+      MARIADB_ROOT_USER: root
 
     healthcheck:
       interval: 1s
@@ -113,7 +114,6 @@ services:
     volumes:
       - root-path:/var/www/html:cached
       - ..:/var/www/html/modules/stancer:cached
-
 
 networks:
   app:

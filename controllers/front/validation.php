@@ -3,10 +3,10 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2024 Stancer / Iliad 78
+ * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
- * @website   https://www.stancer.com
+ * @website https://www.stancer.com
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -31,25 +31,31 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         if (!$newCart || !$newCart['success'] || !Validate::isLoadedObject($newCart['cart'])) {
             return;
         }
-
+        // @phpstan-ignore property.notFound
         $this->context->cookie->id_cart = $newCart['cart']->id;
         $this->context->cart = $newCart['cart'];
         $this->context->smarty->assign('cart_qties', $this->context->cart->nbProducts());
 
         CartRule::autoAddToCart($this->context);
 
-        $sql = implode(' ', [
-            'SELECT checkout_session_data',
-            'FROM `' . _DB_PREFIX_ . 'cart`',
-            'WHERE id_cart = ' . (int) $cart->id,
-        ]);
+        $sql = implode(
+            ' ',
+            [
+                'SELECT checkout_session_data',
+                'FROM `' . _DB_PREFIX_ . 'cart`',
+                'WHERE id_cart = ' . (int) $cart->id,
+            ]
+        );
         $checkoutSessionData = Db::getInstance()->getValue($sql);
 
-        $sql = implode(' ', [
-            'UPDATE `' . _DB_PREFIX_ . 'cart`',
-            'SET checkout_session_data = "' . pSQL($checkoutSessionData) . '"',
-            'WHERE id_cart = ' . (int) $this->context->cart->id,
-        ]);
+        $sql = implode(
+            ' ',
+            [
+                'UPDATE `' . _DB_PREFIX_ . 'cart`',
+                'SET checkout_session_data = "' . pSQL($checkoutSessionData) . '"',
+                'WHERE id_cart = ' . (int) $this->context->cart->id,
+            ]
+        );
         Db::getInstance()->execute($sql);
 
         $this->context->cookie->write();
@@ -60,25 +66,30 @@ class StancerValidationModuleFrontController extends ModuleFrontController
      *
      * @param Cart $cart
      * @param Stancer\Payment $apiPayment
+     * @param string|false $orderState
      *
      * @return Order
      */
-    protected function createOrder(Cart $cart, Stancer\Payment $apiPayment, int $orderState): Order
+    protected function createOrder(Cart $cart, Stancer\Payment $apiPayment, $orderState)
     {
+        if (!($this->module instanceof PaymentModuleCore)) {
+            throw new Exception('module must be a payment module');
+        }
         $this->module->validateOrder(
             $cart->id,
-            $orderState,
+            (int) $orderState,
             $apiPayment->getAmount() / 100,
             $this->module->displayName,
             $this->getOrderMessage($apiPayment),
             ['transaction_id' => $apiPayment->getId()],
             (int) $cart->id_currency,
             false,
-            $cart->secure_key,
+            $cart->secure_key
         );
 
+        // @phpstan-ignore property.notFound
         $newOrder = new Order((int) $this->module->currentOrder);
-        $orderPayments = OrderPayment::getByOrderReference($newOrder->reference);
+        $orderPayments = OrderPayment::getByOrderReference((int) $newOrder->reference);
 
         if (!empty($orderPayments)) {
             $apiCard = $apiPayment->getCard();
@@ -100,14 +111,17 @@ class StancerValidationModuleFrontController extends ModuleFrontController
      *
      * @param Stancer\Payment $apiPayment
      *
-     * @return array
+     * @return string
      */
-    protected function getOrderMessage(Stancer\Payment $apiPayment): string
+    protected function getOrderMessage(Stancer\Payment $apiPayment)
     {
-        $amount = vsprintf('%.02f %s', [
-            $apiPayment->getAmount() / 100,
-            strtoupper($apiPayment->getCurrency()),
-        ]);
+        $amount = vsprintf(
+            '%.02f %s',
+            [
+                $apiPayment->getAmount() / 100,
+                strtoupper($apiPayment->getCurrency()),
+            ]
+        );
 
         if (class_exists('NumberFormatter')) {
             $formatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
@@ -155,7 +169,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
     /**
      * Process validation
      *
-     * @return void
+     * @return null
      */
     public function postProcess()
     {
@@ -165,14 +179,16 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         $customer = $context->customer;
 
         // phpcs:disable PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace
-        if (
-            !Validate::isLoadedObject($cart)
+        if (!Validate::isLoadedObject($cart)
             || !$cart->id_address_delivery
             || !$cart->id_address_invoice
             || !Validate::isLoadedObject($currency)
             || !Validate::isLoadedObject($customer)
-            || $this->module->isNotAvailable()
+            // @phpstan-ignore property.notFound
+            || (method_exists($this->module, 'isNotAvailable') && $this->module->isNotAvailable())
         ) {
+            // We return a void value, the return is here for lisibility
+            // @phpstan-ignore method.void
             return $this->redirect();
         }
 
@@ -230,7 +246,8 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             case Stancer\Payment\Status::TO_CAPTURE:
             case Stancer\Payment\Status::CAPTURE:
                 // @todo : remove check of property when property deleted will be added
-                $deleted = property_exists($apiCard, 'deleted') && $apiCard->deleted ?? false;
+                // @phpstan-ignore property.notFound
+                $deleted = property_exists($apiCard, 'deleted') && $apiCard->deleted;
 
                 if ($deleted) {
                     StancerApiCard::deleteFrom($apiCard);
@@ -258,8 +275,15 @@ class StancerValidationModuleFrontController extends ModuleFrontController
                 return Tools::redirect($url);
         }
 
-        return $this->redirect($apiPayment->getPaymentPageUrl([
-            'lang' => $this->context->language->language_code,
-        ], true));
+        // We return a void value, the return is here for lisibility
+        // @phpstan-ignore method.void
+        return $this->redirect(
+            $apiPayment->getPaymentPageUrl(
+                [
+                    'lang' => $this->context->language->language_code,
+                ],
+                true
+            )
+        );
     }
 }
