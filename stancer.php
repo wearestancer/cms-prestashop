@@ -34,7 +34,7 @@ class Stancer extends PaymentModule
     {
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
-        $this->version = '1.2.4';
+        $this->version = '1.7.0';
         $this->author = 'Stancer';
         $this->need_instance = 1;
         $this->ps_versions_compliancy = ['min' => '1.7.1', 'max' => '1.7.999'];
