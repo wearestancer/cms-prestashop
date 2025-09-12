@@ -13,7 +13,7 @@ parameters:
     - upgrade/
     - stancer.php
 
-  phpVersion: 70100
+  phpVersion: 80000
 
   treatPhpDocTypesAsCertain: false
 
