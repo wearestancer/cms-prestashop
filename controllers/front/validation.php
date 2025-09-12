@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stancer PrestaShop
  *
@@ -129,6 +130,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
 
         if (class_exists('NumberFormatter')) {
             $formatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
+            // @phpstan-ignore method.internalClass
             $amount = $formatter->formatCurrency($apiPayment->getAmount() / 100, $apiPayment->getCurrency());
         }
 

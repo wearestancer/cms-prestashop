@@ -8,8 +8,8 @@ workflow:
 
 variables:
   DOCKER_REGISTRY: wearestancer
-  PHP_VERSION: "8.0-xdebug3.4"
-  PHP_PS_VERSION: "8"
+  PHP_VERSION: "8.1-xdebug3.4"
+  PHP_PS_VERSION: "8.1"
   PS_VERSION: "8.0"
 
 

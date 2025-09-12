@@ -20,6 +20,7 @@
     },
     "scripts": {
         "phpcs": "./vendor/bin/php-cs-fixer check --diff",
+        "phpcs-fix": "./vendor/bin/php-cs-fixer fix",
         "phpstan": "./vendor/bin/phpstan"
     },
     "license": "MIT",

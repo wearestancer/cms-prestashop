@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stancer PrestaShop
  *
@@ -54,7 +55,7 @@ class StancerApi
     public function buildPaymentData(
         Cart $cart,
         Language $language,
-        Currency $currency
+        Currency $currency,
     ): array {
         $total = $cart->getOrderTotal(true, Cart::BOTH);
         $amount = (int) (string) ($total * 100);
@@ -178,7 +179,7 @@ class StancerApi
         Currency $currency,
         $card = null,
         array &$errors = [],
-        &$log = null
+        &$log = null,
     ): Stancer\Payment {
         $paymentData = $this->buildPaymentData($cart, $language, $currency);
         $psApiCustomer = StancerApiCustomer::find($customer);
