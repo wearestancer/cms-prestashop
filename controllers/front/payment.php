@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stancer PrestaShop
  *
@@ -18,6 +19,10 @@ if (!defined('_PS_VERSION_')) {
 class StancerPaymentModuleFrontController extends ModuleFrontController
 {
     use StancerControllerTrait;
+    /**
+     * @var Stancer
+     */
+    public $module;
 
     /**
      * Process payment
@@ -29,15 +34,15 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
         $context = $this->context;
 
         // phpcs:disable PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace
-        if (
-            !Validate::isLoadedObject($context->cart)
+        if (!Validate::isLoadedObject($context->cart)
             || !$context->cart->id_address_delivery
             || !$context->cart->id_address_invoice
             || !Validate::isLoadedObject($context->currency)
             || !Validate::isLoadedObject($context->customer)
             || $this->module->isNotAvailable()
         ) {
-            return $this->redirect();
+            // Redirect always terminate. No return needed.
+            $this->redirect();
         }
 
         $log = '';
@@ -67,14 +72,25 @@ class StancerPaymentModuleFrontController extends ModuleFrontController
         if ($log) {
             $this->errors = $errors;
 
-            return $this->displayError($log);
+            $this->displayError($log);
+
+            return;
         }
 
+        // Redirect always terminate. No return needed.
         if (!empty($existingCard)) {
-            return $this->redirect($context->link->getModuleLink($this->module->name, 'validation', [], true));
+            $this->redirect(
+                $context->link->getModuleLink(
+                    $this->module->name,
+                    'validation',
+                    [],
+                    true
+                )
+            );
         }
 
-        return $this->redirect(
+        // Redirect always terminate. No return needed.
+        $this->redirect(
             $apiPayment->getPaymentPageUrl([
                 'lang' => $context->language->language_code,
             ], true),

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stancer PrestaShop
  *
@@ -20,11 +21,18 @@ class StancerValidationModuleFrontController extends ModuleFrontController
     use StancerControllerTrait;
 
     /**
+     * @var Stancer
+     */
+    public $module;
+
+    /**
      * Clones cart
      *
      * @param Cart $cart
+     *
+     * @return void
      */
-    public function cloneCart(Cart $cart)
+    public function cloneCart(Cart $cart): void
     {
         $newCart = $cart->duplicate();
 
@@ -32,6 +40,10 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             return;
         }
 
+        /*
+         * @phpstan-ignore-next-line 'Access to an undefined property Cookie::$id_cart.'
+         * Cookie has magicMethod __set so their is never an undefined property.
+         */
         $this->context->cookie->id_cart = $newCart['cart']->id;
         $this->context->cart = $newCart['cart'];
         $this->context->smarty->assign('cart_qties', $this->context->cart->nbProducts());
@@ -60,14 +72,15 @@ class StancerValidationModuleFrontController extends ModuleFrontController
      *
      * @param Cart $cart
      * @param Stancer\Payment $apiPayment
+     * @param string|false $orderState
      *
      * @return Order
      */
-    protected function createOrder(Cart $cart, Stancer\Payment $apiPayment, int $orderState): Order
+    protected function createOrder(Cart $cart, Stancer\Payment $apiPayment, $orderState): Order
     {
         $this->module->validateOrder(
             $cart->id,
-            $orderState,
+            (int) $orderState,
             $apiPayment->getAmount() / 100,
             $this->module->displayName,
             $this->getOrderMessage($apiPayment),
@@ -78,6 +91,12 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         );
 
         $newOrder = new Order((int) $this->module->currentOrder);
+        /*
+         * @phpstan-ignore-next-line depending on the Prestashop version, reference is typed as an int or a string.
+         *
+         * In the database as far as I've seen it is always stored as a string.
+         * So we always send $newOrder->reference as a string.
+         */
         $orderPayments = OrderPayment::getByOrderReference($newOrder->reference);
 
         if (!empty($orderPayments)) {
@@ -100,7 +119,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
      *
      * @param Stancer\Payment $apiPayment
      *
-     * @return array
+     * @return string
      */
     protected function getOrderMessage(Stancer\Payment $apiPayment): string
     {
@@ -111,6 +130,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
 
         if (class_exists('NumberFormatter')) {
             $formatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
+            // @phpstan-ignore method.internalClass
             $amount = $formatter->formatCurrency($apiPayment->getAmount() / 100, $apiPayment->getCurrency());
         }
 
@@ -157,7 +177,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
      *
      * @return void
      */
-    public function postProcess()
+    public function postProcess(): void
     {
         $context = $this->context;
         $cart = $context->cart;
@@ -173,7 +193,8 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             || !Validate::isLoadedObject($customer)
             || $this->module->isNotAvailable()
         ) {
-            return $this->redirect();
+            // Redirect always terminate. No return needed.
+            $this->redirect();
         }
 
         $payment = StancerApiPayment::find($cart, $currency);
@@ -182,7 +203,9 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             $err = StancerErrors::getMessage(StancerErrors::NO_PAYMENT);
             $this->errors[] = $err;
 
-            return $this->displayError($err); // We must have a payment
+            $this->displayError($err); // We must have a payment
+
+            return;
         }
 
         $apiPayment = $payment->getApiObject();
@@ -225,12 +248,15 @@ class StancerValidationModuleFrontController extends ModuleFrontController
                     $this->cloneCart($cart);
                 }
 
-                return $this->displayError($err);
+                $this->displayError($err);
+
+                return;
             case Stancer\Payment\Status::AUTHORIZED:
             case Stancer\Payment\Status::TO_CAPTURE:
             case Stancer\Payment\Status::CAPTURE:
                 // @todo : remove check of property when property deleted will be added
-                $deleted = property_exists($apiCard, 'deleted') && $apiCard->deleted ?? false;
+                // @phpstan-ignore-next-line we know that deleted doesn't yet exist.
+                $deleted = property_exists($apiCard, 'deleted') && $apiCard->deleted;
 
                 if ($deleted) {
                     StancerApiCard::deleteFrom($apiCard);
@@ -254,11 +280,10 @@ class StancerValidationModuleFrontController extends ModuleFrontController
                         'key' => $customer->secure_key,
                     ]
                 );
-
-                return Tools::redirect($url);
+                Tools::redirect($url);
         }
-
-        return $this->redirect($apiPayment->getPaymentPageUrl([
+        // Redirect always terminate. No return needed.
+        $this->redirect($apiPayment->getPaymentPageUrl([
             'lang' => $this->context->language->language_code,
         ], true));
     }

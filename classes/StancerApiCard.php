@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stancer PrestaShop
  *
@@ -20,7 +21,7 @@ class StancerApiCard extends ObjectModel
     /** @var int Customer id */
     public $id_customer;
 
-    /** @var int Card id */
+    /** @var string Card id */
     public $card_id;
 
     /** @var bool Is a live mode object? */
@@ -53,10 +54,13 @@ class StancerApiCard extends ObjectModel
     /** @var string Object last modification date */
     public $date_upd;
 
-    protected $api;
+    /** @var Stancer\Card|null The api object. */
+    protected ?Stancer\Card $api = null;
 
     /**
      * @see ObjectModel::$definition
+     *
+     * @var array<string, string|mixed[]>
      */
     public static $definition = [
         'table' => 'stancer_card',
@@ -145,7 +149,7 @@ class StancerApiCard extends ObjectModel
      *
      * @param Stancer\Card $card
      *
-     * @return StancerApiCard
+     * @return StancerApiCard|null
      */
     public static function findByApiCard(Stancer\Card $card): ?StancerApiCard
     {
@@ -158,7 +162,7 @@ class StancerApiCard extends ObjectModel
         if (!$row) {
             return null;
         }
-
+        // @phpstan-ignore new.static
         $card = new static();
         $card->hydrate((array) $row);
 
@@ -171,7 +175,7 @@ class StancerApiCard extends ObjectModel
      * @param Customer $customer
      * @param int $id
      *
-     * @return array
+     * @return StancerApiCard|null
      */
     public static function getCustomerCard(Customer $customer, int $id): ?StancerApiCard
     {
@@ -187,6 +191,7 @@ class StancerApiCard extends ObjectModel
             return null;
         }
 
+        // @phpstan-ignore new.static
         $card = new static();
         $card->hydrate($row);
 
@@ -212,7 +217,7 @@ class StancerApiCard extends ObjectModel
      *
      * @param Customer $customer
      *
-     * @return array
+     * @return StancerApiCard[]
      */
     public static function getCustomerCards(Customer $customer): array
     {
@@ -234,9 +239,12 @@ class StancerApiCard extends ObjectModel
      * @param mixed $null_values
      * @param mixed $auto_date
      *
-     * @return void
+     * @return bool
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
-    public function save($null_values = false, $auto_date = true)
+    public function save($null_values = false, $auto_date = true): bool
     {
         $config = new StancerApiConfig();
 
@@ -253,7 +261,7 @@ class StancerApiCard extends ObjectModel
     /**
      * Create or update an Stancer card from Stancer API card object
      *
-     * @param Stancer\Card $card
+     * @param Stancer\Card $apiCard
      * @param Customer $customer
      *
      * @return StancerApiCard
@@ -263,6 +271,7 @@ class StancerApiCard extends ObjectModel
         $card = static::findByApiCard($apiCard);
 
         if (!$card) {
+            // @phpstan-ignore new.static
             $card = new static();
             $card->id_customer = $customer->id;
             $card->card_id = $apiCard->getId();

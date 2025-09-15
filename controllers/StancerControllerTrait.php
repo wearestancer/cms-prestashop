@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stancer PrestaShop
  *
@@ -43,13 +44,13 @@ trait StancerControllerTrait
 
         $this->setTemplate('module:' . $this->module->name . '/views/templates/front/error.tpl');
 
-        return parent::postProcess();
+        parent::postProcess();
     }
 
     /**
      * Get redirect link
      *
-     * @return void
+     * @return string
      */
     public function getRedirectLink()
     {
@@ -68,7 +69,7 @@ trait StancerControllerTrait
      *
      * @param mixed $url
      *
-     * @return void
+     * @return never
      */
     public function redirect($url = null)
     {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stancer PrestaShop
  *
@@ -12,7 +13,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_1_2_0($module)
+function upgrade_module_1_2_0(Stancer $module): bool
 {
     // Add new configurations
     if (!$module->installConfigurations()) {
@@ -73,7 +74,7 @@ function upgrade_module_1_2_0($module)
     return true;
 }
 
-function fix_payments(bool $isProd)
+function fix_payments(bool $isProd): void
 {
     // We use direct db update to prevent messing with the current configuration during the migration
     $db = Db::getInstance();
@@ -112,7 +113,7 @@ function fix_payments(bool $isProd)
     }
 }
 
-function upgrade_modes()
+function upgrade_modes(): void
 {
     // We use direct db update to prevent messing with the current configuration during the migration
     $db = Db::getInstance();

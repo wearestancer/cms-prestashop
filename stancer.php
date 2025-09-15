@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stancer PrestaShop
  *
@@ -16,14 +17,57 @@ require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
 
 /**
  * Stancer payment module.
+ *
+ * @phpstan-type SettingData array{
+ *  'default'?: ?mixed,
+ *  'desc'?: ?string,
+ *  'class'?: string,
+ *  'group'?: string|int,
+ *  'html_content'?: ?string,
+ *  'label'?: ?string,
+ *  'lang'?: ?bool,
+ *  'mode' ?: string,
+ *  'name'?: ?string,
+ *  'required'?: ?bool,
+ *  'pattern' ?: string,
+ *  'public' ?: string,
+ *  'size'?: int,
+ *  'template'?: ?string,
+ *  'type'?: ?string,
+ *  'values'?: ValueType[],
+ *  }
+ * @phpstan-type ValueType array{'id': ?string, 'value': null|string|int|float|bool}
+ * @phpstan-type DisplaySetting array{
+ *  'legend': array{'icon': string, 'title': string },
+ *  'description'?: ?string,
+ *  'input': array{SettingData},
+ *  }
+ * @phpstan-type DisplaySettingForm array{form: DisplaySetting}
  */
 class Stancer extends PaymentModule
 {
     public const VERSION = '1.2.4';
 
+    /**
+     * Configurations Settings
+     *
+     * @var mixed[]
+     */
     protected $configurations = [];
-    protected $languages = [];
-    protected $hooks = [
+
+    /**
+     * Supported languages
+     *
+     * @var array<int|mixed[]>
+     */
+    protected array $languages = [];
+
+    /**
+     * Hooks called by our modules
+     *
+     * @var string[]
+     */
+    protected array $hooks = [
         'paymentOptions',
         'displayHeader',
     ];
@@ -32,9 +76,9 @@ class Stancer extends PaymentModule
      * Constructor
      *
      * @param string $name Module unique name
-     * @param Context $context
+     * @param Context|null $context
      */
-    public function __construct($name = null, $context = null)
+    public function __construct(string $name = 'stancer', ?Context $context = null)
     {
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
@@ -44,13 +88,13 @@ class Stancer extends PaymentModule
         $this->ps_versions_compliancy = ['min' => '1.7.8', 'max' => '8.2.999'];
         $this->module_key = '405faa09756f808b77ad16948b321351';
         $this->bootstrap = true;
+        $this->context = $context;
 
         parent::__construct();
 
         $this->displayName = 'Stancer';
         $this->description = $this->l('Simple payment solution at low prices.');
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
-        $this->limited_currencies = ['EUR'];
 
         foreach (Language::getLanguages(false) as $lang) {
             if ($this->context->controller instanceof AdminController) {
@@ -59,6 +103,10 @@ class Stancer extends PaymentModule
             }
 
             $this->languages[] = $lang;
+        }
+        // Just to use stancer as the validator doesn't like `$this->name = $name` and we might need the context
+        if ($name === '') {
+            return;
         }
     }
 
@@ -77,9 +125,11 @@ class Stancer extends PaymentModule
     /**
      * Return configuration for install or unistall module
      *
-     * @return array
+     * @param string|null $group
+     *
+     * @return array<string, SettingData>
      */
-    public function getConfigurationsList($group = null)
+    public function getConfigurationsList(?string $group = null): array
     {
         if (!$this->configurations) {
             $this->configurations = [];
@@ -487,7 +537,7 @@ class Stancer extends PaymentModule
      *
      * @param HelperForm $helper
      *
-     * @return array
+     * @return DisplaySettingForm
      */
     public function getContentFormDisplay(HelperForm $helper): array
     {
@@ -543,9 +593,9 @@ class Stancer extends PaymentModule
     /**
      * Create admin form for keys.
      *
-     * @param mixed $helper
+     * @param HelperForm $helper
      *
-     * @return array
+     * @return DisplaySettingForm
      */
     public function getContentFormKeys(HelperForm $helper): array
     {
@@ -613,7 +663,7 @@ class Stancer extends PaymentModule
      *
      * @param HelperForm $helper
      *
-     * @return array
+     * @return DisplaySettingForm
      */
     public function getContentFormSettings(HelperForm $helper): array
     {
@@ -721,7 +771,7 @@ class Stancer extends PaymentModule
     /**
      * Hook called to display payment methods (PS1.7+).
      *
-     * @param array $params
+     * @param array<string, PrestaShop\PrestaShop\Core\Payment\PaymentOption[]> $params
      *
      * @return PrestaShop\PrestaShop\Core\Payment\PaymentOption[]
      */
@@ -941,7 +991,7 @@ class Stancer extends PaymentModule
 
         $return &= $db->execute($sql);
 
-        return $return;
+        return (bool) $return;
     }
 
     /**
@@ -1039,7 +1089,7 @@ class Stancer extends PaymentModule
      * updateConfigurationList
      *
      * @param string $name
-     * @param array $params
+     * @param array<string, string|mixed[]> $params
      *
      * @return void
      */
@@ -1095,7 +1145,7 @@ class Stancer extends PaymentModule
         $return &= $db->execute('DROP TABLE IF EXISTS `' . bqSQL(_DB_PREFIX_ . 'stancer_customer') . '`;');
         $return &= $db->execute('DROP TABLE IF EXISTS `' . bqSQL(_DB_PREFIX_ . 'stancer_payment') . '`;');
 
-        return $return;
+        return (bool) $return;
     }
 
     /**
@@ -1108,7 +1158,7 @@ class Stancer extends PaymentModule
         $return = true;
         foreach ($this->hooks as $hookName) {
             $return &= $this->unregisterHook($hookName);
-            $return &= $this->unregisterExceptions($hookName);
+            $return &= $this->unregisterExceptions(Hook::getIdByName($hookName));
         }
 
         return $return;

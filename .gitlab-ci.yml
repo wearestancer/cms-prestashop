@@ -6,19 +6,26 @@ workflow:
       when: never
     - when: always
 
-
 variables:
   DOCKER_REGISTRY: wearestancer
-  PHP_VERSION: "7.4"
+  PHP_VERSION: "8.1"
+  PS_VERSION: "8.0"
 
 
-Create archive:
-  stage: deploy
-
-  image: ${DOCKER_REGISTRY}/prestashop:php${PHP_VERSION}
-
+.base-php:
+  image: ${DOCKER_REGISTRY}/php:${PHP_VERSION}
+  stage: test
   before_script:
-    - php -v
+    - php --version
+    - composer --version
+    - composer install
+
+
+.base-prestashop:
+  image: ${DOCKER_REGISTRY}/prestashop:${PS_VERSION}-php${PHP_VERSION}
+  stage: deploy
+  before_script:
+    - php --version
     - composer --version
     - pnpm --version
 
@@ -26,6 +33,11 @@ Create archive:
     - sh scripts/git-filters.sh 1
 
     - pnpm install
+
+
+Create archive:
+  extends:
+    - .base-prestashop
 
   script:
     - pnpm run build:archive
@@ -39,15 +51,8 @@ Create archive:
 
 
 phpcs:
-  stage: test
-
-  image: ${DOCKER_REGISTRY}/php:${PHP_VERSION}
-
-  before_script:
-    - php -v
-    - composer --version
-
-    - composer install
+  extends:
+    - .base-php
 
   script:
     - composer run phpcs || true
@@ -56,3 +61,16 @@ phpcs:
   artifacts:
     reports:
       codequality: gl-code-quality-report.json
+
+
+phpstan:
+  extends:
+    - .base-php
+
+  script:
+    - composer run phpstan || true
+    - composer run phpstan -- --error-format=gitlab > gl-static-analysis-report.json
+
+  artifacts:
+    reports:
+      codequality: gl-static-analysis-report.json
