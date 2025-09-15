@@ -31,7 +31,6 @@ pnpm run --dir "${plugin_dir}" translate
 # Get Caddy root CA
 curl http://caddy:2019/pki/ca/local/certificates -so "${devcontainer_dir}/root-ca.crt"
 
-
 if [ -d "${web_dir}/install" ]; then
   # Prepare the database
   mysql -h $DB_SERVER -P $DB_PORT -u $DB_USER -p$DB_PASSWD -ANe "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
