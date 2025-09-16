@@ -66,7 +66,7 @@ const processFile = (file) => {
   }
 
   if (file.endsWith('.php')) {
-    content = addYear('back', content.replace('<?php\n\n', licensePhp + '\n\n'));
+    content = addYear('back', content.replace('<?php\n\n\n', licensePhp + '\n\n'));
   }
 
   if (file.endsWith('.tpl')) {
