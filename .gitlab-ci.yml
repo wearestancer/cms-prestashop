@@ -47,7 +47,7 @@ Create archive:
 
   artifacts:
     paths:
-      - '*.zip'
+      - "*.zip"
 
 
 phpcs:

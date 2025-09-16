@@ -31,7 +31,6 @@ pnpm run --dir "${plugin_dir}" translate
 # Get Caddy root CA
 curl http://caddy:2019/pki/ca/local/certificates -so "${devcontainer_dir}/root-ca.crt"
 
-
 if [ -d "${web_dir}/install" ]; then
   # Prepare the database
   mysql -h $DB_SERVER -P $DB_PORT -u $DB_USER -p$DB_PASSWD -ANe "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
@@ -107,7 +106,7 @@ echo ""
 echo "${underline}${bold}Default settings${normal}${nounderline}"
 echo ""
 echo "Website accessible at:      ${protocol}${PS_DOMAIN}"
-echo "Admin panel accessible at:  ${protocol}${PS_DOMAIN}/ps-admin"
+echo "Admin panel accessible at:  ${protocol}${PS_DOMAIN}/ps-admin/index.php"
 echo ""
 echo "Admin mail:                 ${ADMIN_MAIL}"
 echo "Admin password:             ${ADMIN_PASSWD}"

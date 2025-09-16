@@ -85,7 +85,7 @@ class Stancer extends PaymentModule
         $this->version = '1.2.4';
         $this->author = 'Stancer';
         $this->need_instance = 1;
-        $this->ps_versions_compliancy = ['min' => '1.7.8', 'max' => '8.2.999'];
+        $this->ps_versions_compliancy = ['min' => '8.0', 'max' => '9.0.999'];
         $this->module_key = '405faa09756f808b77ad16948b321351';
         $this->bootstrap = true;
         $this->context = $context;
@@ -97,11 +97,8 @@ class Stancer extends PaymentModule
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
         foreach (Language::getLanguages(false) as $lang) {
-            if ($this->context->controller instanceof AdminController) {
-                $default = $this->context->controller->default_form_language;
-                $lang['is_default'] = $lang['id_lang'] == $default;
-            }
-
+            $default = $this->context->language;
+            $lang['is_default'] = $lang['id_lang'] == $default->id;
             $this->languages[] = $lang;
         }
         // Just to use stancer as the validator doesn't like `$this->name = $name` and we might need the context
@@ -197,7 +194,7 @@ class Stancer extends PaymentModule
 
             $this->configurations['STANCER_API_MODE'] = [
                 // By forcing the cast on Stance\Config Constant we make sure that it binds to values id and show the radio button checked in our form.
-                'default' => (string) $mode,
+                'default' => (string) $mode ?: Stancer\Config::TEST_MODE,
                 'desc' => $this->fetchTemplate('admin/descriptions/api_mode.tpl'),
                 'group' => 'settings',
                 'label' => $this->l('Mode'),
@@ -490,16 +487,8 @@ class Stancer extends PaymentModule
             }
 
             Configuration::updateValue('STANCER_API_MODE', $apiMode);
-
             if (!$hasError) {
-                $link = [
-                    AdminController::$currentIndex,
-                    'configure=' . $this->name,
-                    'conf=4',
-                    'token=' . Tools::getAdminTokenLite('AdminModules'),
-                ];
-
-                return Tools::redirectAdmin(implode('&', $link));
+                $output = $this->displayConfirmation($this->trans('Settings updated', [], 'Admin.Global'));
             }
         }
 
@@ -571,19 +560,7 @@ class Stancer extends PaymentModule
 
                 $helper->fields_value[$name] = $value;
             } else {
-                $clean = array_diff_key($infos, $excep);
-                $settings['input'][] = array_merge($clean, [
-                    'name' => $name,
-                ]);
-
-                if (array_key_exists('lang', $infos) && $infos['lang']) {
-                    foreach ($this->languages as $lang) {
-                        $value = Configuration::get($name, $lang['id_lang']);
-                        $helper->fields_value[$name][$lang['id_lang']] = $value;
-                    }
-                } else {
-                    $helper->fields_value[$name] = Configuration::get($name);
-                }
+                $settings['input'][] = $this->getContentStandardField($helper, $name, $infos);
             }
         }
 
@@ -677,28 +654,41 @@ class Stancer extends PaymentModule
 
         $mode = 'STANCER_API_MODE';
         $helper->fields_value[$mode] = Configuration::get($mode) === Stancer\Config::LIVE_MODE;
+
+        foreach ($this->getConfigurationsList('settings') as $name => $infos) {
+            $settings['input'][] = $this->getContentStandardField($helper, $name, $infos);
+        }
+
+        return ['form' => $settings];
+    }
+
+    /**
+     * Handle the formatting of non customized fields.
+     *
+     * @param HelperForm $helper
+     * @param string $name
+     * @param SettingData $infos
+     *
+     * @return SettingData
+     */
+    public function getContentStandardField(HelperForm $helper, string $name, array $infos)
+    {
         $excep = [
             'default' => 1,
             'group' => 1,
         ];
+        $clean = array_diff_key($infos, $excep);
 
-        foreach ($this->getConfigurationsList('settings') as $name => $infos) {
-            $clean = array_diff_key($infos, $excep);
-            $settings['input'][] = array_merge($clean, [
-                'name' => $name,
-            ]);
-
-            if (array_key_exists('lang', $infos) && $infos['lang']) {
-                foreach ($this->languages as $lang) {
-                    $value = Configuration::get($name, $lang['id_lang']);
-                    $helper->fields_value[$name][$lang['id_lang']] = $value;
-                }
-            } else {
-                $helper->fields_value[$name] = Configuration::get($name);
+        if (array_key_exists('lang', $infos) && $infos['lang']) {
+            foreach ($this->languages as $lang) {
+                $value = Configuration::get($name, $lang['id_lang']);
+                $helper->fields_value[$name][$lang['id_lang']] = $value;
             }
+        } else {
+            $helper->fields_value[$name] = Configuration::get($name);
         }
 
-        return ['form' => $settings];
+        return array_merge($clean, ['name' => $name]);
     }
 
     /**
@@ -716,11 +706,7 @@ class Stancer extends PaymentModule
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
 
-        // Language
-        $helper->default_form_language = $this->context->controller->default_form_language;
-        $helper->allow_employee_form_lang = $this->context->controller->allow_employee_form_lang;
         $helper->languages = $this->languages;
-
         // Title and toolbar
         $helper->title = $this->displayName;
         $helper->show_toolbar = true;
