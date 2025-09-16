@@ -16,6 +16,7 @@ const licenseFront = `/*!
  */
 `;
 const licensePhp = `<?php
+
 /**
  * Stancer PrestaShop
  *
@@ -66,7 +67,7 @@ const processFile = (file) => {
   }
 
   if (file.endsWith('.php')) {
-    content = addYear('back', content.replace('<?php\n\n\n', licensePhp + '\n\n'));
+    content = addYear('back', content.search(/<\?php\n\n[^\/]/) ? content : content.replace(/<\?php\n\n/, licensePhp + '\n\n'));
   }
 
   if (file.endsWith('.tpl')) {
