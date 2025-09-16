@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Check test mode in UI to reflect the database state on module install (CMS-53)
+- Fix smarty module unknown at install (CMS-275)
 
 
 ## [1.7.0] - 2025-09-12
