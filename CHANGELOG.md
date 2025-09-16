@@ -4,16 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2025-09-12
+
+### Changed
+- Add compatibility with Prestashop 1.7.1 and after (CMS-182)
+
+
 ## [1.2.4] - 2024-12-11
 
 ### Fixed
 - Fix a typo in `upgrade.php` (CMS-274)
 
+
 ## [1.2.3] - 2024-11-19
 
 ### Fixed
-- Handling of customer null edge cases. (CMS-255)
-- Better iframe integration. (CMS-261)
+- Handling of customer null edge cases (CMS-255)
+- Better iframe integration (CMS-261)
+
 
 ## [1.2.2] - 2024-10-03
 
@@ -47,9 +55,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Admin settings may not be modifiable
-- Change wordings #CMS-28
+- Change wordings (CMS-28)
 - Inline HTML in the module
-- Some options in admin settings are impossible to deactivate #CMS-29 #CMS-30
+- Some options in admin settings are impossible to deactivate (CMS-29, CMS-30)
 
 
 ## [1.1.0] - 2023-04-19
