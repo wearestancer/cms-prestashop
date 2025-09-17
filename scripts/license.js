@@ -19,7 +19,6 @@ const licensePhp = `<?php
 
 /**
  * Stancer PrestaShop
- *
  * @author    Stancer <hello@stancer.com>
  * ${yearBack.replace('$1-', '')}
  * @license   https://opensource.org/licenses/MIT
@@ -67,7 +66,7 @@ const processFile = (file) => {
   }
 
   if (file.endsWith('.php')) {
-    content = addYear('back', content.search(/<\?php\n\n[^\/]/) ? content : content.replace(/<\?php\n\n/, licensePhp + '\n\n'));
+    content = addYear('back', content.replace('<?php\n\n', licensePhp + '\n\n'));
   }
 
   if (file.endsWith('.tpl')) {
