@@ -1,6 +1,19 @@
 <?php
-
-$config = new PrestaShop\CodingStandards\CsFixer\Config();
+class PhpCsConfig extends PrestaShop\CodingStandards\CsFixer\Config
+{
+    function getRules(): array
+    {
+        // to pass the PS validator we have to disable this rule
+        // It make our files less clean but we do not have a choice to pass.
+        return array_merge(
+            parent::getRules(),
+            [
+                'blank_line_after_opening_tag' => false,
+            ]
+        );
+    }
+}
+$config = new PhpCsConfig();
 
 $config->setUsingCache(true)->setCacheFile(__DIR__ . '/vendor/.cache/php-cs-fixer.cache');
 
