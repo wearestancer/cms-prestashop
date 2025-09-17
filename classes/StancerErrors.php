@@ -3,7 +3,7 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2024 Stancer / Iliad 78
+ * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
@@ -30,7 +30,7 @@ class StancerErrors extends ObjectModel
     /**
      * Get error message
      *
-     * @param mixed $key
+     * @param int $key
      *
      * @return string
      */

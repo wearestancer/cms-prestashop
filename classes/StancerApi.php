@@ -3,7 +3,7 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2024 Stancer / Iliad 78
+ * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
@@ -14,6 +14,16 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * API helper.
+ *
+ * @phpstan-type PaymentData array{
+ *       'amount': int,
+ *       'auth': bool,
+ *       'currency': string,
+ *       'description': string|null,
+ *       'orderId': string,
+ *       'returnUrl'?: string,
+ *       'uniqueId': string|null,
+ *     }
  */
 class StancerApi
 {
@@ -37,12 +47,14 @@ class StancerApi
      * @param Language $language
      * @param Currency $currency
      *
-     * @return array
+     * @return array<string, mixed>
+     *
+     * @phpstan-return PaymentData
      */
     public function buildPaymentData(
         Cart $cart,
         Language $language,
-        Currency $currency
+        Currency $currency,
     ): array {
         $total = $cart->getOrderTotal(true, Cart::BOTH);
         $amount = (int) (string) ($total * 100);
@@ -52,10 +64,10 @@ class StancerApi
 
         $message = Configuration::get('STANCER_PAYMENT_DESCRIPTION', $language->id);
         $params = [
-            'SHOP_NAME' => Configuration::get('PS_SHOP_NAME'),
-            'CART_ID' => (int) $cart->id,
-            'TOTAL_AMOUNT' => sprintf('%.02f', $total),
-            'CURRENCY' => $currencyCode,
+            'SHOP_NAME' => Configuration::get('PS_SHOP_NAME', $language->id),
+            'CART_ID' => (string) $cart->id,
+            'TOTAL_AMOUNT' => (string) sprintf('%.02f', $total),
+            'CURRENCY' => (string) $currencyCode,
         ];
         $description = $message ? str_replace(array_keys($params), $params, $message) : null;
 
@@ -83,6 +95,8 @@ class StancerApi
         ];
 
         if ('iframe' !== Configuration::get('STANCER_PAGE_TYPE')) {
+            // For now we don't have a new SubContext with the link Component
+            // We use https://devdocs.prestashop-project.org/9/development/components/link/ method
             $paymentData['returnUrl'] = Context::getContext()->link->getModuleLink('stancer', 'validation', [], true);
         }
 
@@ -109,9 +123,9 @@ class StancerApi
      *
      * @param Stancer\Payment $apiPayment
      *
-     * @return void
+     * @return array<mixed>
      */
-    public function sendToApi(Stancer\Payment $apiPayment)
+    public function sendToApi(Stancer\Payment $apiPayment): array
     {
         $errors = [];
         $exception = null;
@@ -119,12 +133,15 @@ class StancerApi
 
         try {
             $apiPayment->send();
+            // @phpstan-ignore catch.neverThrown
         } catch (Stancer\Exceptions\NotAuthorizedException $exception) {
             $errors[] = StancerErrors::getMessage(StancerErrors::NOT_AUTHORIZED);
             $log = $exception->getMessage();
+            // @phpstan-ignore catch.neverThrown
         } catch (Stancer\Exceptions\ServerException $exception) {
             $errors[] = StancerErrors::getMessage(StancerErrors::SERVER_ERROR);
             $log = $exception->getMessage();
+            // @phpstan-ignore catch.neverThrown
         } catch (Stancer\Exceptions\ClientException $exception) {
             $errors[] = StancerErrors::getMessage(StancerErrors::CLIENT_ERROR);
             $log = $exception->getMessage();
@@ -151,6 +168,8 @@ class StancerApi
      * @param Language $language
      * @param Currency $currency
      * @param StancerApiCard|null $card
+     * @param string[] $errors called by reference
+     * @param string|null $log called by reference
      *
      * @return Stancer\Payment
      */
@@ -161,7 +180,7 @@ class StancerApi
         Currency $currency,
         $card = null,
         array &$errors = [],
-        &$log = null
+        &$log = null,
     ): Stancer\Payment {
         $paymentData = $this->buildPaymentData($cart, $language, $currency);
         $psApiCustomer = StancerApiCustomer::find($customer);
@@ -174,7 +193,7 @@ class StancerApi
             $apiPayment = $currentPayment->getApiObject();
         }
 
-        if (!$apiPayment || (!empty($apiPayment) && $apiPayment->getStatus() === 'refused')) {
+        if (!$apiPayment || $apiPayment->getStatus() === 'refused') {
             $apiPayment = new Stancer\Payment();
             $apiPayment
                 ->setCustomer($apiCustomer)

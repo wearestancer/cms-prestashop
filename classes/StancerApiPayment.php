@@ -3,7 +3,7 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2024 Stancer / Iliad 78
+ * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
@@ -20,10 +20,10 @@ class StancerApiPayment extends ObjectModel
     /** @var string Payment id */
     public $payment_id;
 
-    /** @var string Customer id */
+    /** @var ?string Customer id */
     public $customer_id;
 
-    /** @var string Card id */
+    /** @var ?string Card id */
     public $card_id;
 
     /** @var int Cart id */
@@ -38,7 +38,7 @@ class StancerApiPayment extends ObjectModel
     /** @var string Currency */
     public $currency;
 
-    /** @var string Payment amount */
+    /** @var int Payment amount */
     public $amount;
 
     /** @var string Payment status */
@@ -53,10 +53,13 @@ class StancerApiPayment extends ObjectModel
     /** @var string Object last modification date */
     public $date_upd;
 
-    protected $api;
+    /** @var Stancer\Payment The api Object. */
+    protected ?Stancer\Payment $api = null;
 
     /**
      * @see ObjectModel::$definition
+     *
+     * @var array<string, string|mixed[]>
      */
     public static $definition = [
         'table' => 'stancer_payment',
@@ -126,9 +129,9 @@ class StancerApiPayment extends ObjectModel
     /**
      * Retrieves Stancer Prestashop payment depends on Stancer API payment object
      *
-     * @param mixed $apiPayment
+     * @param Stancer\Payment $apiPayment
      *
-     * @return StancerApiPayment
+     * @return StancerApiPayment|null
      */
     public static function findByApiPayment(Stancer\Payment $apiPayment): ?StancerApiPayment
     {
@@ -141,7 +144,7 @@ class StancerApiPayment extends ObjectModel
         if (!$row) {
             return null;
         }
-
+        // @phpstan-ignore new.static
         $payment = new static();
         $payment->hydrate((array) $row);
 
@@ -190,7 +193,7 @@ class StancerApiPayment extends ObjectModel
         if (!$row) {
             return null;
         }
-
+        // @phpstan-ignore new.static
         $payment = new static();
         $payment->hydrate((array) $row);
 
@@ -214,9 +217,9 @@ class StancerApiPayment extends ObjectModel
     /**
      * Get order state prestashop from stancer payment status
      *
-     * @return int
+     * @return string|false
      */
-    public function getOrderState(): int
+    public function getOrderState()
     {
         $statuses = [
             Stancer\Payment\Status::AUTHORIZED => 'PS_OS_AUTHORIZED',
@@ -234,7 +237,7 @@ class StancerApiPayment extends ObjectModel
             $key = $statuses[$this->api->getStatus()];
         }
 
-        if ($key === Stancer\Payment\Status::CAPTURED && count($this->api->getRefunds())) {
+        if (array_search($key, $statuses) === Stancer\Payment\Status::CAPTURED && (bool) count($this->api->getRefunds())) {
             if ($this->api->getRefundableAmount()) {
                 $key = 'PS_OS_PARTIAL_REFUND';
             } else {
@@ -291,7 +294,7 @@ class StancerApiPayment extends ObjectModel
     /**
      * Create or update an Stancer payment from Stancer API payment object
      *
-     * @param Stancer\Payment $payment
+     * @param Stancer\Payment $apiPayment
      * @param Cart $cart
      *
      * @return StancerApiPayment
@@ -301,6 +304,7 @@ class StancerApiPayment extends ObjectModel
         $payment = static::findByApiPayment($apiPayment);
 
         if (!$payment) {
+            // @phpstan-ignore new.static
             $payment = new static();
         }
 

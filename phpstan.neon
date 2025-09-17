@@ -1,0 +1,89 @@
+
+includes:
+  - phar://phpstan.phar/conf/bleedingEdge.neon
+  - phpstan-baseline.neon
+
+parameters:
+  scanDirectories:
+    - vendor/stancer/php-stubs-prestashop/stubs/
+  level: 6
+  paths:
+    - classes/
+    - controllers/
+    - upgrade/
+    - stancer.php
+
+  phpVersion: 80000
+
+  treatPhpDocTypesAsCertain: false
+
+  tmpDir: vendor/.cache/phpstan
+
+  dynamicConstantNames:
+    - _PS_MODE_DEV_
+
+  # We cannot ignore in our neon we have to do it line by line
+  # We know why we have those error.
+  # ignoreErrors:
+  #   - '#Unsafe usage of new static\(\).#'
+
+  typeAliases:
+    #
+    # @ classes/StancerApi.php::18
+    # PaymentData: '''
+    #   array{
+    #     'amount': int,
+    #     'auth': bool,
+    #     'currency': string,
+    #     'description': string|null,
+    #     'orderId': string,
+    #     'returnUrl'?: string,
+    #     'uniqueId': string|null,
+    #   }
+    # '''
+
+    # @ stancer.php::20
+    # SettingData: '''
+    #   array{
+    #     'default'?: ?mixed,
+    #     'desc'?: ?string,
+    #     'class'?: string,
+    #     'group'?: string|int,
+    #     'html_content'?: ?string,
+    #     'label'?: ?string,
+    #     'lang'?: ?bool,
+    #     'name'?: ?string,
+    #     'required'?: ?bool,
+    #     'size'?: int,
+    #     'template'?: ?string,
+    #     'type'?: ?string,
+    #     'values'?: ValueType[],
+    #   }
+    # '''
+
+    # @ stancer.php::38
+    # ValueType: '''
+    #   array{
+    #     'id': ?string,
+    #     'value': null|string|int|float|bool,
+    #   }
+    # '''
+
+    # @ stancer.php::39
+    # DisplaySetting: '''
+    #   array{
+    #     'legend': array{
+    #       'icon': string,
+    #       'title': string,
+    #     },
+    #     'description'?: ?string,
+    #     'input': array{SettingData},
+    #   }
+
+    # @ stancer.php::44
+    # '''
+    # DisplaySettingForm: '''
+    #   array{
+    #     form: DisplaySetting,
+    #   }
+    # '''

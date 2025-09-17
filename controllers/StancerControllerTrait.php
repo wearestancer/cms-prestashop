@@ -3,7 +3,7 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2024 Stancer / Iliad 78
+ * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
@@ -43,13 +43,13 @@ trait StancerControllerTrait
 
         $this->setTemplate('module:' . $this->module->name . '/views/templates/front/error.tpl');
 
-        return parent::postProcess();
+        parent::postProcess();
     }
 
     /**
      * Get redirect link
      *
-     * @return void
+     * @return string
      */
     public function getRedirectLink()
     {
@@ -68,7 +68,7 @@ trait StancerControllerTrait
      *
      * @param mixed $url
      *
-     * @return void
+     * @return never
      */
     public function redirect($url = null)
     {

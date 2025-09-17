@@ -18,13 +18,13 @@ const licenseFront = `/*!
 const licensePhp = `<?php
 /**
  * Stancer PrestaShop
- *
  * @author    Stancer <hello@stancer.com>
  * ${yearBack.replace('$1-', '')}
  * @license   https://opensource.org/licenses/MIT
  * @website   https://www.stancer.com
  * @version   ${pack.version}
  */`;
+
 const licenseSmarty = `{*
  * Stancer PrestaShop
  *

@@ -3,7 +3,7 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2024 Stancer / Iliad 78
+ * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
@@ -17,10 +17,10 @@ if (!defined('_PS_VERSION_')) {
  */
 class StancerApiCustomer extends ObjectModel
 {
-    /** @var int Customer id */
+    /** @var ?string Customer id */
     public $id_customer;
 
-    /** @var string Customer id */
+    /** @var ?string Customer id */
     public $customer_id;
 
     /** @var bool Is a live mode object? */
@@ -47,10 +47,13 @@ class StancerApiCustomer extends ObjectModel
     /** @var string Object last modification date */
     public $date_upd;
 
-    protected $api;
+    /** @var ?Stancer\Customer the api object. */
+    protected ?Stancer\Customer $api = null;
 
     /**
      * @see ObjectModel::$definition
+     *
+     * @var array<string, string|array<string,mixed>>
      */
     public static $definition = [
         'table' => 'stancer_customer',
@@ -125,7 +128,7 @@ class StancerApiCustomer extends ObjectModel
                 USING (`id_customer`)
                 WHERE TRUE
                 AND `id_customer` = ' . ((int) $customer->id);
-
+        // @phpstan-ignore new.static
         $obj = new static();
         $obj->hydrate((array) Db::getInstance()->getRow($sql));
 
@@ -223,8 +226,10 @@ class StancerApiCustomer extends ObjectModel
         $existingCustomerId = Db::getInstance()->getValue($query);
 
         if ($existingCustomerId) {
+            // @phpstan-ignore new.static
             $customer = new static($existingCustomerId);
         } else {
+            // @phpstan-ignore new.static
             $customer = new static();
         }
 

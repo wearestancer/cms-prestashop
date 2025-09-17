@@ -3,7 +3,7 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2024 Stancer / Iliad 78
+ * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
@@ -16,14 +16,57 @@ require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
 
 /**
  * Stancer payment module.
+ *
+ * @phpstan-type SettingData array{
+ *  'default'?: ?mixed,
+ *  'desc'?: ?string,
+ *  'class'?: string,
+ *  'group'?: string|int,
+ *  'html_content'?: ?string,
+ *  'label'?: ?string,
+ *  'lang'?: ?bool,
+ *  'mode' ?: string,
+ *  'name'?: ?string,
+ *  'required'?: ?bool,
+ *  'pattern' ?: string,
+ *  'public' ?: string,
+ *  'size'?: int,
+ *  'template'?: ?string,
+ *  'type'?: ?string,
+ *  'values'?: ValueType[],
+ *  }
+ * @phpstan-type ValueType array{'id': ?string, 'value': null|string|int|float|bool}
+ * @phpstan-type DisplaySetting array{
+ *  'legend': array{'icon': string, 'title': string },
+ *  'description'?: ?string,
+ *  'input': array{SettingData},
+ *  }
+ * @phpstan-type DisplaySettingForm array{form: DisplaySetting}
  */
 class Stancer extends PaymentModule
 {
-    public const VERSION = '1.2.4';
+    public const VERSION = '2.0.0';
 
+    /**
+     * Configurations Settings
+     *
+     * @var mixed[]
+     */
     protected $configurations = [];
-    protected $languages = [];
-    protected $hooks = [
+
+    /**
+     * Supported languages
+     *
+     * @var array<int|mixed[]>
+     */
+    protected array $languages = [];
+
+    /**
+     * Hooks called by our modules
+     *
+     * @var string[]
+     */
+    protected array $hooks = [
         'paymentOptions',
         'displayHeader',
     ];
@@ -32,33 +75,34 @@ class Stancer extends PaymentModule
      * Constructor
      *
      * @param string $name Module unique name
-     * @param Context $context
+     * @param Context|null $context
      */
-    public function __construct($name = null, $context = null)
+    public function __construct(string $name = 'stancer', ?Context $context = null)
     {
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
-        $this->version = '1.2.4';
+        $this->version = '2.0.0';
         $this->author = 'Stancer';
         $this->need_instance = 1;
-        $this->ps_versions_compliancy = ['min' => '1.7.8', 'max' => '8.2.999'];
+        $this->ps_versions_compliancy = ['min' => '8.0', 'max' => '9.0.999'];
         $this->module_key = '405faa09756f808b77ad16948b321351';
         $this->bootstrap = true;
+        $this->context = $context;
 
         parent::__construct();
 
         $this->displayName = 'Stancer';
         $this->description = $this->l('Simple payment solution at low prices.');
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
-        $this->limited_currencies = ['EUR'];
 
         foreach (Language::getLanguages(false) as $lang) {
-            if ($this->context->controller instanceof AdminController) {
-                $default = $this->context->controller->default_form_language;
-                $lang['is_default'] = $lang['id_lang'] == $default;
-            }
-
+            $default = $this->context->language;
+            $lang['is_default'] = $lang['id_lang'] == $default->id;
             $this->languages[] = $lang;
+        }
+        // Just to use stancer as the validator doesn't like `$this->name = $name` and we might need the context
+        if ($name === '') {
+            return;
         }
     }
 
@@ -77,9 +121,11 @@ class Stancer extends PaymentModule
     /**
      * Return configuration for install or unistall module
      *
-     * @return array
+     * @param string|null $group
+     *
+     * @return array<string, SettingData>
      */
-    public function getConfigurationsList($group = null)
+    public function getConfigurationsList(?string $group = null): array
     {
         if (!$this->configurations) {
             $this->configurations = [];
@@ -147,7 +193,7 @@ class Stancer extends PaymentModule
 
             $this->configurations['STANCER_API_MODE'] = [
                 // By forcing the cast on Stance\Config Constant we make sure that it binds to values id and show the radio button checked in our form.
-                'default' => (string) $mode,
+                'default' => (string) $mode ?: Stancer\Config::TEST_MODE,
                 'desc' => $this->fetchTemplate('admin/descriptions/api_mode.tpl'),
                 'group' => 'settings',
                 'label' => $this->l('Mode'),
@@ -440,16 +486,8 @@ class Stancer extends PaymentModule
             }
 
             Configuration::updateValue('STANCER_API_MODE', $apiMode);
-
             if (!$hasError) {
-                $link = [
-                    AdminController::$currentIndex,
-                    'configure=' . $this->name,
-                    'conf=4',
-                    'token=' . Tools::getAdminTokenLite('AdminModules'),
-                ];
-
-                return Tools::redirectAdmin(implode('&', $link));
+                $output = $this->displayConfirmation($this->trans('Settings updated', [], 'Admin.Global'));
             }
         }
 
@@ -487,7 +525,7 @@ class Stancer extends PaymentModule
      *
      * @param HelperForm $helper
      *
-     * @return array
+     * @return DisplaySettingForm
      */
     public function getContentFormDisplay(HelperForm $helper): array
     {
@@ -521,19 +559,7 @@ class Stancer extends PaymentModule
 
                 $helper->fields_value[$name] = $value;
             } else {
-                $clean = array_diff_key($infos, $excep);
-                $settings['input'][] = array_merge($clean, [
-                    'name' => $name,
-                ]);
-
-                if (array_key_exists('lang', $infos) && $infos['lang']) {
-                    foreach ($this->languages as $lang) {
-                        $value = Configuration::get($name, $lang['id_lang']);
-                        $helper->fields_value[$name][$lang['id_lang']] = $value;
-                    }
-                } else {
-                    $helper->fields_value[$name] = Configuration::get($name);
-                }
+                $settings['input'][] = $this->getContentStandardField($helper, $name, $infos);
             }
         }
 
@@ -543,9 +569,9 @@ class Stancer extends PaymentModule
     /**
      * Create admin form for keys.
      *
-     * @param mixed $helper
+     * @param HelperForm $helper
      *
-     * @return array
+     * @return DisplaySettingForm
      */
     public function getContentFormKeys(HelperForm $helper): array
     {
@@ -613,7 +639,7 @@ class Stancer extends PaymentModule
      *
      * @param HelperForm $helper
      *
-     * @return array
+     * @return DisplaySettingForm
      */
     public function getContentFormSettings(HelperForm $helper): array
     {
@@ -627,28 +653,41 @@ class Stancer extends PaymentModule
 
         $mode = 'STANCER_API_MODE';
         $helper->fields_value[$mode] = Configuration::get($mode) === Stancer\Config::LIVE_MODE;
+
+        foreach ($this->getConfigurationsList('settings') as $name => $infos) {
+            $settings['input'][] = $this->getContentStandardField($helper, $name, $infos);
+        }
+
+        return ['form' => $settings];
+    }
+
+    /**
+     * Handle the formatting of non customized fields.
+     *
+     * @param HelperForm $helper
+     * @param string $name
+     * @param SettingData $infos
+     *
+     * @return SettingData
+     */
+    public function getContentStandardField(HelperForm $helper, string $name, array $infos)
+    {
         $excep = [
             'default' => 1,
             'group' => 1,
         ];
+        $clean = array_diff_key($infos, $excep);
 
-        foreach ($this->getConfigurationsList('settings') as $name => $infos) {
-            $clean = array_diff_key($infos, $excep);
-            $settings['input'][] = array_merge($clean, [
-                'name' => $name,
-            ]);
-
-            if (array_key_exists('lang', $infos) && $infos['lang']) {
-                foreach ($this->languages as $lang) {
-                    $value = Configuration::get($name, $lang['id_lang']);
-                    $helper->fields_value[$name][$lang['id_lang']] = $value;
-                }
-            } else {
-                $helper->fields_value[$name] = Configuration::get($name);
+        if (array_key_exists('lang', $infos) && $infos['lang']) {
+            foreach ($this->languages as $lang) {
+                $value = Configuration::get($name, $lang['id_lang']);
+                $helper->fields_value[$name][$lang['id_lang']] = $value;
             }
+        } else {
+            $helper->fields_value[$name] = Configuration::get($name);
         }
 
-        return ['form' => $settings];
+        return array_merge($clean, ['name' => $name]);
     }
 
     /**
@@ -666,11 +705,7 @@ class Stancer extends PaymentModule
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
 
-        // Language
-        $helper->default_form_language = $this->context->controller->default_form_language;
-        $helper->allow_employee_form_lang = $this->context->controller->allow_employee_form_lang;
         $helper->languages = $this->languages;
-
         // Title and toolbar
         $helper->title = $this->displayName;
         $helper->show_toolbar = true;
@@ -721,7 +756,7 @@ class Stancer extends PaymentModule
     /**
      * Hook called to display payment methods (PS1.7+).
      *
-     * @param array $params
+     * @param array<string, PrestaShop\PrestaShop\Core\Payment\PaymentOption[]> $params
      *
      * @return PrestaShop\PrestaShop\Core\Payment\PaymentOption[]
      */
@@ -941,7 +976,7 @@ class Stancer extends PaymentModule
 
         $return &= $db->execute($sql);
 
-        return $return;
+        return (bool) $return;
     }
 
     /**
@@ -1039,7 +1074,7 @@ class Stancer extends PaymentModule
      * updateConfigurationList
      *
      * @param string $name
-     * @param array $params
+     * @param array<string, string|mixed[]> $params
      *
      * @return void
      */
@@ -1095,7 +1130,7 @@ class Stancer extends PaymentModule
         $return &= $db->execute('DROP TABLE IF EXISTS `' . bqSQL(_DB_PREFIX_ . 'stancer_customer') . '`;');
         $return &= $db->execute('DROP TABLE IF EXISTS `' . bqSQL(_DB_PREFIX_ . 'stancer_payment') . '`;');
 
-        return $return;
+        return (bool) $return;
     }
 
     /**
@@ -1108,7 +1143,7 @@ class Stancer extends PaymentModule
         $return = true;
         foreach ($this->hooks as $hookName) {
             $return &= $this->unregisterHook($hookName);
-            $return &= $this->unregisterExceptions($hookName);
+            $return &= $this->unregisterExceptions(Hook::getIdByName($hookName));
         }
 
         return $return;

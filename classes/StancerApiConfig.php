@@ -3,7 +3,7 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2024 Stancer / Iliad 78
+ * @copyright 2018-2025 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
@@ -26,7 +26,7 @@ class StancerApiConfig
     /** @var int|null API Timeout */
     public $timeout;
 
-    /** @var string Auth limit */
+    /** @var string|null Auth limit */
     public $authLimit;
 
     /** @var bool API is configured ? */
@@ -41,7 +41,7 @@ class StancerApiConfig
     {
         $this->mode = Configuration::get('STANCER_API_MODE') ?: Stancer\Config::TEST_MODE;
         $this->host = Configuration::get('STANCER_API_HOST');
-        $this->timeout = Configuration::get('STANCER_API_TIMEOUT');
+        $this->timeout = (int) Configuration::get('STANCER_API_TIMEOUT');
         $this->authLimit = Configuration::get('STANCER_AUTH_LIMIT');
         $this->isConfigured = $this->isConfigured();
     }
