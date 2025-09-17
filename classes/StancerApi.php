@@ -95,6 +95,8 @@ class StancerApi
         ];
 
         if ('iframe' !== Configuration::get('STANCER_PAGE_TYPE')) {
+            // For now we don't have a new SubContext with the link Component
+            // We use https://devdocs.prestashop-project.org/9/development/components/link/ method
             $paymentData['returnUrl'] = Context::getContext()->link->getModuleLink('stancer', 'validation', [], true);
         }
 
