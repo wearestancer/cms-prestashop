@@ -94,12 +94,11 @@ class Stancer extends PaymentModule
         $this->displayName = 'Stancer';
         $this->description = $this->l('Simple payment solution at low prices.');
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
-
-        foreach (Language::getLanguages(false) as $lang) {
-            $default = $this->context->language;
-            $lang['is_default'] = $lang['id_lang'] == $default->id;
-            $this->languages[] = $lang;
+        $languages = Language::getLanguages(false);
+        foreach ($languages as $id => $lang) {
+            $languages[$id]['is_default'] = $lang['id_lang'] == Configuration::get('PS_LANG_DEFAULT');
         }
+        $this->languages = $languages;
         // Just to use stancer as the validator doesn't like `$this->name = $name` and we might need the context
         if ($name === '') {
             return;
@@ -670,7 +669,7 @@ class Stancer extends PaymentModule
      *
      * @return SettingData
      */
-    public function getContentStandardField(HelperForm $helper, string $name, array $infos)
+    public function getContentStandardField(HelperForm $helper, string $name, array $infos): array
     {
         $excep = [
             'default' => 1,
@@ -704,6 +703,7 @@ class Stancer extends PaymentModule
         $helper->name_controller = $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
+        $helper->default_form_language = $this->context->language->id;
 
         $helper->languages = $this->languages;
         // Title and toolbar
@@ -711,7 +711,10 @@ class Stancer extends PaymentModule
         $helper->show_toolbar = true;
         $helper->toolbar_scroll = true;
         $helper->submit_action = 'submit' . $this->name;
-
+        $helper->tpl_vars = [
+            'id_language' => $this->context->language,
+            'languages' => $this->context->controller->getLanguages(),
+        ];
         $backHref = [
             AdminController::$currentIndex,
             'token=' . Tools::getAdminTokenLite('AdminModules'),
