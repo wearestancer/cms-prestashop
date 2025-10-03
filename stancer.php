@@ -48,6 +48,7 @@ const STANCER_MODULE_VERSION = '2.0.1';
  */
 class Stancer extends PaymentModule
 {
+    public const VERSION = STANCER_MODULE_VERSION;
     /**
      * Configurations Settings
      *

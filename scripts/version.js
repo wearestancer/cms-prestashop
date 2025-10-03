@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const {glob} = require('glob');
+const { globSync } = require('glob');
 
 const pack = require('../package.json');
 
@@ -15,10 +15,10 @@ const globOptions = {
 };
 const fsOptions = {
   encoding: 'utf-8',
-}
+};
 const version = `* @version   ${pack.version}`;
 
-fs.readFile(file, { encoding: 'utf8' }, (err, content) => {
+fs.readFile(file, fsOptions, (err, content) => {
   if (err) {
     throw err;
   }
@@ -33,7 +33,7 @@ fs.readFile(file, { encoding: 'utf8' }, (err, content) => {
   });
 });
 
-glob('**/*.php', globOptions, (err, files) => {
+globSync('**/*.php', globOptions, (err, files) => {
   if (err) {
     throw err;
   }
@@ -41,7 +41,7 @@ glob('**/*.php', globOptions, (err, files) => {
   files.forEach((file) => {
     const filepath = path.join(process.cwd(), file);
 
-    fs.readFile(filepath, { encoding: 'utf-8' }, (err, content) => {
+    fs.readFile(filepath, fsOptions, (err, content) => {
       if (err) {
         throw err;
       }

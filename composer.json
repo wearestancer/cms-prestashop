@@ -1,4 +1,18 @@
 {
+    "_comment": [
+        "The order of the composer parameters must be:",
+            "name",
+            "description",
+            "homepage",
+            "type",
+            "license",
+            "config",
+            "autoload",
+            "scripts",
+            "require",
+            "require-dev",
+            "support"
+    ],
     "name": "stancer/cms-prestashop",
     "description": "Stancer PrestaShop module",
     "homepage": "https://stancer.com",
@@ -33,7 +47,6 @@
         "prestashop/php-dev-tools": "^4.3",
         "stancer/php-stubs-prestashop": "^1.7"
     },
-
     "support": {
         "docs": "https://gitlab.com/wearestancer/cms/prestashop/-/wikis/home",
         "issues": "https://gitlab.com/wearestancer/cms/prestashop/-/issues",

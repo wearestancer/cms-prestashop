@@ -4,12 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### [2.0.1] - 2025-09-18
+## [unreleased] - 2025-10-03
+
+### Fixed
+- Conflict with Stancer external libraries and PrestaShop external libraries (CMS-110)
+
+
+## [2.0.1] - 2025-09-18
 
 ### Fixed
 - Multilingual form fields were not visible
 
-### [2.0.0] - 2025-09-17
+## [2.0.0] - 2025-09-17
 
 ### Added
 - Compatibility with PrestaShop 9.0 (CMS-101)
@@ -22,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.7.0] - 2025-09-12
 
 ### Changed
-- Add compatibility with Prestashop 1.7.1 and after (CMS-182)
+- Add compatibility with PrestaShop 1.7.1 and after (CMS-182)
 
 
 ## [1.2.4] - 2024-12-11
@@ -47,7 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.1] - 2024-10-02
 
 ### Added
-- Prestashop 8.2 support (CMS-234)
+- PrestaShop 8.2 support (CMS-234)
 - Devcontainer to ease development process (CMS-81)
 - Automatically create an archive for every merge request
 
