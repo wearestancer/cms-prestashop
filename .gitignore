@@ -20,3 +20,4 @@ config*.xml
 index.php
 module-configuration.yml
 *.zip
+vendors/*

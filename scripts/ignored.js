@@ -22,3 +22,7 @@ module.exports.push('CHANGELOG.md');
 
 // PS stuff
 module.exports.push('config*.xml');
+
+//scoper stuff
+module.exports.push('scoper.**');
+module.exports.push('**/*.old');

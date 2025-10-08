@@ -12,6 +12,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Stancer;
+
 /**
  * Front controller receiving the payment from the gateway.
  */
