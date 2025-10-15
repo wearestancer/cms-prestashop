@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Conflict with Stancer external libraries and PrestaShop external libraries (CMS-110)
+- Stancer module beeing available for non supported amounts (CMS-410)
 
 
 ## [2.0.1] - 2025-09-18
