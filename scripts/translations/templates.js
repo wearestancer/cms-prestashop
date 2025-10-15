@@ -26,6 +26,11 @@ const terms = {
       en: 'Minimum amount to trigger an authenticated payment (3DS, Verified by Visa, Mastercard Secure Code...)',
       fr: `Montant minimum pour le déclenchement d'un paiement authentifié (3DS, "Verified by Visa", "Mastercard Secure Code"...)`,
     },
+    {
+      en: 'This module cannot process payments under 50 cents, it will be deactivated for carts below this amount.',
+      fr: 'Ce module ne peut traiter les paiements en dessous de 50 centimes, il sera desactivé pour les paniers en dessous de cette somme.'
+
+    }
   ],
   infos: [
     {
