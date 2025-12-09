@@ -13,7 +13,6 @@ vendor/
 
 # Generated content
 reports/
-translations/
 views/css/
 views/js/
 config*.xml

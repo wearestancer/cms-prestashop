@@ -440,7 +440,7 @@ class Stancer extends PaymentModule
                                 }
                             }
 
-                            $error = $this->l('"%s" is invalid, please provide a correct key.');
+                            $error = $this->l('"%s" is invalid, please provide a valid key.');
                         }
 
                         $output .= $this->displayError(sprintf($error, $infos['label']));
@@ -790,7 +790,7 @@ class Stancer extends PaymentModule
                     true
                 );
 
-                $text = vsprintf($this->l('Pay with your %s finishing with %s'), [$card->brandname, $card->last4]);
+                $text = vsprintf($this->l('Pay with your %s ending with %s'), [$card->brandname, $card->last4]);
                 $cardOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $cardOption
                     ->setModuleName($this->name)
