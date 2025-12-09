@@ -226,12 +226,15 @@ class Stancer extends PaymentModule
             ];
 
             $defaultValue = [];
-
             foreach ($this->languages as $lang) {
                 $defaultValue[$lang['id_lang']] = 'Pay by card';
 
                 if (strpos($lang['language_code'], 'fr') !== false) {
                     $defaultValue[$lang['id_lang']] = 'Payer par carte';
+                }
+
+                if (strpos($lang['language_code'], 'it') !== false) {
+                    $defaultValue[$lang['id_lang']] = 'Paga con carta';
                 }
             }
 
@@ -356,6 +359,10 @@ class Stancer extends PaymentModule
 
                 if (strpos($lang['language_code'], 'fr') !== false) {
                     $defaultDescriptions[$lang['id_lang']] = 'Votre commande SHOP_NAME.';
+                }
+
+                if (strpos($lang['language_code'], 'it') !== false) {
+                    $defaultDescriptions[$lang['id_lang']] = 'Il tuo ordine SHOP_NAME.';
                 }
             }
 

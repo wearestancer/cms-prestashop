@@ -25,7 +25,6 @@ pnpm install --dir "${plugin_dir}"
 
 # Prepare assets
 pnpm run --dir "${plugin_dir}" build:assets
-pnpm run --dir "${plugin_dir}" translate
 
 
 # Get Caddy root CA
