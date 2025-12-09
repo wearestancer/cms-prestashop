@@ -8,6 +8,7 @@ $_MODULE['<{stancer}prestashop>api_mode_836ec50d08948aa1d2ce3988b1710382'] = 'In
 $_MODULE['<{stancer}prestashop>api_mode_8d9dad88938b2158ee2659a51a3501e3'] = 'Check the documentation to find';
 $_MODULE['<{stancer}prestashop>auth_limit_11babe4e3a6faa681b0cb93073b2e866'] = 'Minimum amount to trigger an authenticated payment (3DS, Verified by Visa, Mastercard Secure Code...)';
 $_MODULE['<{stancer}prestashop>auth_limit_d2109e29daaeac2d8d1aef871a1369b3'] = 'Leave blank if you do not wish to authenticate payments, at zero all payments will be authenticated.';
+$_MODULE['<{stancer}prestashop>auth_limit_ff12961a9c8acd954e397c7da3bb2e3e'] = 'This module cannot process payments under 50 cents, it will be deactivated for carts below this amount.';
 $_MODULE['<{stancer}prestashop>error_0557fa923dcee4d0f86b1409f5c2167f'] = 'Back';
 $_MODULE['<{stancer}prestashop>error_4a235dbe21b6fca889de06ec6cf2765f'] = 'This error should be temporary, please try again later.';
 $_MODULE['<{stancer}prestashop>error_5f0210262032f317c9d322f7a6a80545'] = 'If this message persists, please contact the store to resolve this issue as soon as possible.';
