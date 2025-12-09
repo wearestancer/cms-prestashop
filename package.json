@@ -6,15 +6,13 @@
   "license": "MIT",
   "scripts": {
     "archive": "env node ./scripts/zip.js",
-    "build": "pnpm run build:assets && pnpm run translate && pnpm run version && pnpm run license && pnpm run populate",
+    "build": "pnpm run build:assets  && pnpm run version && pnpm run license && pnpm run populate",
     "build:archive": "composer run scope:dependency && pnpm run build && pnpm run archive && composer run after:scoping",
     "build:assets": "gulp build",
     "license": "env node ./scripts/license.js",
     "lint": "stylelint 'views/**/*.scss'",
     "populate": "env node ./scripts/populate.js",
     "local-translate": "env node ./scripts/translate.js",
-    "translate": "env node ./translation-cms/src/js/cli.js --cms='prestashop' --write",
-    "translate:diff": "pnpm run local-translate && env node ./translation-cms/src/js/cli.js --cms='prestashop' --diff='./translations/local' --output_dir='./translations'",
     "version": "env node ./scripts/version.js"
   },
   "devDependencies": {
@@ -26,9 +24,11 @@
     "gulp-postcss": "^10.0.0",
     "gulp-sass": "^5.0.0",
     "gulp-uglify": "^3.0.0",
+    "js-md5": "^0.8.0",
     "postcss": "^8.0.0",
     "pump": "^3.0.0",
     "sass": "^1.0.0",
+    "sprintf-js": "^1.0.0",
     "stylelint": "^16.0.0",
     "stylelint-config-concentric-order": "^5.0.0",
     "stylelint-config-sass-guidelines": "^12.0.0",
