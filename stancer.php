@@ -768,7 +768,10 @@ class Stancer extends PaymentModule
     public function hookPaymentOptions(array $params): array
     {
         $list = [];
-
+        // we stay in int value, float are not "safe" for manipulating amounts
+        if ($params['cart'] instanceof Cart && (int) ($params['cart']->getOrderTotal() * 100) < 50) {
+            return $list;
+        }
         if ($this->isNotAvailable()) {
             return $list;
         }
