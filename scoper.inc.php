@@ -18,7 +18,8 @@ use Isolated\Symfony\Component\Finder\Finder;
 return [
     'prefix' => 'Stancer\\Scoped\\Isolated',
     'finders' => [
-        Finder::create()->files()->in('./vendor/')->exclude('Stancer'),
+        Finder::create()->files()->in('./vendor/'),
         Finder::create()->append(['./composer.json']),
     ],
+    'expose-namespaces' => ['Stancer'],
 ];

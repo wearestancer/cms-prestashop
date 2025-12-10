@@ -2,8 +2,8 @@
 
 set -eu
 
-current_dir=$(dirname $(realpath $0))
-search_dir=$(dirname "$current_dir")
+# current_dir=$(dirname $(realpath $0))
+# search_dir=$(dirname "$current_dir")
 # # We find all the files with a dependancy to Stancer.
 # files=$(grep -REl '^use Stancer(;| as StancerSDK;)$' --exclude-dir=node_modules/ --exclude-dir=vendor/ "$search_dir")
 
@@ -11,7 +11,7 @@ search_dir=$(dirname "$current_dir")
 # for file in $files; do
 #   sed -i'.old' -re 's/use Stancer\b/use Stancer\\Scoped\\Isolated\\Stancer/g' "$file"
 # done
-# mv vendor/stancer build/vendor
+
 rm -rf vendor
 mkdir vendor
 mv build/vendor/* vendor
