@@ -11,7 +11,6 @@
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-use Stancer;
 
 /**
  * Configuration helper.
