@@ -35,7 +35,7 @@
         "phpcs-fix": "./vendor/bin/php-cs-fixer fix",
         "phpstan": "./vendor/bin/phpstan",
         "prefix-stancer": "bash ./scripts/class-prefixer.sh",
-        "prep-vendor": "bash ./scripts/scoper-dl.sh && scoper add-prefix -nf && rm -rf vendor/*",
+        "prep-vendor": "bash ./scripts/scoper-dl.sh && scoper add-prefix -nf",
         "scope:dependency": "composer install --no-dev && composer run prep-vendor && composer run prefix-stancer && composer du"
     },
     "require": {
