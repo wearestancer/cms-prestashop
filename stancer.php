@@ -12,7 +12,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-
 require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
 
 const STANCER_MODULE_VERSION = '2.0.1';

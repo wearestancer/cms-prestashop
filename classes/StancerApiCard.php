@@ -12,7 +12,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-
 /**
  * Model for a card.
  */
