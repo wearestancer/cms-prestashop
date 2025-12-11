@@ -10,4 +10,4 @@
 {l s='In test mode, no payment will be sent to a bank, only test cards can be used.' mod='stancer'}
 <br />
 {l s='Check the documentation to find' mod='stancer'}
-<a href="{l s='https://www.stancer.com/documentation/api/#test-cards' mod='stancer'}" target="_blank">{l s='test cards' mod='stancer'}</a>.
+<a href="{l s='https://docs.stancer.com/en/API.html#test-cards' mod='stancer'}" target="_blank">{l s='test cards' mod='stancer'}</a>.

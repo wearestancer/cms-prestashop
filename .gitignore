@@ -13,10 +13,10 @@ vendor/
 
 # Generated content
 reports/
-translations/
 views/css/
 views/js/
 config*.xml
 index.php
 module-configuration.yml
 *.zip
+vendors/*

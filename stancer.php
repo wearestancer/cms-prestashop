@@ -14,6 +14,7 @@ if (!defined('_PS_VERSION_')) {
 
 require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
 
+const STANCER_MODULE_VERSION = '2.0.2';
 /**
  * Stancer payment module.
  *
@@ -45,8 +46,7 @@ require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
  */
 class Stancer extends PaymentModule
 {
-    public const VERSION = '2.0.1';
-
+    public const VERSION = STANCER_MODULE_VERSION;
     /**
      * Configurations Settings
      *
@@ -81,7 +81,7 @@ class Stancer extends PaymentModule
     {
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
-        $this->version = '2.0.1';
+        $this->version = '2.0.2';
         $this->author = 'Stancer';
         $this->need_instance = 1;
         $this->ps_versions_compliancy = ['min' => '8.0', 'max' => '9.0.999'];
@@ -224,12 +224,15 @@ class Stancer extends PaymentModule
             ];
 
             $defaultValue = [];
-
             foreach ($this->languages as $lang) {
                 $defaultValue[$lang['id_lang']] = 'Pay by card';
 
                 if (strpos($lang['language_code'], 'fr') !== false) {
                     $defaultValue[$lang['id_lang']] = 'Payer par carte';
+                }
+
+                if (strpos($lang['language_code'], 'it') !== false) {
+                    $defaultValue[$lang['id_lang']] = 'Paga con carta';
                 }
             }
 
@@ -355,6 +358,10 @@ class Stancer extends PaymentModule
                 if (strpos($lang['language_code'], 'fr') !== false) {
                     $defaultDescriptions[$lang['id_lang']] = 'Votre commande SHOP_NAME.';
                 }
+
+                if (strpos($lang['language_code'], 'it') !== false) {
+                    $defaultDescriptions[$lang['id_lang']] = 'Il tuo ordine SHOP_NAME.';
+                }
             }
 
             $vars = [
@@ -438,7 +445,7 @@ class Stancer extends PaymentModule
                                 }
                             }
 
-                            $error = $this->l('"%s" is invalid, please provide a correct key.');
+                            $error = $this->l('"%s" is invalid, please provide a valid key.');
                         }
 
                         $output .= $this->displayError(sprintf($error, $infos['label']));
@@ -766,7 +773,10 @@ class Stancer extends PaymentModule
     public function hookPaymentOptions(array $params): array
     {
         $list = [];
-
+        // we stay in int value, float are not "safe" for manipulating amounts
+        if ($params['cart'] instanceof Cart && (int) ($params['cart']->getOrderTotal() * 100) < 50) {
+            return $list;
+        }
         if ($this->isNotAvailable()) {
             return $list;
         }
@@ -785,7 +795,7 @@ class Stancer extends PaymentModule
                     true
                 );
 
-                $text = vsprintf($this->l('Pay with your %s finishing with %s'), [$card->brandname, $card->last4]);
+                $text = vsprintf($this->l('Pay with your %s ending with %s'), [$card->brandname, $card->last4]);
                 $cardOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $cardOption
                     ->setModuleName($this->name)

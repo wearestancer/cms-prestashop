@@ -1,13 +1,42 @@
 {
+    "_comment": [
+        "The order of the composer parameters must be:",
+            "name",
+            "description",
+            "homepage",
+            "type",
+            "license",
+            "config",
+            "autoload",
+            "scripts",
+            "require",
+            "require-dev",
+            "support"
+    ],
     "name": "stancer/cms-prestashop",
     "description": "Stancer PrestaShop module",
     "homepage": "https://stancer.com",
     "type": "prestashop-module",
+    "license": "MIT",
+    "config": {
+        "prepend-autoloader": false,
+        "sort-packages": true
+    },
     "autoload": {
         "classmap": [
             "classes/",
-            "controllers/"
+            "controllers/",
+            "vendor/"
         ]
+    },
+    "scripts": {
+        "after:scoping": "bash ./scripts/clean-after-archives.sh && composer install",
+        "phpcs": "./vendor/bin/php-cs-fixer check --diff",
+        "phpcs-fix": "./vendor/bin/php-cs-fixer fix",
+        "phpstan": "./vendor/bin/phpstan",
+        "prefix-stancer": "bash ./scripts/class-prefixer.sh",
+        "prep-vendor": "bash ./scripts/scoper-dl.sh && scoper add-prefix -nf",
+        "scope:dependency": "composer install --no-dev && composer run prep-vendor && composer run prefix-stancer && composer du"
     },
     "require": {
         "php": ">=7.4",
@@ -17,16 +46,6 @@
         "phpstan/phpstan": "^2.0",
         "prestashop/php-dev-tools": "^4.3",
         "stancer/php-stubs-prestashop": "^1.7"
-    },
-    "scripts": {
-        "phpcs": "./vendor/bin/php-cs-fixer check --diff",
-        "phpcs-fix": "./vendor/bin/php-cs-fixer fix",
-        "phpstan": "./vendor/bin/phpstan"
-    },
-    "license": "MIT",
-    "config": {
-        "prepend-autoloader": false,
-        "sort-packages": true
     },
     "support": {
         "docs": "https://gitlab.com/wearestancer/cms/prestashop/-/wikis/home",

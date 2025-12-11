@@ -1,18 +1,18 @@
 {
   "name": "@stancer/prestashop",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Stancer Prestashop module",
   "private": true,
   "license": "MIT",
   "scripts": {
     "archive": "env node ./scripts/zip.js",
-    "build": "pnpm run create-assets && pnpm run translate && pnpm run version && pnpm run license && pnpm run populate",
-    "build:archive": "rm -rf vendor && composer install --no-dev --optimize-autoloader && pnpm run build && pnpm run archive && composer install",
-    "create-assets": "gulp build",
+    "build": "pnpm run build:assets  && pnpm run version && pnpm run license && pnpm run populate",
+    "build:archive": "composer run scope:dependency && pnpm run build && pnpm run archive && composer run after:scoping",
+    "build:assets": "gulp build",
     "license": "env node ./scripts/license.js",
     "lint": "stylelint 'views/**/*.scss'",
     "populate": "env node ./scripts/populate.js",
-    "translate": "env node ./scripts/translate.js",
+    "local-translate": "env node ./scripts/translate.js",
     "version": "env node ./scripts/version.js"
   },
   "devDependencies": {

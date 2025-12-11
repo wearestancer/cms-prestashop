@@ -57,7 +57,7 @@ class StancerErrors extends ObjectModel
 
         // API errors
         $errors[static::NOT_AUTHORIZED] = implode(' ', [
-            $module->l('Impossible to connect to the payment platform.', 'StancerErrors'),
+            $module->l('Unable to connect to the payment platform.', 'StancerErrors'),
             $module->l('Please contact us to unlock this situation.', 'StancerErrors'),
         ]);
         $errors[static::SERVER_ERROR] = implode(' ', [

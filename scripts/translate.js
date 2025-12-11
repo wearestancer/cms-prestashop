@@ -31,9 +31,9 @@ trads.forEach((trad) => {
   }
 });
 
-fs.mkdir(__dirname + '/../translations/', () => {
+fs.mkdir(__dirname + '/../translations/local/', () => {
   for (let lang in langs) {
-    const file = fs.createWriteStream(__dirname + '/../translations/' + lang + '.php');
+    const file = fs.createWriteStream(__dirname + '/../translations/local/' + lang + '.php');
 
     file.write(
       [
