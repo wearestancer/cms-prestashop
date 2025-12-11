@@ -12,8 +12,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Stancer;
-
 /**
  * Model for a customer.
  */
