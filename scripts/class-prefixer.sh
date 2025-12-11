@@ -4,7 +4,7 @@ set -eu
 
 current_dir=$(dirname $(realpath $0))
 search_dir=$(dirname "$current_dir")
-# We find all the files with a dependancy to Stancer.
+# We find all the files with a dependancy to PSR.
 files=$(grep -REl '^use Psr' "$search_dir/vendor/stancer")
 
 # We create a new file for our archive with the dependency scoped
