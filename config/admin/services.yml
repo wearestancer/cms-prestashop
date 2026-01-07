@@ -1,0 +1,31 @@
+services:
+  _defaults:
+    public: true
+
+  stancer.form.refund_data_provider:
+    class: 'Stancer\Form\Provider\RefundDataProvider'
+  stancer.form.capture_data_provider:
+    class: 'Stancer\Form\Provider\CaptureDataProvider'
+
+  form.type.order.refund.stancer:
+    class: 'Stancer\Form\Type\RefundStancerType'
+    arguments:
+      - "@translator"
+    parent: 'form.type.common_type'
+    public: true
+    tags:
+      - { name: form.type }
+
+  form.type.order.capture.stancer:
+    class: 'Stancer\Form\Type\CaptureStancerType'
+    arguments:
+      - "@translator"
+    parent: 'form.type.common_type'
+    public: true
+    tags:
+      - { name: form.type }
+
+  stancer.controller.order:
+    class: 'Stancer\Controller\StancerOrderController'
+    autowire: true
+

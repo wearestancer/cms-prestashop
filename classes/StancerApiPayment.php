@@ -200,6 +200,24 @@ class StancerApiPayment extends ObjectModel
         return static::ensureData($payment);
     }
 
+    public static function findByOrderId(string $orderID): ?StancerApiPayment
+    {
+        $query = new DbQuery();
+        $query->select('*');
+        $query->from(static::$definition['table']);
+        $query->where('`id_order` = ' . (int) $orderID);
+
+        $row = Db::getInstance()->getRow($query);
+        if (!$row) {
+            return null;
+        }
+        // @phpstan-ignore new.static
+        $payment = new static();
+        $payment->hydrate((array) $row);
+
+        return static::ensureData($payment);
+    }
+
     /**
      * Get Stancer API payment object
      *

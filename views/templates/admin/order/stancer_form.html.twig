@@ -1,0 +1,16 @@
+{% if stancerForDisplay.status is same as('to_capture') %}
+  coucou to_capture
+{% elseif stancerForDisplay.status is same as('captured') %}
+  coucou capture
+{% elseif stancerForDisplay.status is same as('authorized') %}
+  {{ form_widget(stancerForDisplay.status) }}
+{% else %}
+  {{stancerForDisplay.status}}
+{% endif %}
+<div id="stancer_refund_form">
+    {{form(refundForm)}}
+    <script src="{{ asset('../modules/stancer/views/js/invoice.js') }}"></script>
+</div>
+<div>
+  {{form(captureForm)}}
+</div>

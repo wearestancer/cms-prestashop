@@ -26,6 +26,7 @@
         "classmap": [
             "classes/",
             "controllers/",
+            "src",
             "vendor/"
         ]
     },
@@ -44,8 +45,7 @@
     },
     "require-dev": {
         "phpstan/phpstan": "^2.0",
-        "prestashop/php-dev-tools": "^4.3",
-        "stancer/php-stubs-prestashop": "^1.7"
+        "prestashop/php-dev-tools": "^4.3"
     },
     "support": {
         "docs": "https://gitlab.com/wearestancer/cms/prestashop/-/wikis/home",

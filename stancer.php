@@ -69,6 +69,7 @@ class Stancer extends PaymentModule
     protected array $hooks = [
         'paymentOptions',
         'displayHeader',
+        'displayAdminOrderMain',
     ];
 
     /**
@@ -747,6 +748,23 @@ class Stancer extends PaymentModule
         }
 
         return $this->fetchTemplate('hook/header.tpl');
+    }
+
+    /**
+     * Hook called on order page to add our capture/refunds forms
+     *
+     * @param array<string,mixed> $params
+     *
+     * @return string|null
+     */
+    public function hookDisplayAdminOrderMain(array $params): ?string
+    {
+        $displayer = $this->get('stancer.controller.order');
+        if ($displayer) {
+            return $displayer->displayOrderDashboard($params);
+        }
+
+        return null;
     }
 
     /**
