@@ -22,6 +22,14 @@ class RefundStancerType extends AbstractType
         $this->translator = $translator;
     }
 
+    /**
+     * Build the Stancer refund form
+     *
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     *
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -30,30 +38,31 @@ class RefundStancerType extends AbstractType
                     'amount_constraints' => [
                         new GreaterThanOrEqual([
                             'value' => '0',
+                            'message' => $this->translator->trans('Invalid value: the value must be positive or null'),
                         ]),
                         new LessThanOrEqual([
-                            'value' => $options['data']['raw_amount'] / 100,
+                            'value' => $options['data']['refundable_amount'] / 100,
                             'message' => $this->translator->trans('Invalid value: you cannot refund more than the remaining amount'),
                         ]),
                     ],
                     'currencies' => [
                         'EUR' => '€',
                     ],
-                    'data' => (string) $options['data']['raw_amount'] / 100,
-                    'attr' => ['type' => 'coucou', 'placeholder' => $options['data']['raw_amount'] / 100, 'value' => $options['data']['raw_amount'] / 100],
                 ])
             ->add('change_invoice_status', CheckboxType::class,
                 [
-                    'label' => $this->translator->trans('change the invoice status to refunded'),
+                    'label' => $this->translator->trans('Change the invoice status to refunded'),
                     'required' => false,
+                    'data' => true,
                 ])
             ->add('refund', SubmitType::class,
                 [
-                    'label' => $this->translator->trans('refund the payment'),
+                    'label' => $this->translator->trans('Refund the payment'),
                     'attr' => [
                         'class' => 'btn btn-primary',
-                        'data_payment_id' => $options['data']['id'],
-                        'data_amount' => $options['data']['raw_amount'] / 100,
+                        'data-payment_id' => $options['data']['id'],
+                        'data-amount' => $options['data']['raw_amount'] / 100,
+                        'data-refundable' => $options['data']['refundable_amount'],
                     ],
                 ]
             )

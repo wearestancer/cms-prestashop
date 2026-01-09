@@ -147,8 +147,16 @@ class StancerApiPayment extends ObjectModel
         // @phpstan-ignore new.static
         $payment = new static();
         $payment->hydrate((array) $row);
+        $payment->setApiPayment($apiPayment);
 
         return static::ensureData($payment);
+    }
+
+    protected function setApiPayment(Stancer\Payment $apiPayment): void
+    {
+        if ($this->payment_id === $apiPayment->id) {
+            $this->api = $apiPayment;
+        }
     }
 
     /**
@@ -240,7 +248,7 @@ class StancerApiPayment extends ObjectModel
     public function getOrderState(): string|false
     {
         $key = match ($this->api->getStatus()) {
-            Stancer\Payment\Status::AUTHORIZED => 'PS_OS_AUTHORIZED',
+            Stancer\Payment\Status::AUTHORIZED => 'PS_STANCER_AUTHORIZE',
             Stancer\Payment\Status::CANCELED => 'PS_OS_CANCELED',
             Stancer\Payment\Status::CAPTURED,
             Stancer\Payment\Status::TO_CAPTURE => 'PS_OS_PAYMENT',

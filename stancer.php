@@ -59,7 +59,7 @@ class Stancer extends PaymentModule
      *
      * @var array<int|mixed[]>
      */
-    protected array $languages = [];
+    public array $languages = [];
 
     /**
      * Hooks called by our modules
@@ -69,7 +69,7 @@ class Stancer extends PaymentModule
     protected array $hooks = [
         'paymentOptions',
         'displayHeader',
-        'displayAdminOrderMain',
+        'displayAdminOrderSide',
     ];
 
     /**
@@ -767,6 +767,16 @@ class Stancer extends PaymentModule
         return null;
     }
 
+    public function hookDisplayAdminOrderSide(array $params): ?string
+    {
+        $displayer = $this->get('stancer.controller.order');
+        if ($displayer) {
+            return $displayer->displayOrderDashboard($params);
+        }
+
+        return null;
+    }
+
     /**
      * Hook called to display payment methods (PS1.7+).
      *
@@ -992,6 +1002,7 @@ class Stancer extends PaymentModule
             ) COMMENT "This table uses Stancer API names";';
 
         $return &= $db->execute($sql);
+        $return &= DbUpgrader::upgradeDbAuthorizeStatus($this);
 
         return (bool) $return;
     }

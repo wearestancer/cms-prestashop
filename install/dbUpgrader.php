@@ -1,0 +1,26 @@
+<?php
+
+class DbUpgrader
+{
+    public static function upgradeDbAuthorizeStatus(Stancer $module): bool
+    {
+        $return = true;
+        $db = Db::getInstance();
+        $return &= $db->insert('order_state', ['invoice' => 1, 'send_email' => 1, 'module_name' => $module->name, 'color' => '#1450c5', 'unremovable' => true]);
+        $orderStateId = $db->Insert_ID();
+        $orderStatusTranslation = InstallDataProvider::getOrderStatusTranslation();
+        foreach ($module->languages as $language) {
+            $db->insert('order_state_lang',
+                [
+                    'id_order_state' => $orderStateId,
+                    'id_lang' => $language['id_lang'],
+                    'name' => $orderStatusTranslation[$language['iso_code']] ?? $orderStatusTranslation['en'],
+                    'template' => 'payment',
+                ]
+            );
+        }
+        $return &= $db->insert('configuration', ['name' => 'PS_STANCER_AUTHORIZE', 'value' => $orderStateId]);
+
+        return $return;
+    }
+}

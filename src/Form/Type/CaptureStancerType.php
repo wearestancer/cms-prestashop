@@ -4,7 +4,7 @@ namespace Stancer\Form\Type;
 
 use PrestaShopBundle\Translation\TranslatorInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class CaptureStancerType extends AbstractType
@@ -17,14 +17,23 @@ class CaptureStancerType extends AbstractType
         $this->translator = $translator;
     }
 
+    /**
+     * Build form for the Stancer capture
+     *
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     *
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('capture', ButtonType::class,
+            ->add('capture', SubmitType::class,
                 [
-                    'label' => $this->translator->trans('Capture the authorized payment'),
+                    'label' => $this->translator->trans('Capture the payment'),
                     'attr' => ['class' => 'btn btn-primary'],
                 ]
-            );
+            )
+            ->setAction($options['data']['action']);
     }
 }

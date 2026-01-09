@@ -1,52 +1,102 @@
-
-
 <div class="card mt-2" id="view_order_stancer_block">
-  <div id="stancerPaymentCard" class="payment card">
-    <div class="card-header">
-      <h3 class="card-header-title">
-        {{ 'Stancer payment'|trans({}, 'Stancer.Invoice')}}
-      </h3>
-    </div>
-  </div>
+	<div id="stancerPaymentCard" class="payment card">
+		<div class="card-header">
+			<h3 class="card-header-title">
+				{{ 'Stancer payment'|trans({}, 'Stancer.Invoice')}}
+			</h3>
+		</div>
+	</div>
 
-  <div class="card-body">
-    <div id="StancerInfo" class="info-block">
-      <h2 class="mb-0">
-        {# <i class"material-icons">credit_card</i> #}
-        {{'Payment'|trans({},'Stancer.Invoice')}}: "{{stancerForDisplay.id}}"
-      </h2>
-    </div>
-    <div id="stancerInfo" class="row mt-3">
-    {% if stancerForDisplay.method is same as("card") %}
-      <div id="cardBrand" class="col-xxl-6">
-        <p class="mb-1">
-          {{'Card Brand'|trans({},'Stancer.Invoice')}}: {{stancerForDisplay.brand|capitalize}}
-        </p>
-        <p class="mb-1">
-          {{"Last four"|trans({},'Stancer.Invoice')}}: {{stancerForDisplay.last_four}}
-        </p>
-        <p class="mb-1">
-          {{"Expiration Date"|trans({},'stancer.Invoice')}}: {{stancerForDisplay.expiration_date}}
-        </p>
-        <p>
-         {{"CVC"|trans({},'stancer.Invoice')}}: ***
-        </p>
-      </div>
-      {% endif %}
-      <div id="stancerPaymentInfo" class="col-xxl-6">
-        <div>
-          <h2>
-            {{"Status"|trans({},"Stancer.Invoice")}}: {{stancerForDisplay.status}}
-          </h2>
+	<div class="card-body">
+		<div class="row mt-3">
+			<div id="stancerPaymentId" class="col-xl-6">
+				<p class="mb-1">
+					<strong>{{"payment ID:"|trans({},'Stancer.Invoice')}}</strong>
+				</p>
+				<p>
+					{{stancerForDisplay.id}}
+				</p>
+			</div>
+			<div id="stancerPaymentStatus" class="col-xl-6">
+        <div class="row">
+        <div class='col-xxl-6'>
           <p class="mb-1">
-            {{"amount paid"|trans({},'Stancer.Invoice')}}: {{stancerForDisplay.total_amount}}
+            {{"Status"|trans({},"Stancer.Invoice")}}:
           </p>
+          <h3>
+            <span class="badge badge-dark font-size-100">{{stancerForDisplay.status}}</span>
+          </h3>
         </div>
-        <div id="StancerForm">
-          {% include '@Modules/stancer/views/templates/admin/order/stancer_form.html.twig' %}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+        {% if stancerForDisplay.status is same as('authorized') %}
 
+          <div class='col-xxl-6' id='stancer_capture_form'>
+            {{form(captureForm)}}
+          </div>
+        {% endif %}
+        </div>
+			</div>
+		</div>
+
+		<div class="info-block mt-2">
+			<div id="stancerInfo" class="row mt-3">
+				{% if stancerForDisplay.method is same as("card") %}
+					<div id="cardBrand" class="info-block-col col-xl-6">
+						<div class="row justify-content-between no-gutters">
+							<strong>{{'Card Info'|trans({}, 'Stancer.Invoice')}}</strong>
+						</div>
+						<p class="mb-1">
+							{{'Card Brand'|trans({},'Stancer.Invoice')}}:
+							{{stancerForDisplay.brand|capitalize}}
+						</p>
+						<p class="mb-1">
+							{{"Last four"|trans({},'Stancer.Invoice')}}:
+							{{stancerForDisplay.last_four}}
+						</p>
+						<p class="mb-1">
+							{{"Expiration Date"|trans({},'stancer.Invoice')}}:
+							{{stancerForDisplay.expiration_date}}
+						</p>
+						<p>
+							{{"CVC"|trans({},'stancer.Invoice')}}: ***
+						</p>
+					</div>
+				{% endif %}
+				<div
+					id="stancerPaymentInfo" class=" info-block-col col-xl-6">
+					{# Put this in a proper table for better display #}
+					<div class="row justify-content-between no-gutters">
+						<strong>{{'Transaction info'|trans({}, 'Stancer.Invoice')}}</strong>
+					</div>
+					<p class="mb-1">
+						{{"amount paid"|trans({},'Stancer.Invoice')}}:
+						{{stancerForDisplay.total_amount}}
+					</p>
+					{% if  stancerForDisplay.refunded_amount > 0 %}
+						<p class="mb-1">
+							{{"amount refunded"|trans({},'Stancer.Invoice')}}: -{{stancerForDisplay.refunded_amount_formated}}
+						</p>
+						<p class="mb-1">
+							{{"amount remaining"|trans({},'Stancer.Invoice')}}:
+							{{stancerForDisplay.refundable_amount_formated}}
+						</p>
+          {% else %}
+            <div id="stancer_refund_form">
+              {{form_start(refundForm)}}
+              {{form_widget(refundForm.refund_amount,{'value':stancerForDisplay.refundable_amount /100})}}
+              {{form_row(refundForm.change_invoice_status)}}
+              {{form_row(refundForm.refund)}}
+              {{form_rest(refundForm)}}
+              {{form_end(refundForm)}}
+            </div>
+            <script>
+              const refundForm = document.body.querySelector('#stancer_refund_form');
+              const refundButton = refundForm.querySelector('#refund_stancer_payment_refund');
+              const refundPriceInput = refundForm.querySelector('#refund_stancer_payment_refund_amount_amount');
+              refundPriceInput.value = refundButton.getAttribute('data-amount');
+            </script>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
