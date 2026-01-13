@@ -1,11 +1,7 @@
 services:
   _defaults:
     public: true
-
-  stancer.form.refund_data_provider:
-    class: 'Stancer\Form\Provider\RefundDataProvider'
-  stancer.form.capture_data_provider:
-    class: 'Stancer\Form\Provider\CaptureDataProvider'
+    autowire: true
 
   form.type.order.refund.stancer:
     class: 'Stancer\Form\Type\RefundStancerType'
@@ -13,6 +9,7 @@ services:
       - "@translator"
     parent: 'form.type.common_type'
     public: true
+    autowire: false
     tags:
       - { name: form.type }
 
@@ -21,11 +18,16 @@ services:
     arguments:
       - "@translator"
     parent: 'form.type.common_type'
+    autowire: false
     public: true
     tags:
       - { name: form.type }
 
-  stancer.controller.order:
-    class: 'Stancer\Controller\StancerOrderController'
-    autowire: true
+  stancer.display.order:
+    class: 'Stancer\Controller\StancerOrderDisplay'
 
+  Stancer\:
+    resource: '../../src'
+    exclude:
+    - '../../src/index.php'
+    - '../../src/*/index.php'

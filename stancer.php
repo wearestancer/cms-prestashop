@@ -751,25 +751,15 @@ class Stancer extends PaymentModule
     }
 
     /**
-     * Hook called on order page to add our capture/refunds forms
+     * Hook called on order page to add our capture/refund forms
      *
      * @param array<string,mixed> $params
      *
      * @return string|null
      */
-    public function hookDisplayAdminOrderMain(array $params): ?string
-    {
-        $displayer = $this->get('stancer.controller.order');
-        if ($displayer) {
-            return $displayer->displayOrderDashboard($params);
-        }
-
-        return null;
-    }
-
     public function hookDisplayAdminOrderSide(array $params): ?string
     {
-        $displayer = $this->get('stancer.controller.order');
+        $displayer = $this->get('stancer.display.order');
         if ($displayer) {
             return $displayer->displayOrderDashboard($params);
         }

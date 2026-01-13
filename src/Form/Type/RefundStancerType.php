@@ -1,16 +1,17 @@
 <?php
+declare(strict_types=1);
 
 namespace Stancer\Form\Type;
 
 use PrestaShopBundle\Form\Admin\Type\AmountCurrencyType;
-use PrestaShopBundle\Translation\TranslatorInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
+use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\LessThanOrEqual;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RefundStancerType extends AbstractType
 {
@@ -35,14 +36,18 @@ class RefundStancerType extends AbstractType
         $builder
             ->add('refund_amount', AmountCurrencyType::class,
                 [
+                    'label' => $this->translator->trans('Amount', [], 'Modules.Stancer.Refundstancer'),
                     'amount_constraints' => [
-                        new GreaterThanOrEqual([
+                        new GreaterThan([
                             'value' => '0',
-                            'message' => $this->translator->trans('Invalid value: the value must be positive or null'),
+                            'message' => $this->translator->trans('Invalid amount: the value must be positive', [], 'Modules.Stancer.Refundstancertype'),
                         ]),
                         new LessThanOrEqual([
                             'value' => $options['data']['refundable_amount'] / 100,
-                            'message' => $this->translator->trans('Invalid value: you cannot refund more than the remaining amount'),
+                            'message' => $this->translator->trans(
+                                'Invalid amount: you cannot refund more than the remaining amount (%refundable_amount)',
+                                ['%refundable_amount%' => $options['data']['refundable_amount_formated']],
+                                'Modules.Stancer.Refundstancertype'),
                         ]),
                     ],
                     'currencies' => [
@@ -51,13 +56,13 @@ class RefundStancerType extends AbstractType
                 ])
             ->add('change_invoice_status', CheckboxType::class,
                 [
-                    'label' => $this->translator->trans('Change the invoice status to refunded'),
+                    'label' => $this->translator->trans('Set the invoice status to "Refunded"', [], 'Modules.Stancer.Refundstancertype'),
                     'required' => false,
                     'data' => true,
                 ])
             ->add('refund', SubmitType::class,
                 [
-                    'label' => $this->translator->trans('Refund the payment'),
+                    'label' => $this->translator->trans('Refund the payment', [], 'Modules.Stancer.Refundstancertype'),
                     'attr' => [
                         'class' => 'btn btn-primary',
                         'data-payment_id' => $options['data']['id'],

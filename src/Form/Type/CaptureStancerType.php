@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace Stancer\Form\Type;
 
-use PrestaShopBundle\Translation\TranslatorInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CaptureStancerType extends AbstractType
 {
@@ -30,7 +31,7 @@ class CaptureStancerType extends AbstractType
         $builder
             ->add('capture', SubmitType::class,
                 [
-                    'label' => $this->translator->trans('Capture the payment'),
+                    'label' => $this->translator->trans('Capture the payment', [], 'Modules.Stancer.CaptureStancerType'),
                     'attr' => ['class' => 'btn btn-primary'],
                 ]
             )

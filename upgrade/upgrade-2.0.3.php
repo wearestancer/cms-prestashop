@@ -18,7 +18,6 @@ function upgrade_module_2_0_3(Stancer $module): bool
         return false;
     }
     $module->registerHook('displayAdminOrderSide');
-    DbUpgrader::upgradeDbAuthorizeStatus($module);
 
-    return true;
+    return DbUpgrader::upgradeDbAuthorizeStatus($module);
 }

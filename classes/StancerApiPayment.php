@@ -208,12 +208,12 @@ class StancerApiPayment extends ObjectModel
         return static::ensureData($payment);
     }
 
-    public static function findByOrderId(string $orderID): ?StancerApiPayment
+    public static function findByOrderId(int $orderID): ?StancerApiPayment
     {
         $query = new DbQuery();
         $query->select('*');
         $query->from(static::$definition['table']);
-        $query->where('`id_order` = ' . (int) $orderID);
+        $query->where('`id_order` = ' . $orderID);
 
         $row = Db::getInstance()->getRow($query);
         if (!$row) {

@@ -10,7 +10,7 @@ class DbUpgrader
         $orderStateId = $db->Insert_ID();
         $orderStatusTranslation = InstallDataProvider::getOrderStatusTranslation();
         foreach ($module->languages as $language) {
-            $db->insert('order_state_lang',
+            $return &= $db->insert('order_state_lang',
                 [
                     'id_order_state' => $orderStateId,
                     'id_lang' => $language['id_lang'],

@@ -226,14 +226,9 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         if ($apiCard) {
             $payment->card_id = $apiCard->id;
         }
-
+        $status = $apiPayment->getStatus();
         $payment->status = $status->value;
         $payment->save();
-
-        if ($status === Stancer\Payment\Status::AUTHORIZED) {
-            $api->markPaymentAsCaptured($apiPayment);
-            $status = $apiPayment->getStatus();
-        }
 
         switch ($status) {
             case Stancer\Payment\Status::FAILED:
@@ -250,6 +245,9 @@ class StancerValidationModuleFrontController extends ModuleFrontController
 
                 return;
             case Stancer\Payment\Status::AUTHORIZED:
+                $api->markPaymentAsCaptured($apiPayment);
+                $status = $apiPayment->getStatus();
+                // no break
             case Stancer\Payment\Status::TO_CAPTURE:
             case Stancer\Payment\Status::CAPTURE:
                 // @todo : remove check of property when property deleted will be added

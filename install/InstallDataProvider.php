@@ -6,9 +6,9 @@ class InstallDataProvider
     public static function getOrderStatusTranslation(): array
     {
         return [
-            'fr' => 'Paiement Autorisé',
+            'fr' => 'Paiement autorisé',
             'en' => 'Authorized payment',
-            'it' => '',
+            'it' => 'Pagamento autorizzato',
         ];
     }
 }
