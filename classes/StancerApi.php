@@ -193,7 +193,7 @@ class StancerApi
             $apiPayment = $currentPayment->getApiObject();
         }
 
-        if (!$apiPayment || $apiPayment->getStatus() === 'refused') {
+        if (!$apiPayment || $apiPayment->getStatus() === Stancer\Payment\Status::REFUSED) {
             $apiPayment = new Stancer\Payment();
             $apiPayment
                 ->setCustomer($apiCustomer)

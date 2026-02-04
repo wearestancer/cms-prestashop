@@ -124,13 +124,13 @@ class StancerValidationModuleFrontController extends ModuleFrontController
     {
         $amount = vsprintf('%.02f %s', [
             $apiPayment->getAmount() / 100,
-            strtoupper($apiPayment->getCurrency()),
+            strtoupper($apiPayment->getCurrency()->value),
         ]);
 
         if (class_exists('NumberFormatter')) {
             $formatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
             // @phpstan-ignore method.internalClass
-            $amount = $formatter->formatCurrency($apiPayment->getAmount() / 100, $apiPayment->getCurrency());
+            $amount = $formatter->formatCurrency($apiPayment->getAmount() / 100, $apiPayment->getCurrency()->value);
         }
 
         $message[] = 'Transaction';
@@ -182,7 +182,6 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         $cart = $context->cart;
         $currency = $context->currency;
         $customer = $context->customer;
-
         // phpcs:disable PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace
         if (
             !Validate::isLoadedObject($cart)
@@ -228,7 +227,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
             $payment->card_id = $apiCard->id;
         }
 
-        $payment->status = $status;
+        $payment->status = $status->value;
         $payment->save();
 
         if ($status === Stancer\Payment\Status::AUTHORIZED) {
@@ -267,7 +266,6 @@ class StancerValidationModuleFrontController extends ModuleFrontController
 
                 $payment->id_order = $newOrder->id;
                 $payment->save();
-
                 $url = $context->link->getPageLink(
                     'order-confirmation',
                     true,
@@ -283,7 +281,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         }
         // Redirect always terminate. No return needed.
         $this->redirect($apiPayment->getPaymentPageUrl([
-            'lang' => $this->context->language->language_code,
+            'lang' => $context->language->language_code,
         ], true));
     }
 }

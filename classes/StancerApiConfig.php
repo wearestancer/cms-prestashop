@@ -67,6 +67,7 @@ class StancerApiConfig
         if ($this->timeout) {
             $apiConfig->setTimeout($this->timeout);
         }
+        $apiConfig->setVersion(Stancer\Enum\ApiVersion::VERSION_2);
 
         return $apiConfig
             ->addAppData('libstancer-prestashop', STANCER_MODULE_VERSION)
