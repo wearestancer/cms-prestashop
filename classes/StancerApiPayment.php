@@ -219,25 +219,20 @@ class StancerApiPayment extends ObjectModel
      *
      * @return string|false
      */
-    public function getOrderState()
+    public function getOrderState(): string|false
     {
-        $statuses = [
+        $key = match ($this->api->getStatus()) {
             Stancer\Payment\Status::AUTHORIZED => 'PS_OS_AUTHORIZED',
             Stancer\Payment\Status::CANCELED => 'PS_OS_CANCELED',
-            Stancer\Payment\Status::CAPTURED => 'PS_OS_PAYMENT',
+            Stancer\Payment\Status::CAPTURED,
+            Stancer\Payment\Status::TO_CAPTURE => 'PS_OS_PAYMENT',
             Stancer\Payment\Status::DISPUTED => 'PS_OS_DISPUTED',
             Stancer\Payment\Status::EXPIRED => 'PS_OS_EXPIRED',
             Stancer\Payment\Status::FAILED => 'PS_OS_ERROR',
-            Stancer\Payment\Status::TO_CAPTURE => 'PS_OS_PAYMENT',
-        ];
+            default => 'PS_OS_ERROR',
+        };
 
-        $key = 'PS_OS_ERROR';
-
-        if (array_key_exists($this->api->getStatus(), $statuses)) {
-            $key = $statuses[$this->api->getStatus()];
-        }
-
-        if (array_search($key, $statuses) === Stancer\Payment\Status::CAPTURED && (bool) count($this->api->getRefunds())) {
+        if ((bool) count($this->api->getRefunds())) {
             if ($this->api->getRefundableAmount()) {
                 $key = 'PS_OS_PARTIAL_REFUND';
             } else {
@@ -279,13 +274,13 @@ class StancerApiPayment extends ObjectModel
             $status = $this->api->status;
 
             if (!$status && $this->api->auth) {
-                if (in_array($this->api->auth->status, ['declined', 'expired', 'failed', 'unavailable'], true)) {
+                if (in_array($this->api->auth->status->value, ['declined', 'expired', 'failed', 'unavailable'], true)) {
                     // We can not mark the payment failed in the API
                     $status = Stancer\Payment\Status::FAILED;
                 }
             }
 
-            $this->status = $status ?? 'pending';
+            $this->status = $status->value ?? 'pending';
         }
 
         return parent::save($null_values, $auto_date);
@@ -316,7 +311,7 @@ class StancerApiPayment extends ObjectModel
         $payment->api = $apiPayment;
         $payment->card_id = $card ? $card->id : null;
         $payment->created = $creation ? $creation->format('Y-m-d H:i:s') : null;
-        $payment->currency = $apiPayment->currency;
+        $payment->currency = $apiPayment->currency->value;
         $payment->customer_id = $customer ? $customer->id : null;
         $payment->id_cart = $cart->id;
         $payment->payment_id = $apiPayment->id;

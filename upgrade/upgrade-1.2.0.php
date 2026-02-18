@@ -92,7 +92,7 @@ function fix_payments(bool $isProd): void
             }
 
             if ($status) {
-                $updates[] = '`status` = "' . pSQL($status) . '"';
+                $updates[] = '`status` = "' . pSQL($status->value) . '"';
             }
 
             if (!trim($payment->card_id) && $api->card) {
