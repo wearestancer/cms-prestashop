@@ -33,7 +33,13 @@ const stancer_message_iframe = () => {
           queue: false,
         });
       }
+
       if ('finished' === event.data.status && null == event.data.url) {
+        window.location.href = $iframe.data('validation');
+        controller.abort();
+      }
+
+      if (event.data.paymentStatus && event.data.paymentStatus.startsWith('fail')) {
         window.location.href = $iframe.data('validation');
         controller.abort();
       }
