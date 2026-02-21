@@ -69,6 +69,7 @@ class Stancer extends PaymentModule
     protected array $hooks = [
         'paymentOptions',
         'displayHeader',
+        'actionCronJob',
     ];
 
     /**
@@ -379,6 +380,12 @@ class Stancer extends PaymentModule
                 'label' => $this->l('Payment description'),
                 'lang' => true,
                 'type' => 'text',
+            ];
+
+            $this->configurations['STANCER_CRON_TOKEN'] = [
+                'default' => bin2hex(random_bytes(16)),
+                'group' => 'settings',
+                'type' => 'hidden',
             ];
         }
 
@@ -761,6 +768,88 @@ class Stancer extends PaymentModule
         }
 
         return $this->fetchTemplate('hook/header.tpl');
+    }
+
+    /**
+     * Hook called by the PrestaShop CronJobs module (ps_cronjobs).
+     *
+     * Runs the same payment reconciliation logic as the cron front controller.
+     * This hook is optional — the cron front controller works independently.
+     *
+     * @return void
+     */
+    public function hookActionCronJob(): void
+    {
+        $rows = Db::getInstance()->executeS(implode(' ', [
+            'SELECT *',
+            'FROM `' . _DB_PREFIX_ . 'stancer_payment`',
+            'WHERE `status` = "pending"',
+            'AND (`id_order` IS NULL OR `id_order` = 0)',
+            'AND `date_add` <= DATE_SUB(NOW(), INTERVAL 15 MINUTE)',
+        ]));
+
+        if (empty($rows) || !is_array($rows)) {
+            return;
+        }
+
+        foreach ($rows as $row) {
+            try {
+                $payment = new StancerApiPayment((int) $row['id_stancer_payment']);
+                $apiPayment = $payment->getApiObject();
+                $statusRaw = $apiPayment->getStatus();
+
+                if (!$statusRaw) {
+                    continue;
+                }
+
+                $status = $statusRaw instanceof Stancer\Payment\Status
+                    ? $statusRaw->value
+                    : (string) $statusRaw;
+
+                $payment->status = $status;
+                $payment->save();
+
+                // Only to_capture and captured map to PS_OS_PAYMENT in getOrderState().
+                // Intermediate states (capture, capture_sent) are skipped — checked next run.
+                if (!in_array($status, ['to_capture', 'captured'], true)) {
+                    continue;
+                }
+
+                $cart = new Cart((int) $payment->id_cart);
+
+                if (!Validate::isLoadedObject($cart)) {
+                    continue;
+                }
+
+                $orderState = $payment->getOrderState();
+
+                if (!$orderState) {
+                    continue;
+                }
+
+                $this->validateOrder(
+                    $cart->id,
+                    (int) $orderState,
+                    $apiPayment->getAmount() / 100,
+                    $this->displayName,
+                    implode("\n", ['Transaction', $apiPayment->getId(), '', 'Reconciled via Stancer cron job.']),
+                    ['transaction_id' => $apiPayment->getId()],
+                    (int) $cart->id_currency,
+                    false,
+                    $cart->secure_key
+                );
+
+                if ($this->currentOrder) {
+                    $payment->id_order = (int) $this->currentOrder;
+                    $payment->save();
+                }
+            } catch (Exception $e) {
+                PrestaShopLogger::addLog(
+                    sprintf('Stancer hookActionCronJob error for payment %s: %s', $row['payment_id'], $e->getMessage()),
+                    3
+                );
+            }
+        }
     }
 
     /**
