@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Payment reconciliation cron job (`controllers/front/cron.php`). Stancer does
+  not support webhooks, so payments whose redirect never fires (browser closed,
+  network error) stay permanently "pending" locally — no order is ever created
+  even though the payment was captured. A new front controller, called every
+  15 minutes, polls the Stancer API for such payments and creates the
+  PrestaShop order when the status is `to_capture` or `captured`. Refused,
+  failed, canceled and expired payments are logged as warnings.
+  Cron URL: `https://example.com/module/stancer/cron?token=STANCER_CRON_TOKEN`
+  Example crontab: `*/15 * * * * curl -s "https://…/module/stancer/cron?token=TOKEN"`
+- `STANCER_CRON_TOKEN` configuration key, generated on module install via
+  `random_bytes()`, used to authenticate requests to the cron endpoint.
+- `hookActionCronJob()` in the main module class, for shops using the
+  PrestaShop CronJobs module (ps_cronjobs) as an alternative to a server cron.
+
+
 ## [2.0.2] - 2025-12-11
 
 ### Added
