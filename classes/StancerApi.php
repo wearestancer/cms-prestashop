@@ -189,8 +189,7 @@ class StancerApi
             ->setOrderId($paymentData['orderId'])
             ->setCapture(false)
             ->setMethodsAllowed(['card'])
-                ->set_auth(true);
-
+            ->setAuth(true);
 
         if (isset($paymentData['returnUrl'])) {
             $apiPayment->setReturnUrl($paymentData['returnUrl']);

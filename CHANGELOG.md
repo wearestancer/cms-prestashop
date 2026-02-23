@@ -4,13 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## [Unreleased]
 
 ### Changed
 - Change the api version and the sdk version (CMS-469)
 - Change the settings key order to suit the order in Stancer manage (CMS-487)
 - Better devcontainer following new version of stancer SDK
-- delete the possibility to not use 3ds for security and stability reason (CMS-257)
+- Remove the possibility to not use 3ds for security and stability reason (CMS-257)
 
 
 ### Fixed
