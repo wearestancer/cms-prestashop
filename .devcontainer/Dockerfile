@@ -10,10 +10,10 @@ ARG TARGET_USER=vscode
 
 # Install sudo
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked apt update \
-      && apt upgrade -y \
-      && apt install -y --no-install-recommends sudo vim \
-      && sed -i 's/%sudo.*/%sudo   ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
+  --mount=type=cache,target=/var/lib/apt,sharing=locked apt update \
+  && apt upgrade -y \
+  && apt install -y --no-install-recommends sudo vim \
+  && sed -i 's/%sudo.*/%sudo   ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
 
 # Create user
 RUN useradd --create-home --shell /bin/bash --uid 1000 --groups sudo,www-data $TARGET_USER
@@ -23,5 +23,9 @@ RUN mkdir -p /var/www/html/modules/stancer
 
 COPY ./fs/post-attach /post-attach
 RUN chmod +x /post-attach
+
+COPY ./fs/scoper-dl.sh /scoper-dl.sh
+RUN chmod +x /scoper-dl.sh
+RUN /scoper-dl.sh
 
 USER $TARGET_USER

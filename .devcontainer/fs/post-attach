@@ -20,6 +20,7 @@ sh "${plugin_dir}/scripts/git-filters.sh"
 
 # Install dependencies
 composer install --working-dir="${plugin_dir}"
+composer run scope:dependency
 pnpm config set store-dir "${HOME}/.cache/pnpm"
 pnpm install --dir "${plugin_dir}"
 
