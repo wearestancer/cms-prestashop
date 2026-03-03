@@ -20,5 +20,5 @@ gpg --verify scoper.phar.asc scoper.phar
 
 rm scoper.phar.asc
 
-mv scoper.phar /usr/bin/scoper
+mv scoper.phar /usr/bin/scoper -f
 chmod +x /usr/bin/scoper
