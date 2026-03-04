@@ -150,16 +150,6 @@ class Stancer extends PaymentModule
                 'type' => 'hidden',
             ];
 
-            $this->configurations['STANCER_API_LIVE_PUBLIC_KEY'] = [
-                'default' => '',
-                'group' => 'keys',
-                'label' => $this->l('Public live API key'),
-                'mode' => Stancer\Config::LIVE_MODE,
-                'pattern' => '/^pprod_\w{24}$/',
-                'public' => true,
-                'required' => $isLive,
-            ];
-
             $this->configurations['STANCER_API_LIVE_SECRET_KEY'] = [
                 'default' => '',
                 'group' => 'keys',
@@ -170,14 +160,14 @@ class Stancer extends PaymentModule
                 'required' => $isLive,
             ];
 
-            $this->configurations['STANCER_API_TEST_PUBLIC_KEY'] = [
+            $this->configurations['STANCER_API_LIVE_PUBLIC_KEY'] = [
                 'default' => '',
                 'group' => 'keys',
-                'label' => $this->l('Public test API key'),
-                'mode' => Stancer\Config::TEST_MODE,
-                'pattern' => '/^ptest_\w{24}$/',
+                'label' => $this->l('Public live API key'),
+                'mode' => Stancer\Config::LIVE_MODE,
+                'pattern' => '/^pprod_\w{24}$/',
                 'public' => true,
-                'required' => false,
+                'required' => $isLive,
             ];
 
             $this->configurations['STANCER_API_TEST_SECRET_KEY'] = [
@@ -187,6 +177,16 @@ class Stancer extends PaymentModule
                 'mode' => Stancer\Config::TEST_MODE,
                 'pattern' => '/^stest_\w{24}$/',
                 'public' => false,
+                'required' => false,
+            ];
+
+            $this->configurations['STANCER_API_TEST_PUBLIC_KEY'] = [
+                'default' => '',
+                'group' => 'keys',
+                'label' => $this->l('Public test API key'),
+                'mode' => Stancer\Config::TEST_MODE,
+                'pattern' => '/^ptest_\w{24}$/',
+                'public' => true,
                 'required' => false,
             ];
 
