@@ -31,3 +31,4 @@ services:
     exclude:
     - '../../src/index.php'
     - '../../src/*/index.php'
+    - '../../src/Form/*/index.php'

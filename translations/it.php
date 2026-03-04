@@ -91,9 +91,10 @@ $_MODULE['<{stancer}prestashop>translationdataprovider_12f740fe0fd9cdebebd2a0cb5
 $_MODULE['<{stancer}prestashop>translationdataprovider_228a0de44ba4784483250e49323dc90c'] = 'Dettagli della carta:';
 $_MODULE['<{stancer}prestashop>translationdataprovider_38834151b7e5b1e95d86e4d8cd10145e'] = 'Rimborso del Pagamento';
 $_MODULE['<{stancer}prestashop>translationdataprovider_3d2ebc813f61bf5f17a5a70ea97da641'] = 'ID del pagamento:';
+$_MODULE['<{stancer}prestashop>translationdataprovider_444bd3641b9dc3a440e2ec45be689dc7'] = 'Il pagamento è stato cancellato';
 $_MODULE['<{stancer}prestashop>translationdataprovider_57edb36d067ad06aa42bc34d89ddf737'] = 'Dettagli della carta:';
 $_MODULE['<{stancer}prestashop>translationdataprovider_662acb14acff56ef92e014caf16dd6c6'] = 'Importo pagato:';
-$_MODULE['<{stancer}prestashop>translationdataprovider_a4531ff3b5d48ae4259049d22439c9c4'] = 'Ultime quattro cifre:';
+$_MODULE['<{stancer}prestashop>translationdataprovider_c93304287a09b3f17fc9b135e7021b85'] = 'Ultime quattro cifre:';
 $_MODULE['<{stancer}prestashop>translationdataprovider_b017c57d52057840a8621c35b72d66a7'] = 'Dettagli della transazione:';
 $_MODULE['<{stancer}prestashop>translationdataprovider_ec53a8c4f07baed5d8825072c89799be'] = 'Stato';
 $_MODULE['<{stancer}prestashop>translationdataprovider_f0073f8051e3c47747be88ad20fbfcd6'] = 'Importo restante:';

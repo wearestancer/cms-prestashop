@@ -35,7 +35,7 @@ class TranslationDataProvider
             'card_brand' => $this->trans('Card brand:', [], 'Modules.Stancer.Stancerorder'),
             'card_details' => $this->trans('Card details:', [], 'Modules.Stancer.Stancerorder'),
             'card_expirationdate' => $this->trans('Expiration date:', [], 'Modules.Stancer.Stancerorder'),
-            'card_lastfour' => $this->trans('Last fours numbers:', [], 'Modules.Stancer.Stancerorder'),
+            'card_lastfour' => $this->trans('Last four numbers:', [], 'Modules.Stancer.Stancerorder'),
             'payment_id' => $this->trans('Payment ID:', [], 'Modules.Stancer.Stancerorder'),
             'refund_title' => $this->trans('Payment refund', [], 'Modules.Stancer.Stancerorder'),
             'stancer_payment' => $this->trans('Stancer payment', [], 'Modules.stancer.Stancerorder'),
