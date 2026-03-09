@@ -12,6 +12,6 @@ for file in $files; do
   sed -i'.old' -re 's/use Psr\b/use Stancer\\Scoped\\Isolated\\Psr/g' "$file"
 done
 
-rm -rf vendor/psr
+rm -rf vendor/psr vendor/log vendor/http-message
 mv build/* vendor
 rm -rf build
