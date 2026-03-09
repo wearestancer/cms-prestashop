@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Stancer\DataProvider;
 
+use Stancer;
+use Stancer\Enum\ApiVersion;
+
 class PaymentDataProvider
 {
     /**
@@ -12,8 +15,11 @@ class PaymentDataProvider
      *
      * @return array
      */
-    public function getPaymentData(\Stancer\Payment $payment): array
+    public function getPaymentData(Stancer\Payment $payment): array
     {
+        // We Cannot fetch refunds properly with V2 so we use V1 temporarly
+        Stancer\Config::getGlobal()->setVersion(ApiVersion::VERSION_1);
+
         return [
             'id' => $payment->id,
             'raw_amount' => $payment->amount,
@@ -26,6 +32,7 @@ class PaymentDataProvider
             'card_id' => $payment->card->id,
             'method' => $payment->method,
         ];
+        Stancer\Config::getGlobal()->setVersion(ApiVersion::VERSION_2);
     }
 
     private function formatPrice(int|float $amount): string

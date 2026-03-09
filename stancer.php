@@ -760,7 +760,11 @@ class Stancer extends PaymentModule
     public function hookDisplayAdminOrderSide(array $params): ?string
     {
         $displayer = $this->get('stancer.display.order');
-        if ($displayer) {
+        if (!$displayer) {
+            return null;
+        }
+        // We don't want the display to disrupt the user experience, so if anything go wrong we just return.
+        try {
             return $displayer->displayOrderDashboard($params);
         }
 

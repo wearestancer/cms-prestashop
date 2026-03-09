@@ -93,9 +93,7 @@ class PaymentState
                 $stancerApiPayment = \StancerApiPayment::findByApiPayment($stancerPayment);
                 $stancerApiPayment->save();
                 $refundStatus = (int) $stancerApiPayment->getOrderState();
-                if ($refundStatus !== 0) {
-                    $this->updateStatus($orderId, $refundStatus);
-                }
+                $this->updateStatus($orderId, $refundStatus);
             }
         } catch (\Exception $e) {
             return $this->addFlash(

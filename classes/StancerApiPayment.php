@@ -8,6 +8,9 @@
  *
  * @website   https://www.stancer.com
  */
+
+use Stancer\Enum\ApiVersion;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -258,13 +261,12 @@ class StancerApiPayment extends ObjectModel
             default => 'PS_OS_ERROR',
         };
 
+        // We Cannot fetch refunds properly with V2 so we use V1 temporarly
+        Stancer\Config::getGlobal()->setVersion(ApiVersion::VERSION_1);
         if ((bool) count($this->api->getRefunds())) {
-            if ($this->api->getRefundableAmount()) {
-                $key = 'PS_OS_PARTIAL_REFUND';
-            } else {
-                $key = 'PS_OS_REFUND';
-            }
+            $key = 'PS_OS_REFUND';
         }
+        Stancer\Config::getGlobal()->setVersion(ApiVersion::VERSION_2);
 
         return Configuration::get($key);
     }
