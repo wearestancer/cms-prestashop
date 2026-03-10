@@ -14,7 +14,7 @@ if (!defined('_PS_VERSION_')) {
 
 require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
 
-const STANCER_MODULE_VERSION = '2.0.2';
+const STANCER_MODULE_VERSION = '2.0.3';
 /**
  * Stancer payment module.
  *
@@ -82,7 +82,7 @@ class Stancer extends PaymentModule
     {
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
-        $this->version = '2.0.2';
+        $this->version = '2.0.3';
         $this->author = 'Stancer';
         $this->need_instance = 1;
         $this->ps_versions_compliancy = ['min' => '8.0', 'max' => '9.0.999'];
@@ -766,9 +766,9 @@ class Stancer extends PaymentModule
         // We don't want the display to disrupt the user experience, so if anything go wrong we just return.
         try {
             return $displayer->displayOrderDashboard($params);
+        } catch (Exception) {
+            return null;
         }
-
-        return null;
     }
 
     /**

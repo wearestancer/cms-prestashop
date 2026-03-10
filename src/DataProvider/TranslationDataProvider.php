@@ -29,7 +29,7 @@ class TranslationDataProvider
     public function getOrderLabelTranslation(): array
     {
         return [
-            'amount_paid' => $this->trans('Amount paid:', [], 'Modules.Stancer.Translationdataprovider'),
+            'amount_paid' => $this->trans('Amount paid:', [], 'Modules.Stancer.Stancerorder'),
             'amount_refunded' => $this->trans('Amount refunded:', [], 'Modules.Stancer.Stancerorder'),
             'amount_remaining' => $this->trans('Amount remaining:', [], 'Modules.Stancer.Stancerorder'),
             'card_brand' => $this->trans('Card brand:', [], 'Modules.Stancer.Stancerorder'),
@@ -41,7 +41,7 @@ class TranslationDataProvider
             'stancer_payment' => $this->trans('Stancer payment', [], 'Modules.stancer.Stancerorder'),
             'status' => $this->trans('Status', [], 'Modules.Stancer.Stancerorder'),
             'transaction_details' => $this->trans('Transaction details:', [], 'Modules.Stancer.Stancerorder'),
-            'payment_canceled' => $this->trans('Payment has been canceled', [], 'Modules.Stancer.StancerOrder'),
+            'payment_canceled' => $this->trans('Payment has been canceled', [], 'Modules.Stancer.Stancerorder'),
         ];
     }
 }
