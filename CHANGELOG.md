@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change the settings key order to suit the order in Stancer manage (CMS-487)
 - Better devcontainer following new version of stancer SDK
 
+### Fixed
+- Problem with failed payment handling (CMS-387)
+
+
 ## [2.0.2] - 2025-12-11
 
 ### Added

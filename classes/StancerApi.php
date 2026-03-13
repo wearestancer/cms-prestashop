@@ -186,23 +186,16 @@ class StancerApi
         $psApiCustomer = StancerApiCustomer::find($customer);
 
         $apiCustomer = $psApiCustomer->getApiObject();
-        $currentPayment = StancerApiPayment::find($cart, $currency);
 
-        $apiPayment = null;
-        if ($currentPayment) {
-            $apiPayment = $currentPayment->getApiObject();
-        }
+        $apiPayment = new Stancer\Payment();
+        $apiPayment
+            ->setCustomer($apiCustomer)
+            ->setOrderId($paymentData['orderId'])
+            ->setCapture(false)
+            ->setMethodsAllowed(['card']);
 
-        if (!$apiPayment || $apiPayment->getStatus() === Stancer\Payment\Status::REFUSED) {
-            $apiPayment = new Stancer\Payment();
-            $apiPayment
-                ->setCustomer($apiCustomer)
-                ->setOrderId($paymentData['orderId'])
-                ->setCapture(false)
-                ->setMethodsAllowed(['card']);
-            if (isset($paymentData['returnUrl'])) {
-                $apiPayment->setReturnUrl($paymentData['returnUrl']);
-            }
+        if (isset($paymentData['returnUrl'])) {
+            $apiPayment->setReturnUrl($paymentData['returnUrl']);
         }
 
         if ($paymentData['auth'] && empty($apiPayment->getAuth())) {
