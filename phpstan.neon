@@ -33,7 +33,6 @@ parameters:
     # PaymentData: '''
     #   array{
     #     'amount': int,
-    #     'auth': bool,
     #     'currency': string,
     #     'description': string|null,
     #     'orderId': string,
