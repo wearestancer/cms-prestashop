@@ -1,5 +1,5 @@
 <?php
-
+require_once _PS_ROOT_DIR_ . '/modules/stancer/install/InstallDataProvider.php';
 class DbUpgrader
 {
     public static function upgradeDbAuthorizeStatus(Stancer $module): bool

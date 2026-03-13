@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace Stancer\Service;
 
+use Order;
 use PrestaShop\PrestaShop\Core\Domain\Order\Command\UpdateOrderStatusCommand;
-use PrestaShop\PrestaShop\Core\Domain\Order\Exception\ChangeOrderStatusException;
+use PrestaShop\PrestaShop\Core\Domain\Order\Exception as OrderException;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -93,7 +94,9 @@ class PaymentState
                 $stancerApiPayment = \StancerApiPayment::findByApiPayment($stancerPayment);
                 $stancerApiPayment->save();
                 $refundStatus = (int) $stancerApiPayment->getOrderState();
-                $this->updateStatus($orderId, $refundStatus);
+                if ((new \Order($orderId))->getCurrentState() !== $refundStatus) {
+                    $this->updateStatus($orderId, $refundStatus);
+                }
             }
         } catch (\Exception $e) {
             return $this->addFlash(
@@ -126,7 +129,7 @@ class PaymentState
                 'success',
                 $this->translator->trans('Successful update', [], 'Admin.Notifications.Success')
             );
-        } catch (ChangeOrderStatusException $e) {
+        } catch (OrderException\ChangeOrderStatusException $e) {
             $this->handleChangeOrderStatusException($e);
         } catch (\Exception $e) {
             $this->addFlash(
@@ -168,7 +171,7 @@ class PaymentState
      *
      * @return void
      */
-    private function handleChangeOrderStatusException(ChangeOrderStatusException $e)
+    private function handleChangeOrderStatusException(OrderException\ChangeOrderStatusException $e)
     {
         $orderIds = array_merge(
             $e->getOrdersWithFailedToUpdateStatus(),

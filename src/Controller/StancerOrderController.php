@@ -78,7 +78,7 @@ class StancerOrderController extends FrameworkBundleAdminController
             $data = $form->getData();
             $flashMessage = $this->paymentState->refund(
                 $data['payment_id'],
-                (int) ($data['amount'] * 100),
+                (int) (string) ($data['amount'] * 100),
                 $data['change_invoice_status'],
                 $orderId
             );

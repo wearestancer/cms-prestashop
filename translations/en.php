@@ -94,6 +94,7 @@ $_MODULE['<{stancer}prestashop>translationdataprovider_3d2ebc813f61bf5f17a5a70ea
 $_MODULE['<{stancer}prestashop>translationdataprovider_444bd3641b9dc3a440e2ec45be689dc7'] = 'Payment has been canceled';
 $_MODULE['<{stancer}prestashop>translationdataprovider_57edb36d067ad06aa42bc34d89ddf737'] = 'Card brand:';
 $_MODULE['<{stancer}prestashop>translationdataprovider_662acb14acff56ef92e014caf16dd6c6'] = 'Amount paid:';
+$_MODULE['<{stancer}prestashop>translationdataprovider_b2f40690858b404ed10e62bdf422c704'] = 'Amount';
 $_MODULE['<{stancer}prestashop>translationdataprovider_c93304287a09b3f17fc9b135e7021b85'] = 'Last four numbers:';
 $_MODULE['<{stancer}prestashop>translationdataprovider_b017c57d52057840a8621c35b72d66a7'] = 'Transaction details:';
 $_MODULE['<{stancer}prestashop>translationdataprovider_ec53a8c4f07baed5d8825072c89799be'] = 'Status';

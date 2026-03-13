@@ -34,7 +34,7 @@ $_MODULE['<{stancer}prestashop>payment_description_6096510522d1f72ffa2cf95b3f157
 $_MODULE['<{stancer}prestashop>payment_description_cc2a38f6a67b4518a56576f2a73d2a6e'] = 'Sera utilisé comme description pour chaque paiement.';
 $_MODULE['<{stancer}prestashop>paymentstate_126c9e7f7525a45589506838f7eeb74b'] = 'Le paiement à été capturé.';
 $_MODULE['<{stancer}prestashop>paymentstate_587915fb93fe2bd8c1bcf79b27351770'] = 'Remboursement traité avec succès';
-$_MODULE['<{stancer}prestashop>refundstancertype_6531dd3fb116c65622d014792cbb94fa'] = 'Mettre le status de commande à \"Remboursé\"';
+$_MODULE['<{stancer}prestashop>refundstancertype_6531dd3fb116c65622d014792cbb94fa'] = 'Mettre le statut de commande à \"Remboursé\"';
 $_MODULE['<{stancer}prestashop>refundstancertype_72d9195e26c01733cb6a2a7de9abf4cc'] = 'Montant invalide: Vous ne pouvez rembourser plus que le montant restant (%refundable_amount%)';
 $_MODULE['<{stancer}prestashop>refundstancertype_af730fb8faf7bb489b7b280d7c6fa8dd'] = 'Rembourser le paiement';
 $_MODULE['<{stancer}prestashop>refundstancertype_b2f40690858b404ed10e62bdf422c704'] = 'Montant';
@@ -94,7 +94,8 @@ $_MODULE['<{stancer}prestashop>translationdataprovider_3d2ebc813f61bf5f17a5a70ea
 $_MODULE['<{stancer}prestashop>translationdataprovider_444bd3641b9dc3a440e2ec45be689dc7'] = 'Le paiement a été annulé';
 $_MODULE['<{stancer}prestashop>translationdataprovider_57edb36d067ad06aa42bc34d89ddf737'] = 'Marque de la carte :';
 $_MODULE['<{stancer}prestashop>translationdataprovider_662acb14acff56ef92e014caf16dd6c6'] = 'Montant payé :';
-$_MODULE['<{stancer}prestashop>translationdataprovider_c93304287a09b3f17fc9b135e7021b85'] = 'Quatre dernier numéros :';
+$_MODULE['<{stancer}prestashop>translationdataprovider_b2f40690858b404ed10e62bdf422c704'] = 'Montant';
+$_MODULE['<{stancer}prestashop>translationdataprovider_c93304287a09b3f17fc9b135e7021b85'] = 'Quatre derniers numéros :';
 $_MODULE['<{stancer}prestashop>translationdataprovider_b017c57d52057840a8621c35b72d66a7'] = 'Détails de la transaction :';
 $_MODULE['<{stancer}prestashop>translationdataprovider_ec53a8c4f07baed5d8825072c89799be'] = 'Statut';
 $_MODULE['<{stancer}prestashop>translationdataprovider_f0073f8051e3c47747be88ad20fbfcd6'] = 'Montant restant :';

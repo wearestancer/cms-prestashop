@@ -45,7 +45,7 @@ class RefundStancerType extends AbstractType
                         new LessThanOrEqual([
                             'value' => $options['data']['refundable_amount'] / 100,
                             'message' => $this->translator->trans(
-                                'Invalid amount: you cannot refund more than the remaining amount (%refundable_amount)',
+                                'Invalid amount: you cannot refund more than the remaining amount (%refundable_amount%)',
                                 ['%refundable_amount%' => $options['data']['refundable_amount_formated']],
                                 'Modules.Stancer.Refundstancertype'),
                         ]),
@@ -67,7 +67,7 @@ class RefundStancerType extends AbstractType
                         'class' => 'btn btn-primary',
                         'data-payment_id' => $options['data']['id'],
                         'data-amount' => $options['data']['raw_amount'] / 100,
-                        'data-refundable' => $options['data']['refundable_amount'],
+                        'data-refundable' => $options['data']['refundable_amount'] / 100,
                     ],
                 ]
             )

@@ -106,7 +106,7 @@
       </br>
       {{ps.form_group_row(refundForm.refund_amount,{},{
         'label_on_top':true,
-        'label':"Amount:",
+        'label': translatedLabel.amount,
         class:'mb-2',
       })}}
       {{ps.form_group_row(refundForm.change_invoice_status)}}
@@ -121,7 +121,7 @@
         const refundForm = document.body.querySelector('#stancer_refund_form');
         const refundButton = refundForm.querySelector('#refund_stancer_payment_refund');
         const refundPriceInput = refundForm.querySelector('#refund_stancer_payment_refund_amount_amount');
-        refundPriceInput.value = refundButton.getAttribute('data-amount');
+        refundPriceInput.value = refundButton.getAttribute('data-refundable');
       </script>
     </div>
 </div>
