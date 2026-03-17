@@ -1,0 +1,34 @@
+services:
+  _defaults:
+    public: true
+    autowire: true
+
+  form.type.order.refund.stancer:
+    class: 'Stancer\Form\Type\RefundStancerType'
+    arguments:
+      - "@translator"
+    parent: 'form.type.common_type'
+    public: true
+    autowire: false
+    tags:
+      - { name: form.type }
+
+  form.type.order.capture.stancer:
+    class: 'Stancer\Form\Type\CaptureStancerType'
+    arguments:
+      - "@translator"
+    parent: 'form.type.common_type'
+    autowire: false
+    public: true
+    tags:
+      - { name: form.type }
+
+  stancer.display.order:
+    class: 'Stancer\Controller\StancerOrderDisplay'
+
+  Stancer\:
+    resource: '../../src'
+    exclude:
+    - '../../src/index.php'
+    - '../../src/*/index.php'
+    - '../../src/Form/*/index.php'

@@ -1,0 +1,13 @@
+stancer_order_refund:
+  path: stancer/order/refund/{orderId}
+  methods: [POST]
+  defaults:
+    _controller: Stancer\Controller\StancerOrderController::createRefund
+  requirements:
+    orderId: \d+
+
+stancer_order_capture:
+  path: stancer/order/capture/{orderId}
+  methods: [POST]
+  defaults:
+    _controller: Stancer\Controller\StancerOrderController::capturePayment

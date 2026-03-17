@@ -8,6 +8,9 @@
  *
  * @website   https://www.stancer.com
  */
+
+use Stancer\Enum\ApiVersion;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -147,8 +150,16 @@ class StancerApiPayment extends ObjectModel
         // @phpstan-ignore new.static
         $payment = new static();
         $payment->hydrate((array) $row);
+        $payment->setApiPayment($apiPayment);
 
         return static::ensureData($payment);
+    }
+
+    protected function setApiPayment(Stancer\Payment $apiPayment): void
+    {
+        if ($this->payment_id === $apiPayment->id) {
+            $this->api = $apiPayment;
+        }
     }
 
     /**
@@ -200,6 +211,24 @@ class StancerApiPayment extends ObjectModel
         return static::ensureData($payment);
     }
 
+    public static function findByOrderId(int $orderID): ?StancerApiPayment
+    {
+        $query = new DbQuery();
+        $query->select('*');
+        $query->from(static::$definition['table']);
+        $query->where('`id_order` = ' . $orderID);
+
+        $row = Db::getInstance()->getRow($query);
+        if (!$row) {
+            return null;
+        }
+        // @phpstan-ignore new.static
+        $payment = new static();
+        $payment->hydrate((array) $row);
+
+        return static::ensureData($payment);
+    }
+
     /**
      * Get Stancer API payment object
      *
@@ -222,7 +251,7 @@ class StancerApiPayment extends ObjectModel
     public function getOrderState(): string|false
     {
         $key = match ($this->api->getStatus()) {
-            Stancer\Payment\Status::AUTHORIZED => 'PS_OS_AUTHORIZED',
+            Stancer\Payment\Status::AUTHORIZED => 'PS_STANCER_AUTHORIZE',
             Stancer\Payment\Status::CANCELED => 'PS_OS_CANCELED',
             Stancer\Payment\Status::CAPTURED,
             Stancer\Payment\Status::TO_CAPTURE => 'PS_OS_PAYMENT',
@@ -232,13 +261,12 @@ class StancerApiPayment extends ObjectModel
             default => 'PS_OS_ERROR',
         };
 
+        // We Cannot fetch refunds properly with V2 so we use V1 temporarly
+        Stancer\Config::getGlobal()->setVersion(ApiVersion::VERSION_1);
         if ((bool) count($this->api->getRefunds())) {
-            if ($this->api->getRefundableAmount()) {
-                $key = 'PS_OS_PARTIAL_REFUND';
-            } else {
-                $key = 'PS_OS_REFUND';
-            }
+            $key = 'PS_OS_REFUND';
         }
+        Stancer\Config::getGlobal()->setVersion(ApiVersion::VERSION_2);
 
         return Configuration::get($key);
     }

@@ -14,7 +14,7 @@ if (!defined('_PS_VERSION_')) {
 
 require_once _PS_ROOT_DIR_ . '/modules/stancer/vendor/autoload.php';
 
-const STANCER_MODULE_VERSION = '2.0.2';
+const STANCER_MODULE_VERSION = '2.0.3';
 /**
  * Stancer payment module.
  *
@@ -59,7 +59,7 @@ class Stancer extends PaymentModule
      *
      * @var array<int|mixed[]>
      */
-    protected array $languages = [];
+    public array $languages = [];
 
     /**
      * Hooks called by our modules
@@ -69,6 +69,7 @@ class Stancer extends PaymentModule
     protected array $hooks = [
         'paymentOptions',
         'displayHeader',
+        'displayAdminOrderSide',
     ];
 
     /**
@@ -81,7 +82,7 @@ class Stancer extends PaymentModule
     {
         $this->name = 'stancer';
         $this->tab = 'payments_gateways';
-        $this->version = '2.0.2';
+        $this->version = '2.0.3';
         $this->author = 'Stancer';
         $this->need_instance = 1;
         $this->ps_versions_compliancy = ['min' => '8.0', 'max' => '9.0.999'];
@@ -750,6 +751,27 @@ class Stancer extends PaymentModule
     }
 
     /**
+     * Hook called on order page to add our capture/refund forms
+     *
+     * @param array<string,mixed> $params
+     *
+     * @return string|null
+     */
+    public function hookDisplayAdminOrderSide(array $params): ?string
+    {
+        $displayer = $this->get('stancer.display.order');
+        if (!$displayer) {
+            return null;
+        }
+        // We don't want the display to disrupt the user experience, so if anything go wrong we just return.
+        try {
+            return $displayer->displayOrderDashboard($params);
+        } catch (Exception) {
+            return null;
+        }
+    }
+
+    /**
      * Hook called to display payment methods (PS1.7+).
      *
      * @param array<string, PrestaShop\PrestaShop\Core\Payment\PaymentOption[]> $params
@@ -974,6 +996,7 @@ class Stancer extends PaymentModule
             ) COMMENT "This table uses Stancer API names";';
 
         $return &= $db->execute($sql);
+        $return &= DbUpgrader::upgradeDbAuthorizeStatus($this);
 
         return (bool) $return;
     }

@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Refunding and capturing payments in order page (CMS-69)
+
 ### Changed
 - Change the api version and the sdk version (CMS-469)
 - Change the settings key order to suit the order in Stancer manage (CMS-487)
