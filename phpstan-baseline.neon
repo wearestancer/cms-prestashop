@@ -13,8 +13,8 @@ parameters:
 			path: controllers/front/payment.php
 
 		-
-			rawMessage: Access to property $language_code on an unknown class InstallLanguage.
-			identifier: class.notFound
+			rawMessage: 'Method FrontControllerCore::redirectWithNotifications() invoked with 1 parameter, 0 required.'
+			identifier: arguments.count
 			count: 1
 			path: controllers/front/validation.php
 
