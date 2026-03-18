@@ -21,5 +21,7 @@ function upgrade_module_2_0_3(Stancer $module): bool
     $module->registerHook('displayAdminOrderSide');
     Configuration::deleteByName('STANCER_AUTH_LIMIT');
 
+    Media::clearCache();
+
     return DbUpgrader::upgradeDbAuthorizeStatus($module);
 }
