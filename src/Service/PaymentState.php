@@ -109,7 +109,7 @@ class PaymentState
                 $stancerApiPayment = \StancerApiPayment::findByApiPayment($stancerPayment);
                 $stancerApiPayment->save();
                 $refundStatus = (int) $stancerApiPayment->getOrderState();
-                if ((new \Order($orderId))->getCurrentState() !== $refundStatus) {
+                if ((int) (new \Order($orderId))->getCurrentState() !== (int) $refundStatus) {
                     $this->updateStatus($orderId, $refundStatus);
                 }
             }
