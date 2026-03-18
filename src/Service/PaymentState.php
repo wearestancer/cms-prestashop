@@ -14,6 +14,10 @@ declare(strict_types=1);
 
 namespace Stancer\Service;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use Order;
 use PrestaShop\PrestaShop\Core\Domain\Order\Command\UpdateOrderStatusCommand;
 use PrestaShop\PrestaShop\Core\Domain\Order\Exception as OrderException;
@@ -79,7 +83,7 @@ class PaymentState
      *
      * @param string $paymentID
      * @param int $amount
-     * @param string $invoice_status
+     * @param bool $invoice_status
      * @param int $orderId
      *
      * @return array
@@ -178,7 +182,7 @@ class PaymentState
     /**
      * Handle the Exception from the order status
      *
-     * @param ChangeOrderStatusException $e
+     * @param OrderException\ChangeOrderStatusException $e
      *
      * @return void
      */
@@ -189,7 +193,7 @@ class PaymentState
             $e->getOrdersWithFailedToSendEmail()
         );
 
-        /** @var OrderId $orderId */
+        /** @var \PrestaShop\PrestaShop\Core\Domain\Order\ValueObject\OrderId $orderId */
         foreach ($orderIds as $orderId) {
             $this->addFlash(
                 'error',

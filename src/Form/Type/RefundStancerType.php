@@ -14,6 +14,10 @@ declare(strict_types=1);
 
 namespace Stancer\Form\Type;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use PrestaShopBundle\Form\Admin\Type\AmountCurrencyType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;

@@ -14,16 +14,20 @@ declare(strict_types=1);
 
 namespace Stancer\DataProvider;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CardDataProvider
 {
     /**
      * Format the card Object for display and form
      *
-     * @param Stancer\Card $stancerCard the Stancer card linked to the order
+     * @param \Stancer\Card $stancerCard the Stancer card linked to the order
      *
      * @return array
      */
-    public function getCardData(\Stancer\Card $stancerCard): array
+    public function getCardData(?\Stancer\Card $stancerCard): array
     {
         if (!$stancerCard) {
             return [];

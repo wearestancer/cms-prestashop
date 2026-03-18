@@ -10,6 +10,10 @@
  *
  * @version   2.0.3
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class InstallDataProvider
 {
     // Right now i don't know how to save the strings properly in our database without this trick
