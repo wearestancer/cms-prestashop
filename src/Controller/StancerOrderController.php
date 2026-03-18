@@ -14,6 +14,10 @@ declare(strict_types=1);
 
 namespace Stancer\Controller;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 require_once _PS_ROOT_DIR_ . '/modules/stancer/stancer.php';
 
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
@@ -22,6 +26,7 @@ use Stancer\Form\Type\CaptureStancerType;
 use Stancer\Form\Type\RefundStancerType;
 use Stancer\Service\PaymentState;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class StancerOrderController extends FrameworkBundleAdminController
@@ -39,9 +44,9 @@ class StancerOrderController extends FrameworkBundleAdminController
      * @param int $orderId
      * @param Request $request
      *
-     * @return void
+     * @return RedirectResponse
      */
-    public function capturePayment(int $orderId, Request $request)
+    public function capturePayment(int $orderId, Request $request): RedirectResponse
     {
         new \StancerApi();
 
@@ -71,9 +76,9 @@ class StancerOrderController extends FrameworkBundleAdminController
      * @param int $orderId
      * @param Request $request
      *
-     * @return void
+     * @return RedirectResponse
      */
-    public function createRefund(int $orderId, Request $request)
+    public function createRefund(int $orderId, Request $request): RedirectResponse
     {
         new \StancerApi();
 
@@ -90,7 +95,7 @@ class StancerOrderController extends FrameworkBundleAdminController
             $flashMessage = $this->paymentState->refund(
                 $data['payment_id'],
                 (int) (string) ($data['amount'] * 100),
-                $data['change_invoice_status'],
+                (bool) $data['change_invoice_status'],
                 $orderId
             );
             $this->addFlash($flashMessage['status'], $flashMessage['message']);

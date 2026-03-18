@@ -14,6 +14,10 @@ declare(strict_types=1);
 
 namespace Stancer\Controller;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use Stancer\DataProvider\CardDataProvider;
 use Stancer\DataProvider\PaymentDataProvider;

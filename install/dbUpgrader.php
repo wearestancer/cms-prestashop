@@ -10,7 +10,9 @@
  *
  * @version   2.0.3
  */
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 require_once _PS_ROOT_DIR_ . '/modules/stancer/install/InstallDataProvider.php';
 
 class DbUpgrader
@@ -34,6 +36,6 @@ class DbUpgrader
         }
         $return &= $db->insert('configuration', ['name' => 'PS_STANCER_AUTHORIZE', 'value' => $orderStateId]);
 
-        return $return;
+        return (bool) $return;
     }
 }
