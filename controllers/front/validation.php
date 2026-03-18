@@ -243,7 +243,8 @@ class StancerValidationModuleFrontController extends ModuleFrontController
 
                 $this->displayError($err);
 
-                return;
+                $this->redirectWithNotifications($this->getRedirectLink());
+                exit;
             case Stancer\Payment\Status::AUTHORIZED:
                 $api->markPaymentAsCaptured($apiPayment);
                 $status = $apiPayment->getStatus();
@@ -264,6 +265,7 @@ class StancerValidationModuleFrontController extends ModuleFrontController
 
                 $payment->id_order = $newOrder->id;
                 $payment->save();
+
                 $url = $context->link->getPageLink(
                     'order-confirmation',
                     true,
@@ -278,8 +280,6 @@ class StancerValidationModuleFrontController extends ModuleFrontController
                 Tools::redirect($url);
         }
         // Redirect always terminate. No return needed.
-        $this->redirect($apiPayment->getPaymentPageUrl([
-            'lang' => $context->language->language_code,
-        ], true));
+        $this->redirect();
     }
 }
