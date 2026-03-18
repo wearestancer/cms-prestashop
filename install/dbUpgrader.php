@@ -1,5 +1,18 @@
 <?php
+/**
+ * Stancer PrestaShop
+ *
+ * @author    Stancer <hello@stancer.com>
+ * @copyright 2026 Stancer / Iliad 78
+ * @license   https://opensource.org/licenses/MIT
+ *
+ * @website   https://www.stancer.com
+ *
+ * @version   2.0.3
+ */
+
 require_once _PS_ROOT_DIR_ . '/modules/stancer/install/InstallDataProvider.php';
+
 class DbUpgrader
 {
     public static function upgradeDbAuthorizeStatus(Stancer $module): bool
