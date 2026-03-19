@@ -26,6 +26,8 @@
         "classmap": [
             "classes/",
             "controllers/",
+            "install",
+            "src",
             "vendor/"
         ]
     },
@@ -39,13 +41,12 @@
         "scope:dependency": "composer install --no-dev && composer run prep-vendor && composer run prefix-stancer && composer du"
     },
     "require": {
-        "php": ">=7.4",
-        "stancer/stancer": "^1.1.4"
+        "php": ">=8.1",
+        "stancer/stancer": "^2.1"
     },
     "require-dev": {
         "phpstan/phpstan": "^2.0",
-        "prestashop/php-dev-tools": "^4.3",
-        "stancer/php-stubs-prestashop": "^1.7"
+        "prestashop/php-dev-tools": "^4.3"
     },
     "support": {
         "docs": "https://gitlab.com/wearestancer/cms/prestashop/-/wikis/home",

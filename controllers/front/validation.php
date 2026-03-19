@@ -3,7 +3,7 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2025 Stancer / Iliad 78
+ * @copyright 2018-2026 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
@@ -124,13 +124,13 @@ class StancerValidationModuleFrontController extends ModuleFrontController
     {
         $amount = vsprintf('%.02f %s', [
             $apiPayment->getAmount() / 100,
-            strtoupper($apiPayment->getCurrency()),
+            strtoupper($apiPayment->getCurrency()->value),
         ]);
 
         if (class_exists('NumberFormatter')) {
             $formatter = new NumberFormatter('en_GB', NumberFormatter::CURRENCY);
             // @phpstan-ignore method.internalClass
-            $amount = $formatter->formatCurrency($apiPayment->getAmount() / 100, $apiPayment->getCurrency());
+            $amount = $formatter->formatCurrency($apiPayment->getAmount() / 100, $apiPayment->getCurrency()->value);
         }
 
         $message[] = 'Transaction';
@@ -182,7 +182,6 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         $cart = $context->cart;
         $currency = $context->currency;
         $customer = $context->customer;
-
         // phpcs:disable PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace
         if (
             !Validate::isLoadedObject($cart)
@@ -227,14 +226,9 @@ class StancerValidationModuleFrontController extends ModuleFrontController
         if ($apiCard) {
             $payment->card_id = $apiCard->id;
         }
-
-        $payment->status = $status;
+        $status = $apiPayment->getStatus();
+        $payment->status = $status->value;
         $payment->save();
-
-        if ($status === Stancer\Payment\Status::AUTHORIZED) {
-            $api->markPaymentAsCaptured($apiPayment);
-            $status = $apiPayment->getStatus();
-        }
 
         switch ($status) {
             case Stancer\Payment\Status::FAILED:
@@ -249,8 +243,12 @@ class StancerValidationModuleFrontController extends ModuleFrontController
 
                 $this->displayError($err);
 
-                return;
+                $this->redirectWithNotifications($this->getRedirectLink());
+                exit;
             case Stancer\Payment\Status::AUTHORIZED:
+                $api->markPaymentAsCaptured($apiPayment);
+                $status = $apiPayment->getStatus();
+                // no break
             case Stancer\Payment\Status::TO_CAPTURE:
             case Stancer\Payment\Status::CAPTURE:
                 // @todo : remove check of property when property deleted will be added
@@ -282,8 +280,6 @@ class StancerValidationModuleFrontController extends ModuleFrontController
                 Tools::redirect($url);
         }
         // Redirect always terminate. No return needed.
-        $this->redirect($apiPayment->getPaymentPageUrl([
-            'lang' => $this->context->language->language_code,
-        ], true));
+        $this->redirect();
     }
 }

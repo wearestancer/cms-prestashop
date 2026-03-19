@@ -3,7 +3,7 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2025 Stancer / Iliad 78
+ * @copyright 2018-2026 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
@@ -152,7 +152,27 @@ class StancerApiCustomer extends ObjectModel
         }
 
         $this->api = new Stancer\Customer($this->customer_id);
+        try {
+            $this->api->getEmail();
+        } catch (Stancer\Exceptions\NotFoundException) {
+            // If we cannot find the customer we just create a new one.
+            $this->api = new Stancer\Customer();
+            if ($this->email) {
+                $this->api->setEmail($this->email);
+            }
+            if ($this->mobile) {
+                $this->api->setMobile($this->mobile);
+            }
+            if ($this->name) {
+                $this->api->setName($this->name);
+            }
+            if ($this->id_customer) {
+                $this->api->setExternalId((string) $this->id_customer);
+            }
+            $this->api->send();
 
+            return $this->api;
+        }
         $params = [];
 
         if ($this->email && $this->email !== $this->api->getEmail()) {

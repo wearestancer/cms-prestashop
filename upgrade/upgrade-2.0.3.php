@@ -8,18 +8,20 @@
  *
  * @website   https://www.stancer.com
  */
+require_once _PS_ROOT_DIR_ . '/modules/stancer/install/dbUpgrader.php';
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_1_2_3(Stancer $module): bool
+function upgrade_module_2_0_3(Stancer $module): bool
 {
     if (!$module->installConfigurations()) {
         return false;
     }
-    $module->unregisterHook('header');
-    $module->unregisterExceptions(Hook::getIdByName('header'));
-    $module->registerHook('displayHeader');
+    $module->registerHook('displayAdminOrderSide');
+    Configuration::deleteByName('STANCER_AUTH_LIMIT');
 
-    return true;
+    Media::clearCache();
+
+    return DbUpgrader::upgradeDbAuthorizeStatus($module);
 }

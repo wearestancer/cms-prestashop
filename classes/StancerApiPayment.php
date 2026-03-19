@@ -3,11 +3,14 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2025 Stancer / Iliad 78
+ * @copyright 2018-2026 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
  */
+
+use Stancer\Enum\ApiVersion;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -147,8 +150,16 @@ class StancerApiPayment extends ObjectModel
         // @phpstan-ignore new.static
         $payment = new static();
         $payment->hydrate((array) $row);
+        $payment->setApiPayment($apiPayment);
 
         return static::ensureData($payment);
+    }
+
+    protected function setApiPayment(Stancer\Payment $apiPayment): void
+    {
+        if ($this->payment_id === $apiPayment->id) {
+            $this->api = $apiPayment;
+        }
     }
 
     /**
@@ -200,6 +211,24 @@ class StancerApiPayment extends ObjectModel
         return static::ensureData($payment);
     }
 
+    public static function findByOrderId(int $orderID): ?StancerApiPayment
+    {
+        $query = new DbQuery();
+        $query->select('*');
+        $query->from(static::$definition['table']);
+        $query->where('`id_order` = ' . $orderID);
+
+        $row = Db::getInstance()->getRow($query);
+        if (!$row) {
+            return null;
+        }
+        // @phpstan-ignore new.static
+        $payment = new static();
+        $payment->hydrate((array) $row);
+
+        return static::ensureData($payment);
+    }
+
     /**
      * Get Stancer API payment object
      *
@@ -219,31 +248,25 @@ class StancerApiPayment extends ObjectModel
      *
      * @return string|false
      */
-    public function getOrderState()
+    public function getOrderState(): string|false
     {
-        $statuses = [
-            Stancer\Payment\Status::AUTHORIZED => 'PS_OS_AUTHORIZED',
+        $key = match ($this->api->getStatus()) {
+            Stancer\Payment\Status::AUTHORIZED => 'PS_STANCER_AUTHORIZE',
             Stancer\Payment\Status::CANCELED => 'PS_OS_CANCELED',
-            Stancer\Payment\Status::CAPTURED => 'PS_OS_PAYMENT',
+            Stancer\Payment\Status::CAPTURED,
+            Stancer\Payment\Status::TO_CAPTURE => 'PS_OS_PAYMENT',
             Stancer\Payment\Status::DISPUTED => 'PS_OS_DISPUTED',
             Stancer\Payment\Status::EXPIRED => 'PS_OS_EXPIRED',
             Stancer\Payment\Status::FAILED => 'PS_OS_ERROR',
-            Stancer\Payment\Status::TO_CAPTURE => 'PS_OS_PAYMENT',
-        ];
+            default => 'PS_OS_ERROR',
+        };
 
-        $key = 'PS_OS_ERROR';
-
-        if (array_key_exists($this->api->getStatus(), $statuses)) {
-            $key = $statuses[$this->api->getStatus()];
+        // We Cannot fetch refunds properly with V2 so we use V1 temporarly
+        Stancer\Config::getGlobal()->setVersion(ApiVersion::VERSION_1);
+        if ((bool) count($this->api->getRefunds())) {
+            $key = 'PS_OS_REFUND';
         }
-
-        if (array_search($key, $statuses) === Stancer\Payment\Status::CAPTURED && (bool) count($this->api->getRefunds())) {
-            if ($this->api->getRefundableAmount()) {
-                $key = 'PS_OS_PARTIAL_REFUND';
-            } else {
-                $key = 'PS_OS_REFUND';
-            }
-        }
+        Stancer\Config::getGlobal()->setVersion(ApiVersion::VERSION_2);
 
         return Configuration::get($key);
     }
@@ -279,13 +302,13 @@ class StancerApiPayment extends ObjectModel
             $status = $this->api->status;
 
             if (!$status && $this->api->auth) {
-                if (in_array($this->api->auth->status, ['declined', 'expired', 'failed', 'unavailable'], true)) {
+                if (in_array($this->api->auth->status->value, ['declined', 'expired', 'failed', 'unavailable'], true)) {
                     // We can not mark the payment failed in the API
                     $status = Stancer\Payment\Status::FAILED;
                 }
             }
 
-            $this->status = $status ?? 'pending';
+            $this->status = $status->value ?? 'pending';
         }
 
         return parent::save($null_values, $auto_date);
@@ -316,7 +339,7 @@ class StancerApiPayment extends ObjectModel
         $payment->api = $apiPayment;
         $payment->card_id = $card ? $card->id : null;
         $payment->created = $creation ? $creation->format('Y-m-d H:i:s') : null;
-        $payment->currency = $apiPayment->currency;
+        $payment->currency = $apiPayment->currency->value;
         $payment->customer_id = $customer ? $customer->id : null;
         $payment->id_cart = $cart->id;
         $payment->payment_id = $apiPayment->id;

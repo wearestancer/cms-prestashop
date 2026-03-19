@@ -1,21 +1,25 @@
 parameters:
-# Those error exists locally but not on the prestashop validator
-# As such we ignore them in our config file and not in our php files.
 	ignoreErrors:
 		-
-			message: '#^Access to property \$language_code on an unknown class InstallLanguage\.$#'
+			rawMessage: Dead catch - Stancer\Exceptions\NotFoundException is never thrown in the try block.
+			identifier: catch.neverThrown
+			count: 1
+			path: classes/StancerApiCustomer.php
+
+		-
+			rawMessage: Access to property $language_code on an unknown class InstallLanguage.
 			identifier: class.notFound
 			count: 1
 			path: controllers/front/payment.php
 
 		-
-			message: '#^Access to property \$language_code on an unknown class InstallLanguage\.$#'
-			identifier: class.notFound
+			rawMessage: 'Method FrontControllerCore::redirectWithNotifications() invoked with 1 parameter, 0 required.'
+			identifier: arguments.count
 			count: 1
 			path: controllers/front/validation.php
 
 		-
-			message: '#^Access to property \$id on an unknown class InstallLanguage\.$#'
+			rawMessage: Access to property $id on an unknown class InstallLanguage.
 			identifier: class.notFound
 			count: 2
 			path: stancer.php

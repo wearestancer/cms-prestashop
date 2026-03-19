@@ -3,7 +3,7 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2025 Stancer / Iliad 78
+ * @copyright 2018-2026 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
@@ -17,7 +17,6 @@ if (!defined('_PS_VERSION_')) {
  *
  * @phpstan-type PaymentData array{
  *       'amount': int,
- *       'auth': bool,
  *       'currency': string,
  *       'description': string|null,
  *       'orderId': string,
@@ -58,8 +57,6 @@ class StancerApi
     ): array {
         $total = $cart->getOrderTotal(true, Cart::BOTH);
         $amount = (int) (string) ($total * 100);
-        $authLimit = $this->apiConfig->authLimit;
-        $auth = is_null($authLimit) || $authLimit === '' ? false : $total > $authLimit;
         $currencyCode = strtoupper($currency->iso_code);
 
         $message = Configuration::get('STANCER_PAYMENT_DESCRIPTION', $language->id);
@@ -87,7 +84,6 @@ class StancerApi
 
         $paymentData = [
             'amount' => $amount,
-            'auth' => $auth,
             'currency' => strtolower($currency->iso_code),
             'description' => $description,
             'orderId' => (string) $cart->id,
@@ -186,27 +182,17 @@ class StancerApi
         $psApiCustomer = StancerApiCustomer::find($customer);
 
         $apiCustomer = $psApiCustomer->getApiObject();
-        $currentPayment = StancerApiPayment::find($cart, $currency);
 
-        $apiPayment = null;
-        if ($currentPayment) {
-            $apiPayment = $currentPayment->getApiObject();
-        }
+        $apiPayment = new Stancer\Payment();
+        $apiPayment
+            ->setCustomer($apiCustomer)
+            ->setOrderId($paymentData['orderId'])
+            ->setCapture(false)
+            ->setMethodsAllowed(['card'])
+            ->setAuth(true);
 
-        if (!$apiPayment || $apiPayment->getStatus() === 'refused') {
-            $apiPayment = new Stancer\Payment();
-            $apiPayment
-                ->setCustomer($apiCustomer)
-                ->setOrderId($paymentData['orderId'])
-                ->setCapture(false)
-                ->setMethodsAllowed(['card']);
-            if (isset($paymentData['returnUrl'])) {
-                $apiPayment->setReturnUrl($paymentData['returnUrl']);
-            }
-        }
-
-        if ($paymentData['auth'] && empty($apiPayment->getAuth())) {
-            $apiPayment->setAuth(true);
+        if (isset($paymentData['returnUrl'])) {
+            $apiPayment->setReturnUrl($paymentData['returnUrl']);
         }
 
         if ($apiPayment->getAmount() != $paymentData['amount']) {

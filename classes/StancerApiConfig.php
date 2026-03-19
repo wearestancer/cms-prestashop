@@ -3,7 +3,7 @@
  * Stancer PrestaShop
  *
  * @author    Stancer <hello@stancer.com>
- * @copyright 2018-2025 Stancer / Iliad 78
+ * @copyright 2018-2026 Stancer / Iliad 78
  * @license   https://opensource.org/licenses/MIT
  *
  * @website   https://www.stancer.com
@@ -23,11 +23,8 @@ class StancerApiConfig
     /** @var string API Host */
     public $host;
 
-    /** @var int|null API Timeout */
+    /** @var string|false API Timeout */
     public $timeout;
-
-    /** @var string|null Auth limit */
-    public $authLimit;
 
     /** @var bool API is configured ? */
     public $isConfigured;
@@ -41,8 +38,7 @@ class StancerApiConfig
     {
         $this->mode = Configuration::get('STANCER_API_MODE') ?: Stancer\Config::TEST_MODE;
         $this->host = Configuration::get('STANCER_API_HOST');
-        $this->timeout = (int) Configuration::get('STANCER_API_TIMEOUT');
-        $this->authLimit = Configuration::get('STANCER_AUTH_LIMIT');
+        $this->timeout = Configuration::get('STANCER_API_TIMEOUT');
         $this->isConfigured = $this->isConfigured();
     }
 
@@ -65,8 +61,9 @@ class StancerApiConfig
         }
 
         if ($this->timeout) {
-            $apiConfig->setTimeout($this->timeout);
+            $apiConfig->setTimeout((int) $this->timeout);
         }
+        $apiConfig->setVersion(Stancer\Enum\ApiVersion::VERSION_2);
 
         return $apiConfig
             ->addAppData('libstancer-prestashop', STANCER_MODULE_VERSION)
